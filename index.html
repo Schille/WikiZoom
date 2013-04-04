@@ -199,11 +199,7 @@ var out = function() {
 	console.log('DEBUG');
 	set3.animate({transform: "s1"},2000,"elastic");
 };
-var tooltip = new Tips('.sometip');
-tooltip.setTitle('WikiArtikel');
-tooltip.setText('Some Wikitext');
 
-tooltip.attach('set3');
 set3.mouseover(over);
 set3.mouseout(out);
 
