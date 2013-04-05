@@ -1,327 +1,199 @@
 <html>
-<head>
-<script src="dependencies/raphael-min.js" type="text/javascript"></script>
-<script src="dependencies/mootools-more-1.4.0.1.js" type="text/javascript"></script>
-<script src="dependencies/mootools-core-1.4.5.js" type="text/javascript"></script>
-<script src="ZoomCore.js" type="text/javascript"></script>
-<script src="ZoomUI.js" type="text/javascript"></script>
-<script src="WikiFetcher.js" type="text/javascript"></script>
-<script src="Settings.js"></script>
-
-<style type="text/css">/* Style sheet tooltip */
-/* Gesamtbreite für den Tooltip definieren */
-.tool
-{width:500px;
-}
-
-/* Definitionen für den Tooltip-Titel definieren */
-.tool .tip-title
-{
-margin:0 0 10px 0;
-padding:10px 20px;
-font-family:verdana,arial,sans-serif;
-font-weight:bold;
-font-size:1.2em;
-color:#fff;
-background:#666;
-/* Gecko-Browser (Firefox) */
--moz-box-shadow:2px 2px 8px #999;
-/* Webkit-Browser (Safari, Chrome) */
--webkit-box-shadow:2px 2px 8px #999;
-/* allgemein CSS3 */
-box-shadow:2px 2px 8px #999;
-}
-
-/* Definitionen für den Tooltip-Beschreibungstext definieren */
-.tool .tip-text
-{
-margin:0;
-padding:10px 20px;
-font-family:verdana,arial,sans-serif;
-font-size:1.1em;
-line-height:1.7;
-background:#fff;
-/* Gecko-Browser (Firefox) */
--moz-box-shadow:2px 2px 8px #999;
-/* Webkit-Browser (Safari, Chrome) */
--webkit-box-shadow:2px 2px 8px #999;
-/* allgemein CSS3 */
-box-shadow:2px 2px 8px #999;
-}
-</style>
-
-</head> 
-		<style type="text/css">
-			@font-face {
-				font-family: "Cabin";
-				src: url(./fonts/Cabin-Regular.otf);
-			}
-			</style>
-
-<body>
-<script type="text/javascript">
-//Creates canvas 320 × 200 at 10, 50
-var paper = Raphael(10, 10, "100%", "100%");
-
-/* // Creates circle at x = 50, y = 40, with radius 10
-var circle = paper.circle(50, 40, 10);
-// Sets the fill attribute of the circle to red (#f00)
-circle.attr("fill", "red");
-
-circle.node.onmouseover = function() {  
-    this.style.cursor = 'pointer';  
-}  
-var setting = 0;
-circle.node.onclick = function() {
-	if(setting == 0) {
-	circle.animate({r: 50}, 2000);
-	setting = 1;
-	}
-	else {
-	circle.animate({r: 10}, 2000);
-	setting = 0;
-	}
-}
-
-var buzz = paper.ellipse(500,200, 100, 40);
-var buzzdata = buzz.getBBox();
-var buzztext = paper.text(buzzdata.x+buzzdata.width/2,buzzdata.y+buzzdata.height/2, "content")
-var circledata = circle.getBBox();
-buzz.attr({
-	   fill: "hsb(.8, 1, 1)",
-       stroke: "none",
-       opacity: .5,
-       cursor: "move"
-});
-
-var getPath = function() {
-
-	return "M " + buzzdata.x + " " + buzzdata.y + "l 200 200 z";
-};
-var link = paper.path( getPath());
-
-
-start = function () {
-    // storing original coordinates
-    this.ox = this.attr("cx");
-    this.oy = this.attr("cy");
-    this.attr({opacity: 1});
-   
-},
-move = function (dx, dy) {
-    // move will be called with dx and dy
-   
-        this.attr({cx: this.ox + dx, cy: this.oy + dy}); 
-    
-    
-},
-up = function () {
-    // restoring state
-    this.attr({opacity: .5});
-    if (this.attr("y") < 60 && this.attr("x") < 60)
-        this.attr({fill: "#AEAEAE"});            
-}; 
-buzz.drag(move, start,up);
-
-buzz.mouseover(function() {
-	buzz.animate({transform:"s1.4"}, 600, "backOut");});
-	link.animate({path: "M 10 10 l 200 200 z"}, 600, "backOut");
-	
-buzz.mouseout(function() {
-	buzz.animate({transform:"s1.0"}, 600, "backOut");});
-	var k = buzzdata.x + buzzdata.width/2;
-	var m = buzzdata.x - circledata.x ;
-link.animate({path: "M " + k + " " + (buzzdata.y + buzzdata.height/2) + " l " + "-" + m + " "+ "-"+(buzzdata.y-circledata.y) + " z"}, 600, "backOut");
-
-buzz.click(function() {
-	buzz.animate({transform:"s10"}, 800, ">");
-	buzz.animate({opacity: 0}, 800, ">");
-});
-
-buzztext.attr({"font-size": 15});
-
-
-
-
-var cont = 0; 
-cont.x = 100;
-cont.y = 100;
-cont.width = 200;
-cont.height = 50;
-cont.r = 10;
-
-var set = paper.set();
-
-
-var box = paper.circle(100, 100, 75);
-
-var text = paper.text(200,125, "content");
-text.attr({"font-size": 15});
-
-
-set.push(box);
-set.push(text);
-box.attr({"fill": "90-#f00:5-#00f:95","fill-opacity": '1'});
-
-box.mouseover(function () {
-	box.animate({transform:"s2,2"},700,"bounce");
-	});
-
-box.mouseout(function () {
-	box.animate({transform:"s1,1"},700,"bounce");
-
-	this.animate({height: 50, width: 200}, 700, "bounce");
-
-});
-
-var tetronimo = paper.path("M 250 250 l 0 -50 l -50 0 l 0 -50 l -50 0 l 0 50 l -50 0 l 0 50 z");  
-
-// Sets the stroke attribute of the circle to white
-circle.attr("stroke", "#fff"); */
-
-var vertex = new Class({
-	initialize : function(myTitle, myIntro, myLink) {
-		this.id = 0;
-		this.parent = null;
-		this.ajax;
-		this.children = new Array();
-		this.title = myTitle;
-		this.intro = myIntro;
-		this.link = myLink;
-		this.outlinks;
-		this.svg;
-	},
-});
-
-var vertex_mom = new vertex("Chaostheorie","Some nice things about this","http://wikipedia.org");
-
-
-function createEdge(x1,y1,x2,y2) {
-	var path = paper.path("M190,170 L47,40 L50,37 L200,160");
-	path.attr('fill','#000');
-	path.blur(0);
-	var path = paper.path("M45,40 L150,20 50,45");
-	path.attr('fill','#000');
-	path.blur(0);
-}
-
-createEdge();
-// var path = paper.path("M200,170 L350,40").toBack();
-// var path = paper.path("M350,40 L280,40").toFront();
-var circle = paper.circle(50,40,30);
-var circle21 = paper.circle(50,40,26);
-
-
-
-circle21.attr({"stroke":'#AAAAAA', "stroke-dasharray":"- ","stroke-width":2,"stroke-linecap":"round",});
-
-circle.attr({"fill": "#CCCCCC",
-      "fill-opacity": 1,
-      "stroke": '#AAAAAA',
-      "stroke-width":2,});
-var text = paper.text(50,40, "Shits");
-text.attr({"font-size": 15, "font-family": "Cabin","fill":'#555555',});
-circle.blur(0);
-circle21.blur(0);
-text.blur(0);
-
-var circle1 = paper.circle(200,170,50);
-
-circle1.attr({"fill": "#CCCCCC",
-      "fill-opacity": 1,
-      "stroke": '#AAAAAA',
-      "stroke-width":2,});
-var circle11 = paper.circle(200,170,46);
-circle11.attr({"stroke":'#AAAAAA', "stroke-dasharray":"- ","stroke-width":2,"stroke-linecap":"round",});
-circle1.mouseover(function(){
-	
-	circle1.animate({},5000,"elastic");
-});
-var text1 = paper.text(200,170, vertex_mom.title).toFront();
-text1.attr({"font-size": 20, "font-family": "Cabin","fill":'#555555',});
-
-var circle3 = paper.circle(150,20,20);
-circle3.attr({"fill": "#CCCCCC",
-      "fill-opacity": 1,
-      "stroke": '#AAAAAA',
-      "stroke-width":2,});
-var circle31 = paper.circle(150,20,16);
-circle31.attr({"stroke":'#AAAAAA', "stroke-dasharray":"- ","stroke-width":2,"stroke-linecap":"round",});
-
-var text3 = paper.text(150,20, "Poop").toFront();
-text3.attr({"font-size": 12, "font-family": "Cabin","fill":'#555555',});
-
-var set3 = paper.set();
-set3.push(text1,circle1,circle11);
-
-var intro = new Array("Chaostheorie", "Shits", "Poop"); 
-
-
-//Function to manipulate nodes
-var over = function() {
-	console.log('DEBUG');
-	set3.animate({transform: "s1.1"},2000,"elastic");
-	
-	
-	
-};
-
-
-
-
-var out = function() {
-	console.log('DEBUG');
-	set3.animate({transform: "s1"},2000,"elastic");
-};
-
-set3.mouseover(over);
-set3.mouseout(out);
-
-circle3.blur(0);
-circle31.blur(0);
-text3.blur(0);
-
-
-           
-// var circle2 = paper.circle(350,40,30);
-// circle2.attr("fill", "blue");
-// var text2 = paper.text(350,40, "Dump");
-// 
-// var circle2_c1 = paper.circle(280,40,20);
-// circle2_c1.attr("fill", "8888FF");
-// var text2 = paper.text(280,40, "Dookie");
-
-// var edge = paper.path("M500,30 L500,130 L506,30 L500,30");
-// edge.attr("fill","#000");
-
-
-
-</script>
-<script>
-new Request.JSONP({
-	url: "http://de.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&titles=mannheim&",
-
-	onComplete: function(information) {
-		global = information;
-		// Log the result to console for inspection
-		console.info(information.parse.links[0]['*']);
-		var n=information.parse.wikitext['*'].indexOf("'''");
-		var k = 1;
-		while (true) {
-			if (information.parse.wikitext['*'].substring(n-k,n-k+1) == '\n') {
-			
-				var index = information.parse.wikitext['*'].substring(n-k+1,information.parse.wikitext['*'].length);
-				console.info(index);
-				break;
-			}
-			k++;
-		}
+	<head>
+		<script src="dependencies/raphael-min.js" type="text/javascript"></script>
+		<script src="dependencies/mootools-core-1.4.5.js" type="text/javascript"></script>
+		<script src="dependencies/mootools-more-1.4.0.1.js" type="text/javascript"></script>
 		
-	}
-}).send();
-</script><br><br><br><br><br><br><br><br><br><br><br>
+		<script src="ZoomCore.js" type="text/javascript"></script>
+		<script src="ZoomUI.js" type="text/javascript"></script>
+		<script src="WikiFetcher.js" type="text/javascript"></script>
+		<script src="Settings.js"></script>
+
+		<style type="text/css">
+			/* Style sheet tooltip */
+			/* Gesamtbreite für den Tooltip definieren */
+			.tool {
+				width: 500px;
+			}
+
+			/* Definitionen für den Tooltip-Titel definieren */
+			.tool .tip-title {
+				margin: 0 0 10px 0;
+				padding: 10px 20px;
+				font-family: verdana, arial, sans-serif;
+				font-weight: bold;
+				font-size: 1.2em;
+				color: #fff;
+				background: #666;
+				/* Gecko-Browser (Firefox) */
+				-moz-box-shadow: 2px 2px 8px #999;
+				/* Webkit-Browser (Safari, Chrome) */
+				-webkit-box-shadow: 2px 2px 8px #999;
+				/* allgemein CSS3 */
+				box-shadow: 2px 2px 8px #999;
+			}
+
+			/* Definitionen für den Tooltip-Beschreibungstext definieren */
+			.tool .tip-text {
+				margin: 0;
+				padding: 10px 20px;
+				font-family: verdana, arial, sans-serif;
+				font-size: 1.1em;
+				line-height: 1.7;
+				background: #fff;
+				/* Gecko-Browser (Firefox) */
+				-moz-box-shadow: 2px 2px 8px #999;
+				/* Webkit-Browser (Safari, Chrome) */
+				-webkit-box-shadow: 2px 2px 8px #999;
+				/* allgemein CSS3 */
+				box-shadow: 2px 2px 8px #999;
+			}
+		</style>
+
+	</head>
+	<style type="text/css">
+		@font-face {
+			font-family: "Cabin";
+			src: url(./fonts/Cabin-Regular.otf);
+		}
+	</style>
+
+	<body>
+		<script type="text/javascript">
+			//Creates canvas 320 × 200 at 10, 50
+			var paper = Raphael(0, 0, "100%", "100%");
 
 
-</body>
+			var vertex = new Class({
+				initialize : function(myTitle, myIntro, myLink, myLevel) {
+					this.id = 0;
+					this.parent = null;
+					this.ajax
+					this.children = new Array();
+					this.title = myTitle;
+					this.intro = myIntro;
+					this.link = myLink;
+					this.outlinks;
+					this.svg;
+					this.level = myLevel;
+				},
+			});
+
+			var vertex_mom = new vertex("Chaostheorie", "Some nice things about this", "http://wikipedia.org",0);
+			var vertex_child1 = new vertex("Shits", "Some things about shit", "http://wikipedia.org/shits",1);
+			var vertex_child11 = new vertex("Poop", "Some things about poop", "http://wikipedia.org/poop",2);
+
+			function createEdge(x1, y1, x2, y2) {
+				var path = paper.path("M190,170 L47,40 L50,37 L200,160");
+				path.attr('fill', '#000');
+				path.blur(0);
+				var path = paper.path("M45,40 L150,20 50,45");
+				path.attr('fill', '#000');
+				path.blur(0);
+			};
+
+			createEdge();
+			
+
+			
+
+			function paintNode(myNode, x, y) {
+				var level_fac = (Math.pow(0.7,myNode.level));
+				var size = 50*level_fac;
+				var fontsize = 20*level_fac;
+
+				paper.setStart();
+				var circle1 = paper.circle(x, y, size);
+
+				circle1.attr({
+					"fill" : "#CCCCCC",
+					"fill-opacity" : 1,
+					"stroke" : '#AAAAAA',
+					"stroke-width" : 2,
+				});
+				var circle11 = paper.circle(x, y, size-4);
+				circle11.attr({
+					"stroke" : '#AAAAAA',
+					"stroke-dasharray" : "- ",
+					"stroke-width" : 2,
+					"stroke-linecap" : "round",
+				});
+			
+				var text1 = paper.text(x, y, myNode.title).toFront();
+				text1.attr({
+					"font-size" : fontsize,
+					"font-family" : "Cabin",
+					"fill" : '#555555',
+				});
+				var set3 = paper.setFinish();
+
+				myNode.svg = set3;
+				
+				var over = function() {
+				set3.animate({
+					transform : "s1.1"
+				}, 2000, "elastic");
+
+				};
+
+				var out = function() {
+					set3.animate({
+					transform : "s1"
+					}, 2000, "elastic");
+				};
+		
+				set3.mouseover(over);
+				set3.mouseout(out);
+
+				return myNode;
+			};
+			
+			
+			vertext_mom = paintNode(vertex_mom,200,170);
+			vertex_child1 = paintNode(vertex_child1,50,40);
+			vertex_child11 =paintNode(vertex_child11,150,20);
+			
+			
+
+
+			
+
+		</script>
+		<script>
+			new Request.JSONP({
+				url : "http://de.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&titles=mannheim&",
+
+				onComplete : function(information) {
+					global = information;
+					// Log the result to console for inspection
+					console.info(information.parse.links[0]['*']);
+					var n = information.parse.wikitext['*'].indexOf("'''");
+					var k = 1;
+					while (true) {
+						if (information.parse.wikitext['*'].substring(n - k, n - k + 1) == '\n') {
+
+							var index = information.parse.wikitext['*'].substring(n - k + 1, information.parse.wikitext['*'].length);
+							console.info(index);
+							break;
+						}
+						k++;
+					}
+
+				}
+			}).send();
+		</script>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+
+	</body>
 
 </html>
