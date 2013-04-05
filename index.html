@@ -72,10 +72,10 @@
 
 			function createEdge(x1, y1, x2, y2) {
 				var path = paper.path("M190,170 L47,40 L50,37 L200,160");
-				path.attr('fill', '#CCC');
+				path.attr({'fill': '0-#e2e2e2:0-#aeaeae:100', "stroke":"none"});
 			
 				var path = paper.path("M45,40 L150,20 50,45");
-				path.attr('fill', '#FEF');
+				path.attr({'fill': '0-#f5f5f5:0-#e7e7e7:100', "stroke":"none"});
 			
 			};
 
@@ -118,13 +118,13 @@
 
 				circle1.attr({
 					"fill" : shadeColor("#CCCCCC", (1 - level_fac) * 35),
-					"stroke" : shadeColor("#AAAAAA", (1 - level_fac) * 35)
+					"stroke" : shadeColor("#AAAAAA", (1 - level_fac) * 50)
 				});
 				circle11.attr({
-					"stroke" : shadeColor("#AAAAAA", (1 - level_fac) * 35)
+					"stroke" : shadeColor("#AAAAAA", (1 - level_fac) * 50)
 				});
 				text1.attr({
-					"fill" : shadeColor("#555555", (1 - level_fac) * 60)
+					"fill" : shadeColor("#555555", (1 - level_fac) * 80)
 				});
 
 				var an1 = circle1.animate({
