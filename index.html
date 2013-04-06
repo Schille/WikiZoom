@@ -167,27 +167,8 @@
 			createEdge(vertex_mom,vertex_child1);
 		</script>
 		<script>
-			new Request.JSONP({
-				url : "http://de.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&titles=mannheim&",
-
-				onComplete : function(information) {
-					global = information;
-					// Log the result to console for inspection
-					console.info(information.parse.links[0]['*']);
-					var n = information.parse.wikitext['*'].indexOf("'''");
-					var k = 1;
-					while (true) {
-						if (information.parse.wikitext['*'].substring(n - k, n - k + 1) == '\n') {
-
-							var index = information.parse.wikitext['*'].substring(n - k + 1, information.parse.wikitext['*'].length);
-							console.info(index);
-							break;
-						}
-						k++;
-					}
-
-				}
-			}).send();
+			var fetchTest = "Mannheim";
+			fetch(fetchTest);
 		</script>
 		<br>
 		<br>
