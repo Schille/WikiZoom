@@ -76,30 +76,36 @@
 				var colorAngle = Math.floor(Raphael.angle(xP,yP,xC,yC));
 				console.log(startColor+" "+endColor);
 				
-				endColor = "black";
-				startColor = "white";
-				
-				// if(colorAngle<180)
-					// colorAngle = colorAngle +180;
+				if(colorAngle>90 && colorAngle <270)
+					if(colorAngle > 180)
+					 colorAngle = colorAngle - 90 +180;
+					 else
+					 colorAngle = colorAngle - 90;
+				else
+					if(colorAngle > 180)
+					  colorAngle = colorAngle + 90 + 180;
+					  else
+					  colorAngle = colorAngle + 90;
 				 console.log(colorAngle);
 				
 				if(xP < xC && yP < yC) {
 					var path = paper.path("M"+(xP-10)+","+yP+" L"+xC+","+(yC+3)+" L"+xP+","+(yP-10));
-					path.attr({'fill': colorAngle+'-'+endColor+':0-'+startColor+':100', "stroke":"none"});
+					path.attr({'fill': colorAngle+'-'+startColor+'-'+endColor+'', "stroke":"none"}).toBack();
 				}
 				if(xP > xC && yP < yC) {
 					var path = paper.path("M"+xP+","+(yP-10)+" L"+xC+","+(yC+3)+" L"+(xP+10)+","+yP);
-					path.attr({'fill': colorAngle+'-'+endColor+':0-'+startColor+':100', "stroke":"none"});
+					path.attr({'fill': colorAngle+'-'+startColor+'-'+endColor+'', "stroke":"none"}).toBack();
 				}
 				if(xP > xC && yP > yC) {
 					var path = paper.path("M"+xP+","+(yP+10)+" L"+xC+","+(yC-3)+" L"+(xP+10)+","+yP);
-					path.attr({'fill': colorAngle+'-'+endColor+':0-'+startColor+':100', "stroke":"none"});
+					path.attr({'fill': colorAngle+'-'+startColor+'-'+endColor+'', "stroke":"none"}).toBack();
 				
 				}
 				if(xP < xC && yP > yC) {
 					var path = paper.path("M"+(xP-10)+","+yP+" L"+xC+","+(yC-3)+" L"+xP+","+(yP+10));
-					path.attr({'fill': colorAngle+'-'+endColor+':0-'+startColor+':100', "stroke":"none"});
+					path.attr({'fill': colorAngle+'-'+startColor+'-'+endColor+'', "stroke":"none"}).toBack();
 				}
+				
 			
 			};
 
@@ -183,7 +189,7 @@
 			};
 
 			vertext_mom = paintNode(vertex_mom, 300, 200,null);
-			vertex_child1 = paintNode(vertex_mom.children[0],400,10,vertex_mom);
+			vertex_child1 = paintNode(vertex_mom.children[0],400,100,vertex_mom);
 			vertex_child11 = paintNode(vertex_child1.children[0], 150, 20,vertex_child1);
 			createEdge(vertex_mom,vertex_child1);
 			createEdge(vertex_child1,vertex_child11);
