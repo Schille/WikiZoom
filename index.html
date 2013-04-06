@@ -64,21 +64,42 @@
 			var vertex_child11 = new vertex("Poop", "Some things about poop", "http://wikipedia.org/poop", 2);
 			vertex_child1.children.push(vertex_child11);
 
-			function createEdge(vertex1, vertex2) {
+			function createEdge(vertexParent, vertexChild) {
 				
 				
-				var x1 = vertex1.svg[0].attr("cx");
-				var y1 = vertex1.svg.attr("cy");
-				var x2 = vertex2.svg.attr("cx");
-				var y2 = vertex2.svg.attr("cy");
+				var xP = vertexParent.svg[0].attr("cx");
+				var yP = vertexParent.svg[0].attr("cy");
+				var xC = vertexChild.svg[0].attr("cx");
+				var yC = vertexChild.svg[0].attr("cy");
+				var startColor = vertexParent.svg[0].attr("fill");
+				var endColor = vertexChild.svg[0].attr("fill");
+				var colorAngle = Math.floor(Raphael.angle(xP,yP,xC,yC));
+				console.log(startColor+" "+endColor);
 				
-				console.log(x1);
+				endColor = "black";
+				startColor = "white";
 				
-				var path = paper.path("M190,170 L47,40 L50,37 L200,160");
-				path.attr({'fill': '0-#e2e2e2:0-#aeaeae	:100', "stroke":"none"}).toBack();
-			
-				var path = paper.path("M45,40 L150,20 50,45");
-				path.attr({'fill': '0-#f5f5f5:0-#e7e7e7:100', "stroke":"none"}).toBack();
+				// if(colorAngle<180)
+					// colorAngle = colorAngle +180;
+				 console.log(colorAngle);
+				
+				if(xP < xC && yP < yC) {
+					var path = paper.path("M"+(xP-10)+","+yP+" L"+xC+","+(yC+3)+" L"+xP+","+(yP-10));
+					path.attr({'fill': colorAngle+'-'+endColor+':0-'+startColor+':100', "stroke":"none"});
+				}
+				if(xP > xC && yP < yC) {
+					var path = paper.path("M"+xP+","+(yP-10)+" L"+xC+","+(yC+3)+" L"+(xP+10)+","+yP);
+					path.attr({'fill': colorAngle+'-'+endColor+':0-'+startColor+':100', "stroke":"none"});
+				}
+				if(xP > xC && yP > yC) {
+					var path = paper.path("M"+xP+","+(yP+10)+" L"+xC+","+(yC-3)+" L"+(xP+10)+","+yP);
+					path.attr({'fill': colorAngle+'-'+endColor+':0-'+startColor+':100', "stroke":"none"});
+				
+				}
+				if(xP < xC && yP > yC) {
+					var path = paper.path("M"+(xP-10)+","+yP+" L"+xC+","+(yC-3)+" L"+xP+","+(yP+10));
+					path.attr({'fill': colorAngle+'-'+endColor+':0-'+startColor+':100', "stroke":"none"});
+				}
 			
 			};
 
@@ -161,10 +182,11 @@
 				return myNode;
 			};
 
-			vertext_mom = paintNode(vertex_mom, paper_width/2, paper_height/2,null);
-			vertex_child1 = paintNode(vertex_mom.children[0], 50, 40,vertex_mom);
+			vertext_mom = paintNode(vertex_mom, 300, 200,null);
+			vertex_child1 = paintNode(vertex_mom.children[0],400,10,vertex_mom);
 			vertex_child11 = paintNode(vertex_child1.children[0], 150, 20,vertex_child1);
 			createEdge(vertex_mom,vertex_child1);
+			createEdge(vertex_child1,vertex_child11);
 		</script>
 		<script>
 			var fetchTest = "Mannheim";
