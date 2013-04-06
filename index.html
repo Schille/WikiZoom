@@ -61,8 +61,6 @@
 			var vertex_mom = new vertex("Chaostheorie", "Some nice things about this", "http://wikipedia.org", 0);
 			var vertex_child1 = new vertex("Shits", "Some things about shit", "http://wikipedia.org/shits", 1);
 			vertex_mom.children.push(vertex_child1);
-			var vertex_child11 = new vertex("Poop", "Some things about poop", "http://wikipedia.org/poop", 2);
-			vertex_child1.children.push(vertex_child11);
 
 			function createEdge(vertexParent, vertexChild) {
 				
@@ -115,6 +113,57 @@
 				var num = parseInt(color.slice(1), 16), amt = Math.round(2.55 * percent), R = (num >> 16) + amt, B = (num >> 8 & 0x00FF) + amt, G = (num & 0x0000FF) + amt;
 				return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (B < 255 ? B < 1 ? 0 : B : 255) * 0x100 + (G < 255 ? G < 1 ? 0 : G : 255)).toString(16).slice(1);
 			}
+function displayChildNodes(myNode, x, y) {
+				var level_fac = (Math.pow(0.7, myNode.level));
+				console.log("level:" + level_fac);
+				var child_count = myNode.children.length;
+				console.log("CC:" + child_count);
+				var angle_steps = Math.PI * 2 / child_count;
+				var angle = angle_steps;
+				console.log("Angle:" + angle);
+
+				if (child_count > 1) {
+					console.log("drin");
+					for ( i = 0; i < child_count - 1; i++) {
+						console.log(myNode.children[i].title);
+
+						moveNode(myNode.children[i], (200 * level_fac * Math.cos(angle) + x), (200 * level_fac * Math.sin(angle) + y))
+						myNode.children[i].svg.attr({
+							"cx" : (200 * level_fac * Math.cos(angle) + x),
+							"cy" : (200 * level_fac * Math.sin(angle) + y)
+						});
+						console.log(Math.cos(angle));
+						console.log("cx:" + myNode.children[i].svg[0].attr("cx"));
+						angle = angle_steps + angle;
+					}
+
+				}
+
+				var vertex_to_paint = paintNode(myNode.children[child_count - 1], (200 * level_fac * Math.cos(angle) + x), (200 * level_fac * Math.sin(angle) + y), myNode)
+
+				return vertex_to_paint;
+
+			}
+
+			function moveNode(myNode, mx, my) {
+				var gnupsi1 = myNode.svg;
+				gnupsi1.forEach(function(element) {
+					if (element.attr("text") != undefined) {
+						element.animate({
+							"x" : mx,
+							"y" : my
+						}, 2000, "backOut");
+					} else {
+						element.animate({
+							"cx" : mx,
+							"cy" : my
+						}, 2000, "backOut");
+					}
+
+				});
+
+			}
+
 
 			function paintNode(myNode, x, y) {
 				var level_fac = (Math.pow(0.7, myNode.level));
@@ -188,9 +237,32 @@
 				return myNode;
 			};
 
-			vertext_mom = paintNode(vertex_mom, 300, 200,null);
-			vertex_child1 = paintNode(vertex_mom.children[0],400,100,vertex_mom);
-			vertex_child11 = paintNode(vertex_child1.children[0], 150, 20,vertex_child1);
+			vertext_mom = paintNode(vertex_mom, paper_width / 2, paper_height / 2, null);
+			vertex_child1 = displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+			//moveNode(vertex_child1, 200, 200);
+
+			var vertex_child2 = new vertex("Hass", "Some things about hass", "http://wikipedia.org/hass", 1);
+			vertex_mom.children.push(vertex_child2);
+			vertex_child2 = displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+
+			var vertex_child3 = new vertex("Liebe", "Some things about hass", "http://wikipedia.org/hass", 1);
+			vertex_mom.children.push(vertex_child3);
+			vertex_child3 = displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+
+			var vertex_child4 = new vertex("Ahhhh", "Some things about hass", "http://wikipedia.org/hass", 1);
+			vertex_mom.children.push(vertex_child4);
+			vertex_child4 = displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+
+			var vertex_child5 = new vertex("Mies", "Some things about hass", "http://wikipedia.org/hass", 1);
+			vertex_mom.children.push(vertex_child5);
+			vertex_child5 = displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+			console.log("cx:" + vertex_child4.svg[0].attr("cx"));
+			console.log("cy:" + vertex_child4.svg[0].attr("cy"));
+
+			var vertex_child11 = new vertex("Poop", "Some things about poop", "http://wikipedia.org/poop", 2);
+			vertex_child1.children.push(vertex_child11);
+			vertex_child11 = displayChildNodes(vertex_child1, vertex_child1.svg[0].attr("cx"), vertex_child1.svg[0].attr("cy"));
+
 			createEdge(vertex_mom,vertex_child1);
 			createEdge(vertex_child1,vertex_child11);
 		</script>
