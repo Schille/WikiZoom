@@ -55,87 +55,121 @@
 	<body>
 		<script type="text/javascript">
 			//Creates canvas 320 × 200 at 10, 50
+			
+
+			
 			var paper_width = (window.innerWidth - window.innerWidth / 10);
 			var paper_height = (window.innerHeight - window.innerHeight / 10);
 			var paper = Raphael(0, 0, paper_width, paper_height);
 			var vertex_mom = new vertex("Chaostheorie", "Some nice things about this", "http://wikipedia.org", 0);
-			var vertex_child1 = new vertex("Shits", "Some things about shit", "http://wikipedia.org/shits", 1);
+			var vertex_child1 = new vertex("Shits", "Some things about shit", "http://wikipedia.org/shits", 1,vertex_mom);
 			vertex_mom.children.push(vertex_child1);
-
-			function createEdge(vertexParent, vertexChild) {
-				
-				
-				var xP = vertexParent.svg[0].attr("cx");
-				var yP = vertexParent.svg[0].attr("cy");
+			
+			paths = paper.set();
+			
+			function createEdge(vertexChild) {
+			
+				var xP = vertexChild.parent.svg[0].attr("cx");
+				var yP = vertexChild.parent.svg[0].attr("cy");
 				var xC = vertexChild.svg[0].attr("cx");
 				var yC = vertexChild.svg[0].attr("cy");
-				var startColor = vertexParent.svg[0].attr("fill");
-				var endColor = vertexChild.svg[0].attr("fill");
-				var colorAngle = Math.floor(Raphael.angle(xP,yP,xC,yC));
-				console.log(startColor+" "+endColor);
-				
-				if(colorAngle>90 && colorAngle <270)
-					if(colorAngle > 180)
-					 colorAngle = colorAngle - 90 +180;
-					 else
-					 colorAngle = colorAngle - 90;
-				else
-					if(colorAngle > 180)
-					  colorAngle = colorAngle + 90 + 180;
-					  else
-					  colorAngle = colorAngle + 90;
-				 console.log(colorAngle);
-				
-				if(xP < xC && yP < yC) {
-					var path = paper.path("M"+(xP-10)+","+yP+" L"+xC+","+(yC+3)+" L"+xP+","+(yP-10));
-					path.attr({'fill': colorAngle+'-'+startColor+'-'+endColor+'', "stroke":"none"}).toBack();
-				}
-				if(xP > xC && yP < yC) {
-					var path = paper.path("M"+xP+","+(yP-10)+" L"+xC+","+(yC+3)+" L"+(xP+10)+","+yP);
-					path.attr({'fill': colorAngle+'-'+startColor+'-'+endColor+'', "stroke":"none"}).toBack();
-				}
-				if(xP > xC && yP > yC) {
-					var path = paper.path("M"+xP+","+(yP+10)+" L"+xC+","+(yC-3)+" L"+(xP+10)+","+yP);
-					path.attr({'fill': colorAngle+'-'+startColor+'-'+endColor+'', "stroke":"none"}).toBack();
-				
-				}
-				if(xP < xC && yP > yC) {
-					var path = paper.path("M"+(xP-10)+","+yP+" L"+xC+","+(yC-3)+" L"+xP+","+(yP+10));
-					path.attr({'fill': colorAngle+'-'+startColor+'-'+endColor+'', "stroke":"none"}).toBack();
-				}
-				
-			
-			};
+				var startColor = vertexChild.parent.svg[0].attr("fill");
+				var endColor = vertexChild.parent.svg[0].attr("fill");
+				var colorAngle = Math.floor(Raphael.angle(xP, yP, xC, yC));
+				console.log(xC + " " + yC);
 
+				if (colorAngle > 90 && colorAngle < 270)
+					if (colorAngle > 180)
+						colorAngle = colorAngle - 90 + 180;
+					else
+						colorAngle = colorAngle - 90;
+				else if (colorAngle > 180)
+					colorAngle = colorAngle + 90 + 180;
+				else
+					colorAngle = colorAngle + 90;
+
+				if (xP <= xC && yP <= yC) {
+					var path = paper.path("M" + (xP - 10) + "," + yP + " L" + xC + "," + (yC + 3) + " L" + xP + "," + (yP - 10));
+					path.animate({
+						'fill' : colorAngle + '-' + startColor + '-' + endColor + '',
+						"stroke" : "none",
+					},1000,"linear").toBack();
+					paths.push(path);
+				}
+				if (xP >= xC && yP <= yC) {
+					var path = paper.path("M" + xP + "," + (yP - 10) + " L" + xC + "," + (yC + 3) + " L" + (xP + 10) + "," + yP);
+					path.animate({
+						'fill' : colorAngle + '-' + startColor + '-' + endColor + '',
+						"stroke" : "none",
+						},1000,"linear").toBack();
+						paths.push(path);
+				}
+				if (xP >= xC && yP >= yC) {
+					var path = paper.path("M" + xP + "," + (yP + 10) + " L" + xC + "," + (yC - 3) + " L" + (xP + 10) + "," + yP);
+					path.animate({
+						'fill' : colorAngle + '-' + startColor + '-' + endColor + '',
+						"stroke" : "none",
+						},1000,"linear").toBack();
+						paths.push(path);
+						
+
+				}
+				if (xP <= xC && yP >= yC) {
+					var path = paper.path("M" + (xP - 10) + "," + yP + " L" + xC + "," + (yC - 3) + " L" + xP + "," + (yP + 10));
+					path.animate({
+						'fill' : colorAngle + '-' + startColor + '-' + endColor + '',
+						"stroke" : "none",
+						},1000,"linear").toBack();
+						paths.push(path);
+				}
 			
+				
+				
+				console.log("Pfade " + paths.length);
+				
+
+			};
 
 			function shadeColor(color, percent) {
 				var num = parseInt(color.slice(1), 16), amt = Math.round(2.55 * percent), R = (num >> 16) + amt, B = (num >> 8 & 0x00FF) + amt, G = (num & 0x0000FF) + amt;
 				return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (B < 255 ? B < 1 ? 0 : B : 255) * 0x100 + (G < 255 ? G < 1 ? 0 : G : 255)).toString(16).slice(1);
 			}
-function displayChildNodes(myNode, x, y) {
+
+			function displayChildNodes(myNode, x, y) {
 				var level_fac = (Math.pow(0.7, myNode.level));
-				console.log("level:" + level_fac);
+				
 				var child_count = myNode.children.length;
-				console.log("CC:" + child_count);
+				
 				var angle_steps = Math.PI * 2 / child_count;
 				var angle = angle_steps;
-				console.log("Angle:" + angle);
+				
 
 				if (child_count > 1) {
-					console.log("drin");
+					
+					paths.forEach(function(e) {
+						e.remove();
+					});
+							
 					for ( i = 0; i < child_count - 1; i++) {
-						console.log(myNode.children[i].title);
 
 						moveNode(myNode.children[i], (200 * level_fac * Math.cos(angle) + x), (200 * level_fac * Math.sin(angle) + y))
+
 						myNode.children[i].svg.attr({
 							"cx" : (200 * level_fac * Math.cos(angle) + x),
-							"cy" : (200 * level_fac * Math.sin(angle) + y)
+							"cy" : (200 * level_fac * Math.sin(angle) + y),
+							"x" : (200 * level_fac * Math.cos(angle) + x),
+							"y" : (200 * level_fac * Math.sin(angle) + y)
 						});
-						console.log(Math.cos(angle));
-						console.log("cx:" + myNode.children[i].svg[0].attr("cx"));
+						
+						createEdge(myNode.children[i]);
+						
+						
+						
 						angle = angle_steps + angle;
 					}
+					
+					
+					
 
 				}
 
@@ -147,23 +181,23 @@ function displayChildNodes(myNode, x, y) {
 
 			function moveNode(myNode, mx, my) {
 				var gnupsi1 = myNode.svg;
+
 				gnupsi1.forEach(function(element) {
 					if (element.attr("text") != undefined) {
-						element.animate({
+						var move1 = element.animate({
 							"x" : mx,
 							"y" : my
-						}, 2000, "backOut");
+						}, 5000, "backOut");
 					} else {
 						element.animate({
 							"cx" : mx,
 							"cy" : my
-						}, 2000, "backOut");
+						}, 5000, "backOut");
 					}
 
 				});
 
 			}
-
 
 			function paintNode(myNode, x, y) {
 				var level_fac = (Math.pow(0.7, myNode.level));
@@ -233,38 +267,43 @@ function displayChildNodes(myNode, x, y) {
 
 				set3.mouseover(over);
 				set3.mouseout(out);
+				
+				if(myNode.parent != null) {
+					createEdge(myNode);
+				}
 
 				return myNode;
 			};
 
-			vertext_mom = paintNode(vertex_mom, paper_width / 2, paper_height / 2, null);
+			vertext_mom = paintNode(vertex_mom, paper_width / 2, paper_height / 2, null, null);
 			vertex_child1 = displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 			//moveNode(vertex_child1, 200, 200);
-
-			var vertex_child2 = new vertex("Hass", "Some things about hass", "http://wikipedia.org/hass", 1);
+			
+			var vertex_child2 = new vertex("Hass", "Some things about hass", "http://wikipedia.org/hass", 1,vertex_mom);
 			vertex_mom.children.push(vertex_child2);
 			vertex_child2 = displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+			
 
-			var vertex_child3 = new vertex("Liebe", "Some things about hass", "http://wikipedia.org/hass", 1);
+			var vertex_child3 = new vertex("Liebe", "Some things about hass", "http://wikipedia.org/hass", 1,vertex_mom);
 			vertex_mom.children.push(vertex_child3);
 			vertex_child3 = displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+			
 
-			var vertex_child4 = new vertex("Ahhhh", "Some things about hass", "http://wikipedia.org/hass", 1);
+			var vertex_child4 = new vertex("Ahhhh", "Some things about hass", "http://wikipedia.org/hass", 1,vertex_mom);
 			vertex_mom.children.push(vertex_child4);
 			vertex_child4 = displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+			
 
-			var vertex_child5 = new vertex("Mies", "Some things about hass", "http://wikipedia.org/hass", 1);
+			var vertex_child5 = new vertex("Mies", "Some things about hass", "http://wikipedia.org/hass", 1,vertex_mom);
 			vertex_mom.children.push(vertex_child5);
 			vertex_child5 = displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
-			console.log("cx:" + vertex_child4.svg[0].attr("cx"));
-			console.log("cy:" + vertex_child4.svg[0].attr("cy"));
+			
+			
 
-			var vertex_child11 = new vertex("Poop", "Some things about poop", "http://wikipedia.org/poop", 2);
+			var vertex_child11 = new vertex("Poop", "Some things about poop", "http://wikipedia.org/poop", 2,vertex_child1);
 			vertex_child1.children.push(vertex_child11);
 			vertex_child11 = displayChildNodes(vertex_child1, vertex_child1.svg[0].attr("cx"), vertex_child1.svg[0].attr("cy"));
-
-			createEdge(vertex_mom,vertex_child1);
-			createEdge(vertex_child1,vertex_child11);
+			
 		</script>
 		<script>
 			var fetchTest = "Mannheim";
