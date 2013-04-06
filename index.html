@@ -67,6 +67,27 @@
 			
 			paths = paper.set();
 			
+			paper.customAttributes.grad = function(colorAngle, startColor, endColor) {
+				return {fill : colorAngle + '-' + startColor + '-' + endColor,};
+			}
+			paper.customAttributes.stroke1 = function() {
+				return {stroke:'none',};
+			}
+			
+			
+			function calcIPoint (myNode1, myNode2)
+			{
+				if (Math.sqrt((myNode2.svg[0].attr("cx")-(myNode1.svg[0].attr("cx"))^2+((myNode2.svg[0].attr("cy")-(myNode1.svg[0].attr("cy"))^2)>=((myNode2.svg[0].attr("r")+(myNode1.svg[0].attr("r"))))))))
+				{
+					
+					return true;
+				}
+				else {
+					return true;}
+				
+				
+			}
+			
 			function createEdge(vertexChild) {
 			
 				var xP = vertexChild.parent.svg[0].attr("cx");
@@ -90,36 +111,44 @@
 
 				if (xP <= xC && yP <= yC) {
 					var path = paper.path("M" + (xP - 10) + "," + yP + " L" + xC + "," + (yC + 3) + " L" + xP + "," + (yP - 10));
+					path.attr({'fill':'white',
+					stroke:'none',});
 					path.animate({
-						'fill' : colorAngle + '-' + startColor + '-' + endColor + '',
-						"stroke" : "none",
-					},1000,"linear").toBack();
+						grad : [colorAngle, startColor, endColor],
+						stroke1 : 'none',
+					},2000,">").toBack();
 					paths.push(path);
 				}
 				if (xP >= xC && yP <= yC) {
 					var path = paper.path("M" + xP + "," + (yP - 10) + " L" + xC + "," + (yC + 3) + " L" + (xP + 10) + "," + yP);
+					path.attr({'fill':'white',
+					stroke:'none',});
 					path.animate({
-						'fill' : colorAngle + '-' + startColor + '-' + endColor + '',
-						"stroke" : "none",
-						},1000,"linear").toBack();
+						grad : [colorAngle, startColor, endColor],
+						stroke1 : 'none',
+						},2000,">").toBack();
 						paths.push(path);
 				}
 				if (xP >= xC && yP >= yC) {
 					var path = paper.path("M" + xP + "," + (yP + 10) + " L" + xC + "," + (yC - 3) + " L" + (xP + 10) + "," + yP);
+					path.attr({'fill':'white',
+					stroke:'none',});
 					path.animate({
-						'fill' : colorAngle + '-' + startColor + '-' + endColor + '',
-						"stroke" : "none",
-						},1000,"linear").toBack();
+						grad : [colorAngle, startColor, endColor],
+						stroke1 : 'none',
+						},2000,">").toBack();
 						paths.push(path);
 						
 
 				}
 				if (xP <= xC && yP >= yC) {
 					var path = paper.path("M" + (xP - 10) + "," + yP + " L" + xC + "," + (yC - 3) + " L" + xP + "," + (yP + 10));
+					path.attr({'fill':'white',
+					stroke:'none',});
 					path.animate({
-						'fill' : colorAngle + '-' + startColor + '-' + endColor + '',
-						"stroke" : "none",
-						},1000,"linear").toBack();
+						grad : [colorAngle, startColor, endColor],
+						stroke1 : 'none',
+						},2000,">").toBack();
 						paths.push(path);
 				}
 			
@@ -187,12 +216,12 @@
 						var move1 = element.animate({
 							"x" : mx,
 							"y" : my
-						}, 5000, "backOut");
+						}, 2000, "backOut");
 					} else {
 						element.animate({
 							"cx" : mx,
 							"cy" : my
-						}, 5000, "backOut");
+						}, 2000, "backOut");
 					}
 
 				});
