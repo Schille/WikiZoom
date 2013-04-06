@@ -1,8 +1,8 @@
 
 			var vertex = new Class({
-				initialize : function(myTitle, myIntro, myLink, myLevel) {
+				initialize : function(myTitle, myIntro, myLink, myLevel,myParent) {
 					this.id = 0;
-					this.parent = null;
+					this.parent = myParent;
 					this.ajax
 					this.children = new Array();
 					this.title = myTitle;

@@ -51,12 +51,6 @@
 		</style>
 
 	</head>
-	<style type="text/css">
-		@font-face {
-			font-family: "Cabin";
-			src: url(./fonts/Cabin-Regular.otf);
-		}
-	</style>
 
 	<body>
 		<script type="text/javascript">
@@ -70,16 +64,25 @@
 			var vertex_child11 = new vertex("Poop", "Some things about poop", "http://wikipedia.org/poop", 2);
 			vertex_child1.children.push(vertex_child11);
 
-			function createEdge(x1, y1, x2, y2) {
+			function createEdge(vertex1, vertex2) {
+				
+				
+				var x1 = vertex1.svg[0].attr("cx");
+				var y1 = vertex1.svg.attr("cy");
+				var x2 = vertex2.svg.attr("cx");
+				var y2 = vertex2.svg.attr("cy");
+				
+				console.log(x1);
+				
 				var path = paper.path("M190,170 L47,40 L50,37 L200,160");
-				path.attr({'fill': '0-#e2e2e2:0-#aeaeae:100', "stroke":"none"});
+				path.attr({'fill': '0-#e2e2e2:0-#aeaeae	:100', "stroke":"none"}).toBack();
 			
 				var path = paper.path("M45,40 L150,20 50,45");
-				path.attr({'fill': '0-#f5f5f5:0-#e7e7e7:100', "stroke":"none"});
+				path.attr({'fill': '0-#f5f5f5:0-#e7e7e7:100', "stroke":"none"}).toBack();
 			
 			};
 
-			createEdge();
+			
 
 			function shadeColor(color, percent) {
 				var num = parseInt(color.slice(1), 16), amt = Math.round(2.55 * percent), R = (num >> 16) + amt, B = (num >> 8 & 0x00FF) + amt, G = (num & 0x0000FF) + amt;
@@ -158,10 +161,10 @@
 				return myNode;
 			};
 
-			vertext_mom = paintNode(vertex_mom, 200, 170);
-			vertex_child1 = paintNode(vertex_mom.children[0], 50, 40);
-			vertex_child11 = paintNode(vertex_child1.children[0], 150, 20);
-
+			vertext_mom = paintNode(vertex_mom, paper_width/2, paper_height/2,null);
+			vertex_child1 = paintNode(vertex_mom.children[0], 50, 40,vertex_mom);
+			vertex_child11 = paintNode(vertex_child1.children[0], 150, 20,vertex_child1);
+			createEdge(vertex_mom,vertex_child1);
 		</script>
 		<script>
 			new Request.JSONP({
