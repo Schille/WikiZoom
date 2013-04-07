@@ -11,5 +11,6 @@
 					this.outlinks;
 					this.svg;
 					this.level = myLevel;
+					this.path;
 				},
 			});

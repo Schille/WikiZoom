@@ -38,7 +38,7 @@ var zoomUI = new Class({
 		var startColor = vertexChild.parent.svg[0].attr("fill");
 		var endColor = vertexChild.parent.svg[0].attr("fill");
 		var colorAngle = Math.floor(Raphael.angle(xP, yP, xC, yC));
-		console.log(xC + " " + yC);
+		
 
 		if (colorAngle > 90 && colorAngle < 270)
 			if (colorAngle > 180)
@@ -51,7 +51,7 @@ var zoomUI = new Class({
 			colorAngle = colorAngle + 90;
 
 		if (xP <= xC && yP <= yC) {
-			var path = paper.path("M" + (xP - 10) + "," + yP + " L" + xC + "," + (yC + 3) + " L" + xP + "," + (yP - 10));
+			var path = paper.path("M" + (xP - 10) + "," + yP + " L" + xC + "," + yC + " L" + xP + "," + (yP - 10));
 			path.attr({
 				'fill' : 'white',
 				stroke : 'none',
@@ -61,9 +61,10 @@ var zoomUI = new Class({
 				stroke1 : 'none',
 			}, 2000, ">").toBack();
 			paths.push(path);
+			vertexChild.path = path;
 		}
 		if (xP >= xC && yP <= yC) {
-			var path = paper.path("M" + xP + "," + (yP - 10) + " L" + xC + "," + (yC + 3) + " L" + (xP + 10) + "," + yP);
+			var path = paper.path("M" + xP + "," + (yP - 10) + " L" + xC + "," + yC + " L" + (xP + 10) + "," + yP);
 			path.attr({
 				'fill' : 'white',
 				stroke : 'none',
@@ -73,9 +74,11 @@ var zoomUI = new Class({
 				stroke1 : 'none',
 			}, 2000, ">").toBack();
 			paths.push(path);
+			vertexChild.path = path;
+			
 		}
 		if (xP >= xC && yP >= yC) {
-			var path = paper.path("M" + xP + "," + (yP + 10) + " L" + xC + "," + (yC - 3) + " L" + (xP + 10) + "," + yP);
+			var path = paper.path("M" + xP + "," + (yP + 10) + " L" + xC + "," + yC + " L" + (xP + 10) + "," + yP);
 			path.attr({
 				'fill' : 'white',
 				stroke : 'none',
@@ -85,10 +88,11 @@ var zoomUI = new Class({
 				stroke1 : 'none',
 			}, 2000, ">").toBack();
 			paths.push(path);
+			vertexChild.path = path;
 
 		}
 		if (xP <= xC && yP >= yC) {
-			var path = paper.path("M" + (xP - 10) + "," + yP + " L" + xC + "," + (yC - 3) + " L" + xP + "," + (yP + 10));
+			var path = paper.path("M" + (xP - 10) + "," + yP + " L" + xC + "," + yC + " L" + xP + "," + (yP + 10));
 			path.attr({
 				'fill' : 'white',
 				stroke : 'none',
@@ -98,9 +102,9 @@ var zoomUI = new Class({
 				stroke1 : 'none',
 			}, 2000, ">").toBack();
 			paths.push(path);
+			vertexChild.path = path;
 		}
 
-		console.log("Pfade " + paths.length);
 
 	},
 
@@ -119,14 +123,9 @@ var zoomUI = new Class({
 
 		if (child_count > 1) {
 
-			paths.forEach(function(e) {
-				e.remove();
-			});
-
 			for ( i = 0; i < child_count - 1; i++) {
 
-				this.moveNode(myNode.children[i], (200 * level_fac * Math.cos(angle) + x), (200 * level_fac * Math.sin(angle) + y))
-
+				this.moveNode(myNode.children[i], (200 * level_fac * Math.cos(angle) + x), (200 * level_fac * Math.sin(angle) + y));
 				myNode.children[i].svg.attr({
 					"cx" : (200 * level_fac * Math.cos(angle) + x),
 					"cy" : (200 * level_fac * Math.sin(angle) + y),
@@ -134,7 +133,7 @@ var zoomUI = new Class({
 					"y" : (200 * level_fac * Math.sin(angle) + y)
 				});
 
-				this.createEdge(myNode.children[i]);
+				
 
 				angle = angle_steps + angle;
 			}
@@ -142,14 +141,24 @@ var zoomUI = new Class({
 		}
 
 		var vertex_to_paint = this.paintNode(myNode.children[child_count - 1], (200 * level_fac * Math.cos(angle) + x), (200 * level_fac * Math.sin(angle) + y), myNode)
-
+		this.createEdge(myNode.children[child_count - 1]);
 		return vertex_to_paint;
 
 	},
 
 	moveNode : function(myNode, mx, my) {
 		var gnupsi1 = myNode.svg;
+		var nodePath = myNode.path;
+		var xP = myNode.parent.svg[0].attr("cx");
+		var yP = myNode.parent.svg[0].attr("cy");
+		
+		
+		var level_fac = (Math.pow(0.7, myNode.level));
+		var child_count = myNode.children.length;
 
+		var angle_steps = Math.PI * 2 / child_count;
+		var angle = angle_steps;
+		
 		gnupsi1.forEach(function(element) {
 			if (element.attr("text") != undefined) {
 				var move1 = element.animate({
@@ -164,14 +173,49 @@ var zoomUI = new Class({
 			}
 
 		});
+		
+		
+		
+		if (xP <= mx && yP <= my) {
+			nodePath.animate({
+				path : "M" + (xP - 10) + "," + yP + " L" + mx + "," + my + " L" + xP  + "," + (yP - 10),
+			}, 2000, "backOut").toBack();
+			
 
+		}
+		if (xP >= mx && yP <= my) {
+			nodePath.animate({
+				path : "M" + xP + "," + (yP - 10) + " L" + mx + "," + my + " L" + (xP + 10) + "," + yP,
+			}, 2000, "backOut").toBack();
+			
+		}
+		if (xP >= mx && yP >= my) {
+			nodePath.animate({
+			path : "M" + xP + "," + (yP + 10) + " L" + mx + "," + my + " L" + (xP + 10) + "," + yP,
+			}, 2000, "backOut").toBack();
+			
+
+		}
+		if (xP <= mx && yP >= my) {
+			nodePath.animate({
+				path : "M" + (xP - 10) + "," + yP + " L" + mx + "," + my + " L" + xP + "," + (yP + 10),
+			}, 2000, "backOut").toBack();
+			
+		}
+		
+		if(myNode.children.length > 0) {
+			console.log(myNode.children[0]);
+			for(var j = 0; j < myNode.children.length; j++) {
+				this.moveNode(myNode.children[i],(200 * level_fac * Math.cos(angle) + mx), (200 * level_fac * Math.sin(angle) + my));
+			}
+		}
+		
 	},
 
 	paintNode : function(myNode, x, y) {
 		var level_fac = (Math.pow(0.7, myNode.level));
 		var size = 50 * level_fac;
 		var fontsize = 20 * level_fac;
-		var scope = this;
 		
 		paper.setStart();
 		var circle1 = paper.circle(x, y, 0);
@@ -237,10 +281,6 @@ var zoomUI = new Class({
 		set3.mouseover(over);
 		set3.mouseout(out);
 
-		if (myNode.parent != null) {
-			this.createEdge(myNode);
-		}
-
 		return myNode;
 	},
 
@@ -271,6 +311,17 @@ var zoomUI = new Class({
 		var vertex_child11 = new vertex("Poop", "Some things about poop", "http://wikipedia.org/poop", 2, vertex_child1);
 		vertex_child1.children.push(vertex_child11);
 		vertex_child11 = this.displayChildNodes(vertex_child1, vertex_child1.svg[0].attr("cx"), vertex_child1.svg[0].attr("cy"));
+		
+		
+		var rect = paper.rect(0, 0, 50, 50);
+		rect.attr({fill:'black'});
+		
+		rect.click(function() {
+			var vertex_child6 = new vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
+			vertex_mom.children.push(vertex_child6);
+			vertex_child6 = scope.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+		});
+		
 
 	},
 });
