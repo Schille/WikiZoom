@@ -39,16 +39,18 @@ var zoomUI = new Class({
 		var endColor = vertexChild.parent.svg[0].attr("fill");
 		var colorAngle = Math.floor(Raphael.angle(xP, yP, xC, yC));
 		
-
+		
+		console.log(vertexChild.title + " " + colorAngle);
 		if (colorAngle > 90 && colorAngle < 270)
 			if (colorAngle > 180)
 				colorAngle = colorAngle - 90 + 180;
 			else
-				colorAngle = colorAngle - 90;
-		else if (colorAngle > 180)
-			colorAngle = colorAngle + 90 + 180;
-		else
-			colorAngle = colorAngle + 90;
+				colorAngle = colorAngle - 180;
+		else 
+			if (colorAngle < 180)
+				colorAngle = colorAngle + 90 + 180;
+			else
+				colorAngle = colorAngle + 90;
 
 		if (xP <= xC && yP <= yC) {
 			var path = paper.path("M" + (xP - 10) + "," + yP + " L" + xC + "," + yC + " L" + xP + "," + (yP - 10));
@@ -124,17 +126,7 @@ var zoomUI = new Class({
 		if (child_count > 1) {
 
 			for ( i = 0; i < child_count - 1; i++) {
-
 				this.moveNode(myNode.children[i], (200 * level_fac * Math.cos(angle) + x), (200 * level_fac * Math.sin(angle) + y));
-				myNode.children[i].svg.attr({
-					"cx" : (200 * level_fac * Math.cos(angle) + x),
-					"cy" : (200 * level_fac * Math.sin(angle) + y),
-					"x" : (200 * level_fac * Math.cos(angle) + x),
-					"y" : (200 * level_fac * Math.sin(angle) + y)
-				});
-
-				
-
 				angle = angle_steps + angle;
 			}
 
@@ -173,6 +165,13 @@ var zoomUI = new Class({
 			}
 
 		});
+		
+		myNode.svg.attr({
+					"cx" : (mx),
+					"cy" : (my),
+					"x" : (mx),
+					"y" : (my)
+				});
 		
 		
 		
@@ -280,6 +279,11 @@ var zoomUI = new Class({
 
 		set3.mouseover(over);
 		set3.mouseout(out);
+		
+	
+		
+		
+		
 
 		return myNode;
 	},
@@ -320,6 +324,11 @@ var zoomUI = new Class({
 			var vertex_child6 = new vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
 			vertex_mom.children.push(vertex_child6);
 			vertex_child6 = scope.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+			
+			// var vertex_child7 = new vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 2, vertex_child5);
+			// vertex_child5.children.push(vertex_child7);
+			// vertex_child7 = scope.displayChildNodes(vertex_child5, vertex_child5.svg[0].attr("cx"), vertex_child5.svg[0].attr("cy"));
+// 			
 		});
 		
 
