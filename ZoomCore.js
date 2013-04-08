@@ -1,7 +1,7 @@
 function start(initialArticle){
 	UI = new ZoomUI();
 	Core = new ZoomCore(initialArticle);
-},
+}
 
 var ZoomCore = new Class({
 	initialize : function() {
