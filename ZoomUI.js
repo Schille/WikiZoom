@@ -37,10 +37,12 @@ var zoomUI = new Class({
 		var yC = vertexChild.svg[0].attr("cy");
 		var startColor = vertexChild.parent.svg[0].attr("fill");
 		var endColor = vertexChild.parent.svg[0].attr("fill");
-		var colorAngle = Math.floor(Raphael.angle(xP, yP, xC, yC));
-		
+		var colorAngle = Math.ceil(Raphael.angle(xP, yP, xC, yC));
+	
 		
 		console.log(vertexChild.title + " " + colorAngle);
+		console.log("Coords Child " + xC + " " +yC);
+		console.log("Coords parent " + xP + " " +yP);
 		if (colorAngle > 90 && colorAngle < 270)
 			if (colorAngle > 180)
 				colorAngle = colorAngle - 90 + 180;
