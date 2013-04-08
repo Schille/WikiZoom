@@ -1,17 +1,23 @@
+var WikiFetcher = new Class({
+	
+initialize : function (vertex) {
+	this.myVertex = vertex;
+	scope = this;
+},
 /**
  * This function decodes all HTML tags in a String
- * @param html This is the HTML encoded String to be decoded 
+ * @param html This is the HTML encoded String to be decoded
  */
-function decodeHtml(html) {
+decodeHtml : function (html) {
 	var txt = document.createElement("textarea");
 	txt.innerHTML = html;
 	return txt.value;
-}
+},
 /**
  * This function fetches the Links and the content of the introduction of a Wikipedia article
  * @param {Object} title This is the title of the Wikipedia article to be fetched
- */ 
-function fetch(title) {
+ */
+fetch : function (title) {
 	var global;
 	window.addEvent('domready', function() {
 
@@ -39,8 +45,8 @@ function fetch(title) {
 					k++;
 
 				}
-				// decode HTML tags 
-				index = decodeHtml(index);
+				// decode HTML tags
+				index = scope.decodeHtml(index);
 				// create RegEx patterns for the Wikipedia Link pattern [[Name of Link|text in introduction]]
 				var doubleLinkSearch = /\[\[[a-zäüöß\(\).,\-\s#]+\s?([a-zäüöß\(\).,\-\s#]+)?\|[a-zäüöß\(\).,\-\s#]+\s?([a-zäüöß\(\).,\-\s#]+)?\]\]/gi;
 				// pattern for [[Link]], when link = text in introduction
@@ -62,7 +68,7 @@ function fetch(title) {
 					helper = String.split(DoubleLinks[k], "|");
 					Links.push(helper[0]);
 				}
-				// replace unwanted patterns in the Link array 
+				// replace unwanted patterns in the Link array
 				for (var k = 0; k < Links.length; k++) {
 					var element = Links[k];
 					var clean = element.replace(/\[|\]/gi, '')
@@ -79,4 +85,6 @@ function fetch(title) {
 
 	});
 	return;
-}
+},
+
+});
