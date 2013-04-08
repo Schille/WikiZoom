@@ -9,7 +9,7 @@ var Vertex = new Class({
 		this.link;
 		this.outlinks
 		this.svg
-		this.level = myLevel;
+		this.level;
 		this.path
 	},
 

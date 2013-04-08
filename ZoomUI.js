@@ -5,8 +5,7 @@ var zoomUI = new Class({
 		paper_height = (window.innerHeight - window.innerHeight / 10);
 		paper = Raphael(0, 0, paper_width, paper_height);
 		paths = paper.set();
-		scope = this;
-
+		scope_zoomUI = this;
 		paper.customAttributes.grad = function(colorAngle, startColor, endColor) {
 			return {
 				fill : colorAngle + '-' + startColor + '-' + endColor,
@@ -291,41 +290,73 @@ var zoomUI = new Class({
 	},
 
 	test : function() {
-		var vertex_mom = new Vertex("Chaostheorie", "Some nice things about this", "http://wikipedia.org", 0);
-		var vertex_child1 = new Vertex("Shits", "Some things about shit", "http://wikipedia.org/shits", 1, vertex_mom);
+		var vertex_mom = new Vertex();
+		vertex_mom.title = "Chaostheorie";
+		vertex_mom.intro = "introtext";
+		vertex_mom.level = 0;
+		
+		var vertex_child1 = new Vertex();
+		vertex_child1.title = "Shits";
+		vertex_child1.intro = "introtext";
+		vertex_child1.level = 1;
+		vertex_child1.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child1);
 		vertext_mom = this.paintNode(vertex_mom, paper_width / 2, paper_height / 2, null, null);
 		vertex_child1 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 		//moveNode(vertex_child1, 200, 200);
 
-		var vertex_child2 = new Vertex("Hass", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
+		var vertex_child2 = new Vertex();
+		vertex_child2.title = "Hass";
+		vertex_child2.intro = "introtext";
+		vertex_child2.level = 1;
+		vertex_child2.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child2);
 		vertex_child2 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 
-		var vertex_child3 = new Vertex("Liebe", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
+		var vertex_child3 = new Vertex();
+		vertex_child3.title = "Liebe";
+		vertex_child3.intro = "introtext";
+		vertex_child3.level = 1;
+		vertex_child3.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child3);
 		vertex_child3 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 
-		var vertex_child4 = new Vertex("Ahhhh", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
+		var vertex_child4 = new Vertex();
+		vertex_child4.title = "Ahh";
+		vertex_child4.intro = "introtext";
+		vertex_child4.level = 1;
+		vertex_child4.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child4);
 		vertex_child4 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 
-		var vertex_child5 = new Vertex("Mies", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
+		var vertex_child5 = new Vertex();
+		vertex_child5.title = "Mies";
+		vertex_child5.intro = "introtext";
+		vertex_child5.level = 1;
+		vertex_child5.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child5);
 		vertex_child5 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 
-		var vertex_child11 = new Vertex("Poop", "Some things about poop", "http://wikipedia.org/poop", 2, vertex_child1);
+		var vertex_child11 = new Vertex();
+		vertex_child11.title = "Poop";
+		vertex_child11.intro = "introtext";
+		vertex_child11.level = 2;
+		vertex_child11.parent = vertex_child1;
 		vertex_child1.children.push(vertex_child11);
 		vertex_child11 = this.displayChildNodes(vertex_child1, vertex_child1.svg[0].attr("cx"), vertex_child1.svg[0].attr("cy"));
 		
 		
 		var rect = paper.rect(0, 0, 50, 50);
 		rect.attr({fill:'black'});
-		
 		rect.click(function() {
-			var vertex_child6 = new Vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
+			var vertex_child6 = new Vertex();
+			vertex_child6.title = "New Stuff";
+			vertex_child6.intro = "introtext";
+			vertex_child6.level = 1;
+			vertex_child6.parent = vertex_mom;
 			vertex_mom.children.push(vertex_child6);
-			vertex_child6 = scope.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+			console.log(scope);
+			vertex_child6 = scope_zoomUI.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 			
 			// var vertex_child7 = new Vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 2, vertex_child5);
 			// vertex_child5.children.push(vertex_child7);
