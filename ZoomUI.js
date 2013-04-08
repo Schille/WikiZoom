@@ -51,7 +51,7 @@ var zoomUI = new Class({
 			else
 				colorAngle = colorAngle + 90;
 
-		if (xP <= xC && yP <= yC) {
+		if (xP <= xC && yP < yC) {
 			var path = paper.path("M" + (xP - 10) + "," + yP + " L" + xC + "," + yC + " L" + xP + "," + (yP - 10));
 			path.attr({
 				'fill' : 'white',
@@ -78,7 +78,7 @@ var zoomUI = new Class({
 			vertexChild.path = path;
 			
 		}
-		if (xP >= xC && yP >= yC) {
+		if (xP >= xC && yP > yC) {
 			var path = paper.path("M" + xP + "," + (yP + 10) + " L" + xC + "," + yC + " L" + (xP + 10) + "," + yP);
 			path.attr({
 				'fill' : 'white',
