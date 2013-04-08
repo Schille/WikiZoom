@@ -14,3 +14,4 @@ var Vertex = new Class({
 	},
 
 }); 
+
