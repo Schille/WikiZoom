@@ -355,7 +355,6 @@ var zoomUI = new Class({
 			vertex_child6.level = 1;
 			vertex_child6.parent = vertex_mom;
 			vertex_mom.children.push(vertex_child6);
-			console.log(scope);
 			vertex_child6 = scope_zoomUI.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 			
 			// var vertex_child7 = new Vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 2, vertex_child5);
