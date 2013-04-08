@@ -291,30 +291,30 @@ var zoomUI = new Class({
 	},
 
 	test : function() {
-		var vertex_mom = new vertex("Chaostheorie", "Some nice things about this", "http://wikipedia.org", 0);
-		var vertex_child1 = new vertex("Shits", "Some things about shit", "http://wikipedia.org/shits", 1, vertex_mom);
+		var vertex_mom = new Vertex("Chaostheorie", "Some nice things about this", "http://wikipedia.org", 0);
+		var vertex_child1 = new Vertex("Shits", "Some things about shit", "http://wikipedia.org/shits", 1, vertex_mom);
 		vertex_mom.children.push(vertex_child1);
 		vertext_mom = this.paintNode(vertex_mom, paper_width / 2, paper_height / 2, null, null);
 		vertex_child1 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 		//moveNode(vertex_child1, 200, 200);
 
-		var vertex_child2 = new vertex("Hass", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
+		var vertex_child2 = new Vertex("Hass", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
 		vertex_mom.children.push(vertex_child2);
 		vertex_child2 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 
-		var vertex_child3 = new vertex("Liebe", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
+		var vertex_child3 = new Vertex("Liebe", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
 		vertex_mom.children.push(vertex_child3);
 		vertex_child3 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 
-		var vertex_child4 = new vertex("Ahhhh", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
+		var vertex_child4 = new Vertex("Ahhhh", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
 		vertex_mom.children.push(vertex_child4);
 		vertex_child4 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 
-		var vertex_child5 = new vertex("Mies", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
+		var vertex_child5 = new Vertex("Mies", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
 		vertex_mom.children.push(vertex_child5);
 		vertex_child5 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 
-		var vertex_child11 = new vertex("Poop", "Some things about poop", "http://wikipedia.org/poop", 2, vertex_child1);
+		var vertex_child11 = new Vertex("Poop", "Some things about poop", "http://wikipedia.org/poop", 2, vertex_child1);
 		vertex_child1.children.push(vertex_child11);
 		vertex_child11 = this.displayChildNodes(vertex_child1, vertex_child1.svg[0].attr("cx"), vertex_child1.svg[0].attr("cy"));
 		
@@ -323,11 +323,11 @@ var zoomUI = new Class({
 		rect.attr({fill:'black'});
 		
 		rect.click(function() {
-			var vertex_child6 = new vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
+			var vertex_child6 = new Vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 1, vertex_mom);
 			vertex_mom.children.push(vertex_child6);
 			vertex_child6 = scope.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 			
-			// var vertex_child7 = new vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 2, vertex_child5);
+			// var vertex_child7 = new Vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 2, vertex_child5);
 			// vertex_child5.children.push(vertex_child7);
 			// vertex_child7 = scope.displayChildNodes(vertex_child5, vertex_child5.svg[0].attr("cx"), vertex_child5.svg[0].attr("cy"));
 // 			
