@@ -1,4 +1,5 @@
 var Vertex = new Class({
+	initialize : function() {
 		this.id;
 		this.parent;
 		this.ajax
@@ -10,5 +11,6 @@ var Vertex = new Class({
 		this.svg
 		this.level = myLevel;
 		this.path
+	},
 
 }); 
