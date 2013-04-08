@@ -39,9 +39,7 @@ var zoomUI = new Class({
 		var colorAngle = Math.ceil(Raphael.angle(xP, yP, xC, yC));
 	
 		
-		console.log(vertexChild.title + " " + colorAngle);
-		console.log("Coords Child " + xC + " " +yC);
-		console.log("Coords parent " + xP + " " +yP);
+	
 		if (colorAngle > 90 && colorAngle < 270)
 			if (colorAngle > 180)
 				colorAngle = colorAngle - 90 + 180;
@@ -204,7 +202,7 @@ var zoomUI = new Class({
 		}
 		
 		if(myNode.children.length > 0) {
-			console.log(myNode.children[0]);
+			
 			for(var j = 0; j < myNode.children.length; j++) {
 				this.moveNode(myNode.children[i],(200 * level_fac * Math.cos(angle) + mx), (200 * level_fac * Math.sin(angle) + my));
 			}
