@@ -125,13 +125,13 @@ var zoomUI = new Class({
 		if (child_count > 1) {
 
 			for ( i = 0; i < child_count - 1; i++) {
-				this.moveNode(myNode.children[i], (200 * level_fac * Math.cos(angle) + x), (200 * level_fac * Math.sin(angle) + y));
+				this.moveNode(myNode.children[i], Math.ceil((200 * level_fac * Math.cos(angle) + x)), Math.ceil((200 * level_fac * Math.sin(angle) + y)));
 				angle = angle_steps + angle;
 			}
 
 		}
 
-		var vertex_to_paint = this.paintNode(myNode.children[child_count - 1], (200 * level_fac * Math.cos(angle) + x), (200 * level_fac * Math.sin(angle) + y), myNode)
+		var vertex_to_paint = this.paintNode(myNode.children[child_count - 1], Math.ceil((200 * level_fac * Math.cos(angle) + x)), Math.ceil((200 * level_fac * Math.sin(angle) + y)), myNode)
 		this.createEdge(myNode.children[child_count - 1]);
 		return vertex_to_paint;
 
@@ -204,7 +204,7 @@ var zoomUI = new Class({
 		if(myNode.children.length > 0) {
 			
 			for(var j = 0; j < myNode.children.length; j++) {
-				this.moveNode(myNode.children[i],(200 * level_fac * Math.cos(angle) + mx), (200 * level_fac * Math.sin(angle) + my));
+				this.moveNode(myNode.children[i],Math.ceil((200 * level_fac * Math.cos(angle)) + mx), Math.ceil((200 * level_fac * Math.sin(angle)) + my));
 			}
 		}
 		
