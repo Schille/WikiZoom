@@ -17,14 +17,14 @@ decodeHtml : function (html) {
  * This function fetches the Links and the content of the introduction of a Wikipedia article
  * @param {Object} title This is the title of the Wikipedia article to be fetched
  */
-fetch : function (title) {
-	var global;
+fetch : function (vertex) {
+	
 	window.addEvent('domready', function() {
 
 		var obj;
 		new Request.JSONP({
 			// create URL for API call
-			url : "http://de.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&titles=" + title,
+			url : "http://de.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&titles=" + vertex.title,
 			data : {
 
 			},
