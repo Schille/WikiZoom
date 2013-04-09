@@ -25,14 +25,13 @@ fetch : function (vertex) {
 		vertex.AJAX = new Request.JSONP({
 			// create URL for API call
 			url : "http://de.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&titles=" + vertex.title,
-			data : {
-
-			},
+			encoding : 'iso-8859-1',
 			// onComplete start the action
 			onComplete : function(JSONdata) {
 				//first parse the JSON Object
-				var pageid = Object.keys(JSONdata.query.pages)
-				var intro = JSONdata.query.pages[pageid].revisions[0]["*"]
+				var pageid = Object.keys(JSONdata.query.pages);
+				var intro = JSONdata.query.pages[pageid].revisions[0]["*"];
+	
 				// then search for the ''' Pattern to determine the start of the introduction
 				var n = intro.indexOf("'''");
 				var k = 1;
@@ -45,12 +44,11 @@ fetch : function (vertex) {
 					k++;
 
 				}
-				// decode HTML tags
 				index = scope.decodeHtml(index);
 				// create RegEx patterns for the Wikipedia Link pattern [[Name of Link|text in introduction]]
-				var doubleLinkSearch = /\[\[[a-zäüöß\(\).,\-\s#]+\s?([a-zäüöß\(\).,\-\s#]+)?\|[a-zäüöß\(\).,\-\s#]+\s?([a-zäüöß\(\).,\-\s#]+)?\]\]/gi;
+				var doubleLinkSearch = /\[\[[a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+\s?([a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+)?\|[a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+\s?([a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+)?\]\]/gi;
 				// pattern for [[Link]], when link = text in introduction
-				var singleLinkSearch = /\[\[[a-zäöüß,.\(\)\s\-]+\]\]/gi;
+				var singleLinkSearch = /\[\[[a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+\]\]/gi; 
 				var result;
 				// create arrays to store the links
 				DoubleLinks = new Array();
@@ -76,9 +74,11 @@ fetch : function (vertex) {
 				}
 				// get rid of every unwanted pattern in the introduction this includes:
 				// href Links, Wikipedia Links, parenthesis patterns and some other formatting
-				var cleanIntro = index.replace(/<ref>[^<]+<\/ref>/gi, '').replace(/\[http[^\]]+]/gi, '').replace(/\[\[[a-zäüöß\(\).,\-\s#]+\s?([a-zäüöß\(\).,\-\s#]+)?\|/gi, '').replace(/{{[^']+'''/gi, '').replace(/'|{|}/gi, '').replace(/<[^>]+>/gi, '').replace(/\[|\]/gi, '');
+				var cleanIntro = index.replace(/<ref>[^<]+<\/ref>/gi, '').replace(/\[http[^\]]+]/gi, '').replace(/\[\[[a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+\s?([a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+)?\|/gi, '').replace(/{{[^']+'''/gi, '').replace(/'|{|}/gi, '').replace(/<[^>]+>/gi, '').replace(/\[|\]/gi, '');
 				vertex.intro = cleanIntro;
 				vertex.outlinks = Links;
+				console.info(vertex.intro);
+				console.info(vertex.outlinks);
 			}
 		}).send();
 
