@@ -25,7 +25,6 @@ fetch : function (vertex) {
 		vertex.AJAX = new Request.JSONP({
 			// create URL for API call
 			url : "http://de.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&titles=" + vertex.title,
-			encoding : 'iso-8859-1',
 			// onComplete start the action
 			onComplete : function(JSONdata) {
 				//first parse the JSON Object
