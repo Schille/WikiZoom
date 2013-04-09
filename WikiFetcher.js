@@ -22,7 +22,7 @@ fetch : function (vertex) {
 	window.addEvent('domready', function() {
 
 		var obj;
-		new Request.JSONP({
+		vertex.AJAX = new Request.JSONP({
 			// create URL for API call
 			url : "http://de.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&titles=" + vertex.title,
 			data : {
@@ -77,14 +77,13 @@ fetch : function (vertex) {
 				// get rid of every unwanted pattern in the introduction this includes:
 				// href Links, Wikipedia Links, parenthesis patterns and some other formatting
 				var cleanIntro = index.replace(/<ref>[^<]+<\/ref>/gi, '').replace(/\[http[^\]]+]/gi, '').replace(/\[\[[a-zäüöß\(\).,\-\s#]+\s?([a-zäüöß\(\).,\-\s#]+)?\|/gi, '').replace(/{{[^']+'''/gi, '').replace(/'|{|}/gi, '').replace(/<[^>]+>/gi, '').replace(/\[|\]/gi, '');
-				console.info(cleanIntro);
-				console.info(Links);
-				test = this
+				vertex.intro = cleanIntro;
+				vertex.outlinks = Links;
 			}
 		}).send();
 
 	});
-	return;
+	return vertex;
 },
 
 });
