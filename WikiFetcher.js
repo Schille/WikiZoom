@@ -79,7 +79,7 @@ fetch : function (vertex) {
 				var cleanIntro = index.replace(/<ref>[^<]+<\/ref>/gi, '').replace(/\[http[^\]]+]/gi, '').replace(/\[\[[a-zäüöß\(\).,\-\s#]+\s?([a-zäüöß\(\).,\-\s#]+)?\|/gi, '').replace(/{{[^']+'''/gi, '').replace(/'|{|}/gi, '').replace(/<[^>]+>/gi, '').replace(/\[|\]/gi, '');
 				console.info(cleanIntro);
 				console.info(Links);
-
+				test = this
 			}
 		}).send();
 
