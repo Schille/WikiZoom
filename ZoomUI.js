@@ -16,6 +16,8 @@ var zoomUI = new Class({
 				stroke : 'none',
 			};
 		}
+			
+
 	},
 
 	calcIPoint : function(myNode1, myNode2) {
@@ -303,6 +305,8 @@ var zoomUI = new Class({
 	},
 
 	test : function() {
+		
+		
 		var vertex_mom = new Vertex();
 		vertex_mom.title = "Chaostheorie";
 		vertex_mom.intro = "introtext";
@@ -410,9 +414,9 @@ var zoomUI = new Class({
 			// vertex_child7 = scope.displayChildNodes(vertex_child5, vertex_child5.svg[0].attr("cx"), vertex_child5.svg[0].attr("cy"));
 // 			
 		});
-		var rect = paper.rect(60, 0, 50, 50);
-		rect.attr({fill:'black'});
-		rect.click(function() {
+		var rect1 = paper.rect(60, 0, 50, 50);
+		rect1.attr({fill:'black'});
+		rect1.click(function(event) {
 			var vertex_child6 = new Vertex();
 			vertex_child6.title = "New Stuff";
 			vertex_child6.intro = "introtext";
@@ -420,12 +424,13 @@ var zoomUI = new Class({
 			vertex_child6.parent = vertex_mom;
 			vertex_mom.children.push(vertex_child6);
 			vertex_child6 = scope_zoomUI.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
-			
+						
 			// var vertex_child7 = new Vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 2, vertex_child5);
 			// vertex_child5.children.push(vertex_child7);
 			// vertex_child7 = scope.displayChildNodes(vertex_child5, vertex_child5.svg[0].attr("cx"), vertex_child5.svg[0].attr("cy"));
 // 			
 		});
+		
 		
 
 	},
