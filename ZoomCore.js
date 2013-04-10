@@ -45,8 +45,6 @@ var ZoomCore = new Class({
 			console.log('Fetching vertex: ' + vertex.id + '(' + vertex.title + ' ' + vertex.level + ')');
 			this.fetcher.fetch(vertex);
 		}
-		return;
-	},
 
 	getNextID : function() {
 		result = this.nextID;

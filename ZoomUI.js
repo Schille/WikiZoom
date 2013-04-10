@@ -16,6 +16,8 @@ var zoomUI = new Class({
 				stroke : 'none',
 			};
 		}
+			
+
 	},
 
 	calcIPoint : function(myNode1, myNode2) {
@@ -287,8 +289,24 @@ var zoomUI = new Class({
 
 		return myNode;
 	},
+	
+	formatIntro : function(intro, lineLength, maxChars){
+		var currentPos = 0;
+		var lastSpacePos = 0;
+		for(currentPos = 0; currentPos < maxChars; currentPos++){
+			if(intro.charAt(currentPos)==' ')
+				lastSpacePos = currentPos;
+			if(currentPos%lineLength==0){
+				intro = intro.slice(0,lastSpacePos)+'\n'+intro.slice(lastSpacePos,intro.length);
+			}
+		}
+		intro = intro.slice(0,lastSpacePos)+'...';
+		return intro;
+	},
 
 	test : function() {
+		
+		
 		var vertex_mom = new Vertex();
 		vertex_mom.title = "Chaostheorie";
 		vertex_mom.intro = "introtext";
@@ -347,6 +365,39 @@ var zoomUI = new Class({
 		
 		var rect = paper.rect(0, 0, 50, 50);
 		rect.attr({fill:'black'});
+		var intro = "Albert Einstein (* 14. März 1879 in Ulm; † 18. April 1955 in Princeton, New Jersey) war ein theoretischer Physiker. Seine Forschungen zur Struktur von Materie, Raum und Zeit sowie dem Wesen der Gravitation veränderten maßgeblich das physikalische Weltbild. Er gilt daher als einer der größten Physiker aller Zeiten.Einsteins Hauptwerk, die Relativitätstheorie, machte ihn weltberühmt. Im Jahr 1905 erschien seine Arbeit mit dem Titel Zur Elektrodynamik bewegter Körper, deren Inhalt heute als spezielle Relativitätstheorie bezeichnet wird. 1915 publizierte Einstein die allgemeine Relativitätstheorie. Auch zur Quantenphysik leistete er wesentliche Beiträge: Für seine Erklärung des photoelektrischen Effekts, die er ebenfalls 1905 publiziert hatte, wurde ihm im November 1922 der Nobelpreis für Physik für 1921 verliehen. Seine theoretischen Arbeiten spielten – im Gegensatz zur verbreiteten Meinung – beim Bau der Atombombe und der Entwicklung der Kernenergie nur eine indirekte Rolle.Albert Einstein gilt als Inbegriff des Forschers und Genies. Er nutzte seine außerordentliche Bekanntheit auch außerhalb der naturwissenschaftlichen Fachwelt bei seinem Einsatz für Völkerverständigung und Frieden. In diesem Zusammenhang verstand er sich selbst als Pazifist, Sozialist, und Zionist.Im Laufe seines Lebens war Einstein Staatsbürger mehrerer Länder: Durch Geburt besaß er die württembergische Staatsbürgerschaft. Von 1896 bis 1901 staatenlos, danach Staatsbürger der Schweiz, war er 1911/12 auch Bürger Österreich-Ungarns. Seit 1914 Mitglied der Akademie der Wissenschaften und Bürger Preußens, war er somit erneut Staatsangehöriger im Deutschen Reich. Mit der Machtergreifung Hitlers gab er 1933 den deutschen Pass endgültig ab. Zum seit 1901 geltenden Schweizer Bürgerrecht trat ab 1940 noch die US-Staatsbürgerschaft.";
+		var lineLength = 80;
+		var maxChars = 500;
+
+		var toolTip = paper.rect(0, 0, 500, 17*(maxChars/lineLength+1), 5).hide();
+		toolTip.attr({fill:'white'});
+		var textTip = paper.text(0, 0, this.formatIntro(intro, lineLength, maxChars)).hide();	
+		textTip.attr('text-anchor', 'start');
+		textTip.attr('font-size',12);
+		var over = function(event) {
+			toolTip.animate({
+				x : rect.attr('x')+5,
+				y : rect.attr('y')+5
+			},50);
+			toolTip.show();
+			textTip.animate({
+				x : rect.attr('x')+10,
+				y : rect.attr('y')+10
+			},50);
+			textTip.show();
+			console.log("Text there?");
+			
+		};
+
+		var out = function(event) {
+			toolTip.hide();
+			textTip.hide();
+			
+		};
+
+		rect.mouseover(over);
+		toolTip.mouseout(out);
+		
 		rect.click(function() {
 			var vertex_child6 = new Vertex();
 			vertex_child6.title = "New Stuff";
@@ -361,9 +412,9 @@ var zoomUI = new Class({
 			// vertex_child7 = scope.displayChildNodes(vertex_child5, vertex_child5.svg[0].attr("cx"), vertex_child5.svg[0].attr("cy"));
 // 			
 		});
-		var rect = paper.rect(60, 0, 50, 50);
-		rect.attr({fill:'black'});
-		rect.click(function() {
+		var rect1 = paper.rect(60, 0, 50, 50);
+		rect1.attr({fill:'black'});
+		rect1.click(function(event) {
 			var vertex_child6 = new Vertex();
 			vertex_child6.title = "New Stuff";
 			vertex_child6.intro = "introtext";
@@ -371,13 +422,16 @@ var zoomUI = new Class({
 			vertex_child6.parent = vertex_mom;
 			vertex_mom.children.push(vertex_child6);
 			vertex_child6 = scope_zoomUI.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
-			
+						
 			// var vertex_child7 = new Vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 2, vertex_child5);
 			// vertex_child5.children.push(vertex_child7);
 			// vertex_child7 = scope.displayChildNodes(vertex_child5, vertex_child5.svg[0].attr("cx"), vertex_child5.svg[0].attr("cy"));
 // 			
 		});
 		
+		
 
 	},
+	
+	
 });
