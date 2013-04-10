@@ -282,16 +282,16 @@ var zoomUI = new Class({
 			set3.animate({
 				transform : "s1.1"
 			}, 2000, "elastic");
-			toolTip.animate({
+			toolTip.attr({
 				x : set3[0].attr('cx')+set3[0].attr('r')-20*level_fac,
 				y : set3[0].attr('cy')+set3[0].attr('r')-20*level_fac
-			},0);
+			});
 			toolTip.toFront();
 			toolTip.show();
-			textTip.animate({
+			textTip.attr({
 				x : set3[0].attr('cx')+set3[0].attr('r')-20*level_fac,
 				y : set3[0].attr('cy')+set3[0].attr('r')-20*level_fac
-			},0);
+			});
 			textTip.toFront();
 			textTip.show();
 		};
