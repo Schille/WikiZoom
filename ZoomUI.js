@@ -204,7 +204,8 @@ var zoomUI = new Class({
 		if(myNode.children.length > 0) {
 			
 			for(var j = 0; j < myNode.children.length; j++) {
-				this.moveNode(myNode.children[i],Math.ceil((200 * level_fac * Math.cos(angle)) + mx), Math.ceil((200 * level_fac * Math.sin(angle)) + my));
+				this.moveNode(myNode.children[j],Math.ceil((200 * level_fac * Math.cos(angle)) + mx), Math.ceil((200 * level_fac * Math.sin(angle)) + my));
+				angle = angle_steps + angle;
 			}
 		}
 		
@@ -393,6 +394,22 @@ var zoomUI = new Class({
 		rect.mouseover(over);
 		toolTip.mouseout(out);
 		
+		rect.click(function() {
+			var vertex_child6 = new Vertex();
+			vertex_child6.title = "New Stuff";
+			vertex_child6.intro = "introtext";
+			vertex_child6.level = 2;
+			vertex_child6.parent = vertex_child1;
+			vertex_child1.children.push(vertex_child6);
+			vertex_child6 = scope_zoomUI.displayChildNodes(vertex_child1, vertex_child1.svg[0].attr("cx"), vertex_child1.svg[0].attr("cy"));
+			
+			// var vertex_child7 = new Vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 2, vertex_child5);
+			// vertex_child5.children.push(vertex_child7);
+			// vertex_child7 = scope.displayChildNodes(vertex_child5, vertex_child5.svg[0].attr("cx"), vertex_child5.svg[0].attr("cy"));
+// 			
+		});
+		var rect = paper.rect(60, 0, 50, 50);
+		rect.attr({fill:'black'});
 		rect.click(function() {
 			var vertex_child6 = new Vertex();
 			vertex_child6.title = "New Stuff";

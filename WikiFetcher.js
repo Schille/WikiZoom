@@ -24,18 +24,28 @@ fetch : function (vertex) {
 		var obj;
 		vertex.AJAX = new Request.JSONP({
 			// create URL for API call
-			url : "http://de.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&titles=" + vertex.title,
+			url : "http://de.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&redirects&titles=" + vertex.title,
 			// onComplete start the action
 			onComplete : function(JSONdata) {
 				//first parse the JSON Object
+				console.info("Received article " + vertex.title);
 				var pageid = Object.keys(JSONdata.query.pages);
-				var intro = JSONdata.query.pages[pageid].revisions[0]["*"];
+				if(JSONdata.query.pages[pageid].revisions == undefined){
+					console.warn('Can not resolve redlink: ' + vertex.title + ' of ' + vertex.parent.title);
+					return;
+				}
+				else{
+					var intro = JSONdata.query.pages[pageid].revisions[0]["*"];
+				}
+				
 	
 				// then search for the ''' Pattern to determine the start of the introduction
 				var n = intro.indexOf("'''");
 				var k = 1;
 				// go back to the first \n and cut off the text in front
 				while (true) {
+					if(k > 1000)
+						break;
 					if (intro.substring(n - k, n - k + 1) == '\n') {
 						var index = intro.substring(n - k + 1, intro.length);
 						break;
@@ -76,8 +86,10 @@ fetch : function (vertex) {
 				var cleanIntro = index.replace(/<ref>[^<]+<\/ref>/gi, '').replace(/\[http[^\]]+]/gi, '').replace(/\[\[[a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+\s?([a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+)?\|/gi, '').replace(/{{[^']+'''/gi, '').replace(/'|{|}/gi, '').replace(/<[^>]+>/gi, '').replace(/\[|\]/gi, '');
 				vertex.intro = cleanIntro;
 				vertex.outlinks = Links;
-				console.info(vertex.intro);
-				console.info(vertex.outlinks);
+				vertex.link = 'http://de.wikipedia.de/wiki/' + vertex.title
+				//console.info(vertex.intro);
+				//console.info(vertex.outlinks);
+				Core.updated(vertex)
 			}
 		}).send();
 
