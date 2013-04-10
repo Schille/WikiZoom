@@ -28,6 +28,7 @@ fetch : function (vertex) {
 			// onComplete start the action
 			onComplete : function(JSONdata) {
 				//first parse the JSON Object
+				console.info("Received article " + vertex.title);
 				var pageid = Object.keys(JSONdata.query.pages);
 				var intro = JSONdata.query.pages[pageid].revisions[0]["*"];
 	
@@ -78,8 +79,9 @@ fetch : function (vertex) {
 				var cleanIntro = index.replace(/<ref>[^<]+<\/ref>/gi, '').replace(/\[http[^\]]+]/gi, '').replace(/\[\[[a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+\s?([a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+)?\|/gi, '').replace(/{{[^']+'''/gi, '').replace(/'|{|}/gi, '').replace(/<[^>]+>/gi, '').replace(/\[|\]/gi, '');
 				vertex.intro = cleanIntro;
 				vertex.outlinks = Links;
-				console.info(vertex.intro);
-				console.info(vertex.outlinks);
+				//console.info(vertex.intro);
+				//console.info(vertex.outlinks);
+				Core.updated(vertex)
 			}
 		}).send();
 

@@ -10,51 +10,48 @@ var ZoomCore = new Class({
 		initialVertex = this.createVertex(myInitialArticle, null, 0);
 		//fetcher.fetch(initialVertex);
 	},
-	
-	zoomed : function(myVertex){
-		if(myVertex.level == CUR_LEVEL)
+
+	zoomed : function(myVertex) {
+		if (myVertex.level == CUR_LEVEL)
 			return;
-		
-		if(myVertex.level < CUR_LEVEL)
-		{
+
+		if (myVertex.level < CUR_LEVEL) {
 			console.log('Zooming back to vertex: ' + myVertex.id + '(' + myVertex.title + ')');
 			CUR_LEVEL = myVertex.level;
 			return;
-		}
-		else{
+		} else {
 			console.log('Zooming to vertex: ' + myVertex.id + '(' + myVertex.title + ')');
 			this.iterateChildren(myVertex, this.vertices);
 		}
-		
+
 	},
-	
-	updated : function(myVertex){
-		
-	},
-	
-	iterateChildren : function(myVertex, f){
-		for (var i=0;i<f;i++)
-		{ 
-			var vertex = this.createVertex(myVertex.outlinks[i],myVertex, myVertex.level + 1);
-			console.log('Fetching vertex: ' + vertex.id + '(' + vertex.title + ')');
-			this.fetcher.fetch(vertex);
+
+	updated : function(myVertex) {
+		if (myVertex.level < (CUR_LEVEL + (this.prefetch + 1))) {
+			this.iterateChildren(myVertex, this.vertices);
 		}
-		for (var i=0;i<f;i++)
-		{ 
-			if(myVertex.level == (CUR_LEVEL + (this.prefetch + 1))){
-				this.iterateChildren(myVertex, f - 1);
-			}
+	},
+
+	iterateChildren : function(myVertex, f) {
+		if(myVertex.outlinks == undefined)
+			return;
+		for (var i = 0; i < f; i++) {
+			if(myVertex.outlinks[i] == undefined)
+				continue;
+			var vertex = this.createVertex(myVertex.outlinks[i], myVertex, (myVertex.level + 1));
+			console.log('Fetching vertex: ' + vertex.id + '(' + vertex.title + ' ' + vertex.level + ')');
+			this.fetcher.fetch(vertex);
 		}
 		return;
 	},
-	
-	getNextID : function(){
+
+	getNextID : function() {
 		result = this.nextID;
 		this.nextID += 1
 		return result;
 	},
-	
-	createVertex : function(myArticleName,myParent, myLevel){
+
+	createVertex : function(myArticleName, myParent, myLevel) {
 		var vertex = new Vertex()
 		vertex.id = this.getNextID();
 		vertex.title = myArticleName;
@@ -63,11 +60,9 @@ var ZoomCore = new Class({
 		console.log('Created new Vertex: ' + vertex.title + ' ID:' + vertex.id);
 		return vertex;
 	},
-	
-	
 })
 
-function start(initialArticle){
+function start(initialArticle) {
 	UI = new ZoomUI();
 	Core = new ZoomCore(initialArticle);
 }
