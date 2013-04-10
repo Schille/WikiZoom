@@ -107,6 +107,8 @@ var zoomUI = new Class({
 			paths.push(path);
 			vertexChild.path = path;
 		}
+		
+		return path;
 
 
 	},
@@ -135,6 +137,7 @@ var zoomUI = new Class({
 
 		var vertex_to_paint = this.paintNode(myNode.children[child_count - 1], Math.ceil((200 * level_fac * Math.cos(angle) + x)), Math.ceil((200 * level_fac * Math.sin(angle) + y)), myNode)
 		this.createEdge(myNode.children[child_count - 1]);
+		
 		return vertex_to_paint;
 
 	},
