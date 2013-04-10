@@ -367,9 +367,11 @@ var zoomUI = new Class({
 
 		var toolTip = paper.rect(0, 0, 500, 17*(maxChars/lineLength+1), 5).hide();
 		toolTip.attr({fill:'white'});
+		toolTip.toFront();
 		var textTip = paper.text(0, 0, this.formatIntro(intro, lineLength, maxChars)).hide();	
 		textTip.attr('text-anchor', 'start');
 		textTip.attr('font-size',12);
+		textTip.toFront();
 		var over = function(event) {
 			toolTip.animate({
 				x : rect.attr('x')+5,
