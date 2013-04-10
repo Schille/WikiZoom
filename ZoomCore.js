@@ -27,16 +27,18 @@ var ZoomCore = new Class({
 	},
 
 	updated : function(myVertex) {
-		if (myVertex.level < (CUR_LEVEL + (this.prefetch + 1))) {
-			this.iterateChildren(myVertex, this.vertices);
+		if (myVertex.link != undefined) {
+			if (myVertex.level < (CUR_LEVEL + (this.prefetch + 1))) {
+				this.iterateChildren(myVertex, this.vertices);
+			}
 		}
 	},
 
 	iterateChildren : function(myVertex, f) {
-		if(myVertex.outlinks == undefined)
+		if (myVertex.outlinks == undefined)
 			return;
 		for (var i = 0; i < f; i++) {
-			if(myVertex.outlinks[i] == undefined)
+			if (myVertex.outlinks[i] == undefined)
 				continue;
 			var vertex = this.createVertex(myVertex.outlinks[i], myVertex, (myVertex.level + 1));
 			console.log('Fetching vertex: ' + vertex.id + '(' + vertex.title + ' ' + vertex.level + ')');
