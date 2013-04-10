@@ -269,8 +269,10 @@ var zoomUI = new Class({
 		var intro = "Albert Einstein (* 14. März 1879 in Ulm; † 18. April 1955 in Princeton, New Jersey) war ein theoretischer Physiker. Seine Forschungen zur Struktur von Materie, Raum und Zeit sowie dem Wesen der Gravitation veränderten maßgeblich das physikalische Weltbild. Er gilt daher als einer der größten Physiker aller Zeiten.Einsteins Hauptwerk, die Relativitätstheorie, machte ihn weltberühmt. Im Jahr 1905 erschien seine Arbeit mit dem Titel Zur Elektrodynamik bewegter Körper, deren Inhalt heute als spezielle Relativitätstheorie bezeichnet wird. 1915 publizierte Einstein die allgemeine Relativitätstheorie. Auch zur Quantenphysik leistete er wesentliche Beiträge: Für seine Erklärung des photoelektrischen Effekts, die er ebenfalls 1905 publiziert hatte, wurde ihm im November 1922 der Nobelpreis für Physik für 1921 verliehen. Seine theoretischen Arbeiten spielten – im Gegensatz zur verbreiteten Meinung – beim Bau der Atombombe und der Entwicklung der Kernenergie nur eine indirekte Rolle.Albert Einstein gilt als Inbegriff des Forschers und Genies. Er nutzte seine außerordentliche Bekanntheit auch außerhalb der naturwissenschaftlichen Fachwelt bei seinem Einsatz für Völkerverständigung und Frieden. In diesem Zusammenhang verstand er sich selbst als Pazifist, Sozialist, und Zionist.Im Laufe seines Lebens war Einstein Staatsbürger mehrerer Länder: Durch Geburt besaß er die württembergische Staatsbürgerschaft. Von 1896 bis 1901 staatenlos, danach Staatsbürger der Schweiz, war er 1911/12 auch Bürger Österreich-Ungarns. Seit 1914 Mitglied der Akademie der Wissenschaften und Bürger Preußens, war er somit erneut Staatsangehöriger im Deutschen Reich. Mit der Machtergreifung Hitlers gab er 1933 den deutschen Pass endgültig ab. Zum seit 1901 geltenden Schweizer Bürgerrecht trat ab 1940 noch die US-Staatsbürgerschaft.";
 		var lineLength = 80;
 		var maxChars = 500;
+		var boxWidth = 500;
+		var boxHeight = 17*(maxChars/lineLength+1);
 
-		var toolTip = paper.rect(0, 0, 500, 17*(maxChars/lineLength+1), 5).hide();
+		var toolTip = paper.rect(0, 0, boxWidth, boxHeight, 5).hide();
 		toolTip.attr({fill:'white'});
 		
 		var textTip = paper.text(0, 0, this.formatIntro(intro, lineLength, maxChars)).hide();	
@@ -282,15 +284,21 @@ var zoomUI = new Class({
 			set3.animate({
 				transform : "s1.1"
 			}, 2000, "elastic");
+			var xPos = set3[0].attr('cx')+set3[0].attr('r')-20*level_fac;
+			var yPos = set3[0].attr('cy')+set3[0].attr('r')-20*level_fac;
+			if(xPos>paper_width/2)
+				xPos = set3[0].attr('cx')-set3[0].attr('r')+20*level_fac-boxWidth;
+			if(yPos>paper_height/2)
+				yPos = set3[0].attr('cy')-set3[0].attr('r')+20*level_fac-boxHeight;
 			toolTip.attr({
-				x : set3[0].attr('cx')+set3[0].attr('r')-20*level_fac,
-				y : set3[0].attr('cy')+set3[0].attr('r')-20*level_fac
+				x : xPos,
+				y : yPos
 			});
 			toolTip.toFront();
 			toolTip.show();
 			textTip.attr({
-				x : set3[0].attr('cx')+set3[0].attr('r')-20*level_fac,
-				y : set3[0].attr('cy')+set3[0].attr('r')-20*level_fac
+				x : xPos,
+				y : yPos
 			});
 			textTip.toFront();
 			textTip.show();
