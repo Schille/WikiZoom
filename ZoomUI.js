@@ -412,9 +412,9 @@ var zoomUI = new Class({
 			// vertex_child7 = scope.displayChildNodes(vertex_child5, vertex_child5.svg[0].attr("cx"), vertex_child5.svg[0].attr("cy"));
 // 			
 		});
-		var rect = paper.rect(60, 0, 50, 50);
-		rect.attr({fill:'black'});
-		rect.click(function(event) {
+		var rect1 = paper.rect(60, 0, 50, 50);
+		rect1.attr({fill:'black'});
+		rect1.click(function(event) {
 			var vertex_child6 = new Vertex();
 			vertex_child6.title = "New Stuff";
 			vertex_child6.intro = "introtext";
