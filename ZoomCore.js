@@ -22,6 +22,7 @@ var ZoomCore = new Class({
 		} else {
 			console.log('Zooming to vertex: ' + myVertex.id + '(' + myVertex.title + ')');
 			this.iterateChildren(myVertex, this.vertices);
+			//TODO add code here...
 		}
 
 	},
