@@ -24,7 +24,7 @@ fetch : function (vertex) {
 		var obj;
 		vertex.AJAX = new Request.JSONP({
 			// create URL for API call
-			url : "http://de.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&titles=" + vertex.title,
+			url : "http://de.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&rvsection=0&format=json&redirects&titles=" + vertex.title,
 			// onComplete start the action
 			onComplete : function(JSONdata) {
 				//first parse the JSON Object
@@ -36,6 +36,8 @@ fetch : function (vertex) {
 				var k = 1;
 				// go back to the first \n and cut off the text in front
 				while (true) {
+					if(k > 1000)
+						break;
 					if (intro.substring(n - k, n - k + 1) == '\n') {
 						var index = intro.substring(n - k + 1, intro.length);
 						break;
