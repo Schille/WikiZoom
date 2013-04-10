@@ -279,7 +279,6 @@ var zoomUI = new Class({
 		textTip.attr('text-anchor', 'start');
 		textTip.attr('font-size',12);
 		
-		
 		var over = function(event) {
 			set3.animate({
 				transform : "s1.1"
@@ -314,11 +313,11 @@ var zoomUI = new Class({
 
 		set3.mouseover(over);
 		set3.mouseout(out);
-		
-	
-		
-		
-		
+
+		var click = function(event){
+			window.open(myNode.link);
+		};
+		set3.click(click);
 
 		return myNode;
 	},
@@ -344,11 +343,13 @@ var zoomUI = new Class({
 		vertex_mom.title = "Chaostheorie";
 		vertex_mom.intro = "introtext";
 		vertex_mom.level = 0;
+		vertex_mom.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		
 		var vertex_child1 = new Vertex();
 		vertex_child1.title = "Shits";
 		vertex_child1.intro = "introtext";
 		vertex_child1.level = 1;
+		vertex_child1.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		vertex_child1.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child1);
 		vertext_mom = this.paintNode(vertex_mom, paper_width / 2, paper_height / 2, null, null);
@@ -359,6 +360,7 @@ var zoomUI = new Class({
 		vertex_child2.title = "Hass";
 		vertex_child2.intro = "introtext";
 		vertex_child2.level = 1;
+		vertex_child2.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		vertex_child2.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child2);
 		vertex_child2 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
@@ -367,6 +369,7 @@ var zoomUI = new Class({
 		vertex_child3.title = "Liebe";
 		vertex_child3.intro = "introtext";
 		vertex_child3.level = 1;
+		vertex_child3.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		vertex_child3.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child3);
 		vertex_child3 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
@@ -375,6 +378,7 @@ var zoomUI = new Class({
 		vertex_child4.title = "Ahh";
 		vertex_child4.intro = "introtext";
 		vertex_child4.level = 1;
+		vertex_child4.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		vertex_child4.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child4);
 		vertex_child4 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
@@ -383,6 +387,7 @@ var zoomUI = new Class({
 		vertex_child5.title = "Mies";
 		vertex_child5.intro = "introtext";
 		vertex_child5.level = 1;
+		vertex_child5.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		vertex_child5.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child5);
 		vertex_child5 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
@@ -391,6 +396,7 @@ var zoomUI = new Class({
 		vertex_child11.title = "Poop";
 		vertex_child11.intro = "introtext";
 		vertex_child11.level = 2;
+		vertex_child11.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		vertex_child11.parent = vertex_child1;
 		vertex_child1.children.push(vertex_child11);
 		vertex_child11 = this.displayChildNodes(vertex_child1, vertex_child1.svg[0].attr("cx"), vertex_child1.svg[0].attr("cy"));
@@ -404,6 +410,7 @@ var zoomUI = new Class({
 			vertex_child6.title = "New Stuff";
 			vertex_child6.intro = "introtext";
 			vertex_child6.level = 2;
+			vertex_child6.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 			vertex_child6.parent = vertex_child1;
 			vertex_child1.children.push(vertex_child6);
 			vertex_child6 = scope_zoomUI.displayChildNodes(vertex_child1, vertex_child1.svg[0].attr("cx"), vertex_child1.svg[0].attr("cy"));
@@ -420,6 +427,7 @@ var zoomUI = new Class({
 			vertex_child6.title = "New Stuff";
 			vertex_child6.intro = "introtext";
 			vertex_child6.level = 1;
+			vertex_child6.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 			vertex_child6.parent = vertex_mom;
 			vertex_mom.children.push(vertex_child6);
 			vertex_child6 = scope_zoomUI.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
