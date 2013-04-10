@@ -1,5 +1,5 @@
 function start(initialArticle){
-	UI = new ZoomUI();
+	/*UI = new ZoomUI();*/
 	Core = new ZoomCore(initialArticle);
 }
 
@@ -38,7 +38,7 @@ var ZoomCore = new Class({
 			var vertex = this.createVertex(myVertex.outlinks[i],myVertex, myVertex.level + 1);
 			this.fetcher.fetch(vertex);
 		}
-	}
+	},
 	
 	getNextID : function(){
 		result = this.nextID;
