@@ -33,7 +33,7 @@ var ZoomCore = new Class({
 
 	updated : function(myVertex) {
 		if (myVertex.link != undefined) {
-			if (myVertex.level < (CUR_LEVEL + (this.prefetch + 1))) {
+			if (myVertex.level < (CUR_LEVEL + (this.prefetch))) {
 				this.iterateChildren(myVertex, (this.vertices - (myVertex.level - CUR_LEVEL)));
 			}
 		}
