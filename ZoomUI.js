@@ -126,7 +126,11 @@ var zoomUI = new Class({
 		return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (B < 255 ? B < 1 ? 0 : B : 255) * 0x100 + (G < 255 ? G < 1 ? 0 : G : 255)).toString(16).slice(1);
 	},
 
-	displayChildNodes : function(myNode, x, y) {
+	displayChildNodes : function(myNode) {
+		
+		console.log(myNode.title + ' ' + myNode.parent.title);
+		var x = myNode.parent.svg[0].attr('cx');
+		var y = myNode.parent.svg[0].attr('cy');
 		var level_fac = (Math.pow(0.7,  (myNode.level-CUR_LEVEL)));
 
 		var child_count = myNode.children.length;
@@ -192,6 +196,7 @@ var zoomUI = new Class({
 		var size = 50 * level_fac;
 		var fontsize = 20 * level_fac;
 		var temp_scope = this;
+		
 		vertex.svg.forEach(function(element) {
 			if(element.attr('text') == undefined) {
 				if(element.attr("stroke-dasharray") == "- ") {
@@ -207,6 +212,7 @@ var zoomUI = new Class({
 					"r" : size
 					}, 500, "linear");
 					element.attr('fill', temp_scope.shadeColor("#CCCCCC", (1 - level_fac) * 35));
+					console.log()
 				}
 				}
 			else {
@@ -216,6 +222,11 @@ var zoomUI = new Class({
 					}, 500, "linear");
 				
 					
+			}
+			if(vertex.children.length > 0) {
+				for (var i = 0; i < vertex.children.length; i++) {
+					temp_scope.repaintChildren(vertex.children[i]);
+				}
 			}
 			});
 	},
@@ -291,8 +302,7 @@ var zoomUI = new Class({
 		var yP = myNode.parent.svg[0].attr("cy");
 		
 		var startColor = myNode.parent.svg[0].attr("fill");
-		var endColor = myNode.svg[0].attr("fill");
-		var colorAngle = Math.ceil(Raphael.angle(xP, yP, myNode.svg[0].attr('cx'), myNode.svg[0].attr('cy')));
+		console.log(myNode.parent.title);
 		
 		
 		var level_fac = (Math.pow(0.7,  (myNode.level-CUR_LEVEL)));
@@ -365,8 +375,20 @@ var zoomUI = new Class({
 		}
 		
 	},
+	
+	paint : function(myVertex) {
+		if(myVertex.level == 0) {
+			this.paintNode(myVertex, paper_width/2, paper_height/2);
+		}
+		else{
+			this.displayChildNodes(myVertex)
+		}
+		
+		console.log(myVertex.title + ' done.');
+	},
 
-	paintNode : function(myNode, x, y) {
+	paintNode : function(myNode, x , y) {
+		
 		var level_fac = (Math.pow(0.7, (myNode.level-CUR_LEVEL)));
 		var size = 50 * level_fac;
 		var fontsize = 20 * level_fac;
@@ -500,6 +522,7 @@ var zoomUI = new Class({
 		vertex_mom.level = 0;
 		vertex_mom.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		
+
 		vertex_child1 = new Vertex();
 		vertex_child1.title = "Shits";
 		vertex_child1.intro = "introtext";
@@ -507,8 +530,8 @@ var zoomUI = new Class({
 		vertex_child1.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		vertex_child1.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child1);
-		vertext_mom = this.paintNode(vertex_mom, paper_width / 2, paper_height / 2, null, null);
-		vertex_child1 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+		this.paint(vertex_mom);
+		this.paint(vertex_child1);
 		//moveNode(vertex_child1, 200, 200);
 
 		vertex_child2 = new Vertex();
@@ -556,6 +579,15 @@ var zoomUI = new Class({
 		vertex_child1.children.push(vertex_child11);
 		vertex_child11 = this.displayChildNodes(vertex_child1, vertex_child1.svg[0].attr("cx"), vertex_child1.svg[0].attr("cy"));
 		
+		
+		vertex_child111 = new Vertex();
+		vertex_child111.title = "Poope die 2.";
+		vertex_child111.intro = "introtext";
+		vertex_child111.level = 3;
+		vertex_child111.link = "https://de.wikipedia.org/wiki/Chaosforschung";
+		vertex_child111.parent = vertex_child11;
+		vertex_child11.children.push(vertex_child111);
+		vertex_child111 = this.displayChildNodes(vertex_child11, vertex_child11.svg[0].attr("cx"), vertex_child11.svg[0].attr("cy"));
 		
 		var rect = paper.rect(0, 0, 50, 50);
 		rect.attr({fill:'black'});		
