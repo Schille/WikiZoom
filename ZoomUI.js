@@ -6,6 +6,7 @@ var zoomUI = new Class({
 		paper = Raphael(0, 0, paper_width, paper_height);
 		paths = paper.set();
 		scope_zoomUI = this;
+		selectedNode = null;
 		paper.customAttributes.grad = function(colorAngle, startColor, endColor) {
 			return {
 				fill : colorAngle + '-' + startColor + '-' + endColor,
@@ -16,7 +17,14 @@ var zoomUI = new Class({
 				stroke : 'none',
 			};
 		}
-			
+		
+		window.addEvent('domready', function(){
+  			document.addEvent('mousewheel', function(event){
+  				if(zoomUI.selectedNode != null){
+				    ZoomCore.zoomed(zoomUI.selectedNode);
+			   }
+			});
+		});	
 
 	},
 
@@ -280,6 +288,7 @@ var zoomUI = new Class({
 		textTip.attr('font-size',12);
 		
 		var over = function(event) {
+			zoomUI.selectedNode = myNode;
 			set3.animate({
 				transform : "s1.1"
 			}, 2000, "elastic");
@@ -304,6 +313,7 @@ var zoomUI = new Class({
 		};
 
 		var out = function(event) {
+			zoomUI.selectedNode = null;
 			set3.animate({
 				transform : "s1"
 			}, 2000, "elastic");
@@ -318,7 +328,7 @@ var zoomUI = new Class({
 			window.open(myNode.link);
 		};
 		set3.click(click);
-
+		
 		return myNode;
 	},
 	
