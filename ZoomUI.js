@@ -45,7 +45,7 @@ var zoomUI = new Class({
 		var xC = vertexChild.svg[0].attr("cx");
 		var yC = vertexChild.svg[0].attr("cy");
 		var startColor = vertexChild.parent.svg[0].attr("fill");
-		var endColor = vertexChild.parent.svg[0].attr("fill");
+		var endColor = vertexChild.svg[0].attr("fill");
 		var colorAngle = Math.ceil(Raphael.angle(xP, yP, xC, yC));
 	
 		
@@ -68,7 +68,7 @@ var zoomUI = new Class({
 				stroke : 'none',
 			});
 			path.animate({
-				grad : [colorAngle, startColor, endColor],
+				'fill' : startColor,
 				stroke1 : 'none',
 			}, 2000, ">").toBack();
 			paths.push(path);
@@ -81,7 +81,7 @@ var zoomUI = new Class({
 				stroke : 'none',
 			});
 			path.animate({
-				grad : [colorAngle, startColor, endColor],
+				'fill' : startColor,
 				stroke1 : 'none',
 			}, 2000, ">").toBack();
 			paths.push(path);
@@ -95,7 +95,7 @@ var zoomUI = new Class({
 				stroke : 'none',
 			});
 			path.animate({
-				grad : [colorAngle, startColor, endColor],
+				'fill' : startColor,
 				stroke1 : 'none',
 			}, 2000, ">").toBack();
 			paths.push(path);
@@ -109,7 +109,7 @@ var zoomUI = new Class({
 				stroke : 'none',
 			});
 			path.animate({
-				grad : [colorAngle, startColor, endColor],
+				'fill' : startColor,
 				stroke1 : 'none',
 			}, 2000, ">").toBack();
 			paths.push(path);
@@ -127,7 +127,7 @@ var zoomUI = new Class({
 	},
 
 	displayChildNodes : function(myNode, x, y) {
-		var level_fac = (Math.pow(0.7, myNode.level));
+		var level_fac = (Math.pow(0.7,  (myNode.level-CUR_LEVEL)));
 
 		var child_count = myNode.children.length;
 
@@ -152,31 +152,109 @@ var zoomUI = new Class({
 	
 	zoomIn : function(vertex) {
 		CUR_LEVEL++;
+		var level_fac = (Math.pow(0.7, (vertex.level-CUR_LEVEL)));
 		vertex.svg.animate({
 					"cx" : paper_width/2,
 					"cy" : paper_height/2,
 					"x" : paper_width/2,
 					"y" : paper_height/2,
-				}, 500, "linear");
+				}, 2000, "backOut");
+				vertex.svg.attr({
+					"cx" : paper_width/2,
+					"cy" : paper_height/2,
+					"x" : paper_width/2,
+					"y" : paper_height/2,
+				});
 		vertex.path.remove();
 	this.fadeOutSiblings(vertex);
+	this.repaintNode(vertex);
 	
+	
+		var child_count = vertex.children.length;
+
+		var angle_steps = Math.PI * 2 / child_count;
+		var angle = angle_steps;
+
+		if (child_count >= 1) {
+		console.log("I'm on");
+			for (var i = 0; i < child_count; i++) {
+				console.log("I'm in ya");
+				this.moveNode(vertex.children[i], Math.ceil((200 * level_fac * Math.cos(angle) + vertex.svg[0].attr('cx'))), Math.ceil((200 * level_fac * Math.sin(angle) + vertex.svg[0].attr('cy'))));
+				angle = angle_steps + angle;
+				this.repaintChildren(vertex.children[i]);
+			}
+		}
 	},
+	
+	repaintChildren : function(vertex) {
+	
+		var level_fac = (Math.pow(0.7, (vertex.level-CUR_LEVEL)));
+		var size = 50 * level_fac;
+		var fontsize = 20 * level_fac;
+		var temp_scope = this;
+		vertex.svg.forEach(function(element) {
+			if(element.attr('text') == undefined) {
+				if(element.attr("stroke-dasharray") == "- ") {
+					element.animate({
+					"stroke" : temp_scope.shadeColor("#AAAAAA", (1 - level_fac) * 50),
+					"r" : size-4,
+					}, 500, "linear");
+				}
+				else {
+					element.animate({
+					"fill" : temp_scope.shadeColor("#CCCCCC", (1 - level_fac) * 35),
+					"stroke" : temp_scope.shadeColor("#AAAAAA", (1 - level_fac) * 50),
+					"r" : size
+					}, 500, "linear");
+					element.attr('fill', temp_scope.shadeColor("#CCCCCC", (1 - level_fac) * 35));
+				}
+				}
+			else {
+				element.animate({
+					"fill" : temp_scope.shadeColor("#555555", (1 - level_fac) * 80),
+					"font-size" : fontsize
+					}, 500, "linear");
+				
+					
+			}
+			});
+	},
+	
 	
 	repaintNode : function(vertex) {
 		
+		var level_fac = (Math.pow(0.7, (vertex.level-CUR_LEVEL)));
+		var size = 50 * level_fac;
+		var fontsize = 20 * level_fac;
+		var temp_scope = this;
 		
+		vertex.svg.forEach(function(element) {
+			if(element.attr('text') == undefined) {
+				if(element.attr("stroke-dasharray") == "- ") {
+					element.animate({
+					"stroke" : temp_scope.shadeColor("#AAAAAA", (1 - level_fac) * 50),
+					"r" : size-4,
+					}, 500, "linear");
+				}
+				else {
+					element.animate({
+					"fill" : temp_scope.shadeColor("#CCCCCC", (1 - level_fac) * 35),
+					"stroke" : temp_scope.shadeColor("#AAAAAA", (1 - level_fac) * 50),
+					"r" : size
+					}, 500, "linear");
+					element.attr('fill', temp_scope.shadeColor("#CCCCCC", (1 - level_fac) * 35));
+				}
+				}
+			else {
+				element.animate({
+					"fill" : temp_scope.shadeColor("#555555", (1 - level_fac) * 80),
+					"font-size" : fontsize
+					}, 500, "linear");
+			}
+			
+		   	
+		});
 		
-		circle1.attr({
-			"fill" : this.shadeColor("#CCCCCC", (1 - level_fac) * 35),
-			"stroke" : this.shadeColor("#AAAAAA", (1 - level_fac) * 50)
-		});
-		circle11.attr({
-			"stroke" : this.shadeColor("#AAAAAA", (1 - level_fac) * 50)
-		});
-		text1.attr({
-			"fill" : this.shadeColor("#555555", (1 - level_fac) * 80)
-		});
 	},
 	
 	fadeOutSiblings : function(vertex) {
@@ -212,8 +290,12 @@ var zoomUI = new Class({
 		var xP = myNode.parent.svg[0].attr("cx");
 		var yP = myNode.parent.svg[0].attr("cy");
 		
+		var startColor = myNode.parent.svg[0].attr("fill");
+		var endColor = myNode.svg[0].attr("fill");
+		var colorAngle = Math.ceil(Raphael.angle(xP, yP, myNode.svg[0].attr('cx'), myNode.svg[0].attr('cy')));
 		
-		var level_fac = (Math.pow(0.7, myNode.level));
+		
+		var level_fac = (Math.pow(0.7,  (myNode.level-CUR_LEVEL)));
 		var child_count = myNode.children.length;
 
 		var angle_steps = Math.PI * 2 / child_count;
@@ -246,6 +328,7 @@ var zoomUI = new Class({
 		if (xP <= mx && yP <= my) {
 			nodePath.animate({
 				path : "M" + (xP - 10) + "," + yP + " L" + mx + "," + my + " L" + xP  + "," + (yP - 10),
+				fill : startColor,
 			}, 2000, "backOut").toBack();
 			
 
@@ -253,12 +336,14 @@ var zoomUI = new Class({
 		if (xP >= mx && yP <= my) {
 			nodePath.animate({
 				path : "M" + xP + "," + (yP - 10) + " L" + mx + "," + my + " L" + (xP + 10) + "," + yP,
+				fill : startColor,
 			}, 2000, "backOut").toBack();
 			
 		}
 		if (xP >= mx && yP >= my) {
 			nodePath.animate({
 			path : "M" + xP + "," + (yP + 10) + " L" + mx + "," + my + " L" + (xP + 10) + "," + yP,
+			fill : startColor,
 			}, 2000, "backOut").toBack();
 			
 
@@ -266,6 +351,7 @@ var zoomUI = new Class({
 		if (xP <= mx && yP >= my) {
 			nodePath.animate({
 				path : "M" + (xP - 10) + "," + yP + " L" + mx + "," + my + " L" + xP + "," + (yP + 10),
+				fill : startColor,
 			}, 2000, "backOut").toBack();
 			
 		}
@@ -281,7 +367,7 @@ var zoomUI = new Class({
 	},
 
 	paintNode : function(myNode, x, y) {
-		var level_fac = (Math.pow(0.7, myNode.level));
+		var level_fac = (Math.pow(0.7, (myNode.level-CUR_LEVEL)));
 		var size = 50 * level_fac;
 		var fontsize = 20 * level_fac;
 		
@@ -290,7 +376,7 @@ var zoomUI = new Class({
 
 		circle1.attr({
 			"fill" : "#CCCCCC",
-			"fill-opacity" : 1,
+		
 			"stroke" : '#AAAAAA',
 			"stroke-width" : 2,
 		});
@@ -414,7 +500,7 @@ var zoomUI = new Class({
 		vertex_mom.level = 0;
 		vertex_mom.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		
-		var vertex_child1 = new Vertex();
+		vertex_child1 = new Vertex();
 		vertex_child1.title = "Shits";
 		vertex_child1.intro = "introtext";
 		vertex_child1.level = 1;
@@ -461,7 +547,7 @@ var zoomUI = new Class({
 		vertex_mom.children.push(vertex_child5);
 		vertex_child5 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 
-		var vertex_child11 = new Vertex();
+		vertex_child11 = new Vertex();
 		vertex_child11.title = "Poop";
 		vertex_child11.intro = "introtext";
 		vertex_child11.level = 2;
