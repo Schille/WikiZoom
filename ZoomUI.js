@@ -1,4 +1,4 @@
-var zoomUI = new Class({
+var ZoomUI = new Class({
 	initialize : function() {
 
 		paper_width = (window.innerWidth - window.innerWidth / 10);
@@ -18,13 +18,13 @@ var zoomUI = new Class({
 			};
 		}
 		
-		window.addEvent('domready', function(){
-  			document.addEvent('mousewheel', function(event){
-  				if(zoomUI.selectedNode != null){
-				    ZoomCore.zoomed(zoomUI.selectedNode);
-			   }
-			});
-		});	
+		//window.addEvent('domready', function(){
+  		//	document.addEvent('mousewheel', function(event){
+  		//		if(zoomUI.selectedNode != null){
+		//		    ZoomCore.zoomed(zoomUI.selectedNode);
+		//	   }
+		//	});
+		//});	
 
 	},
 
@@ -129,7 +129,13 @@ var zoomUI = new Class({
 	displayChildNodes : function(myNode, x, y) {
 		var level_fac = (Math.pow(0.7,  (myNode.level-CUR_LEVEL)));
 
-		var child_count = myNode.children.length;
+		var child_count = 0;
+		for (var i = 0; i < myNode.children.length; i++) {
+  			if(myNode.children[i].svg != null)
+  				child_count += 1;
+		}
+		
+		
 
 		var angle_steps = Math.PI * 2 / child_count;
 		var angle = angle_steps;
@@ -137,14 +143,16 @@ var zoomUI = new Class({
 		if (child_count > 1) {
 
 			for ( i = 0; i < child_count - 1; i++) {
+				if(myNode.children[i].svg == undefined)
+					continue;
 				this.moveNode(myNode.children[i], Math.ceil((200 * level_fac * Math.cos(angle) + x)), Math.ceil((200 * level_fac * Math.sin(angle) + y)));
 				angle = angle_steps + angle;
 			}
 
 		}
 
-		var vertex_to_paint = this.paintNode(myNode.children[child_count - 1], Math.ceil((200 * level_fac * Math.cos(angle) + x)), Math.ceil((200 * level_fac * Math.sin(angle) + y)), myNode)
-		this.createEdge(myNode.children[child_count - 1]);
+		var vertex_to_paint = this.paintNode(myNode.children[child_count], Math.ceil((200 * level_fac * Math.cos(angle) + x)), Math.ceil((200 * level_fac * Math.sin(angle) + y)), myNode)
+		this.createEdge(myNode.children[child_count]);
 		
 		return vertex_to_paint;
 
@@ -362,7 +370,13 @@ var zoomUI = new Class({
 			
 		}
 		
-		if(myNode.children.length > 0) {
+		var child_count = 0;
+		for (var i = 0; i < myNode.children.length; i++) {
+  			if(myNode.children[i].svg != null)
+  				child_count += 1;
+		}
+		
+		if(child_count > 0) {
 			
 			for(var j = 0; j < myNode.children.length; j++) {
 				this.moveNode(myNode.children[j],Math.ceil((200 * level_fac * Math.cos(angle)) + mx), Math.ceil((200 * level_fac * Math.sin(angle)) + my));
@@ -373,12 +387,17 @@ var zoomUI = new Class({
 	},
 	
 	paint : function(myVertex) {
+		if(myVertex.level != 0 && myVertex.parent.svg == null){
+			return false;
+		}
+		
 		if(myVertex.level == 0) {
 			this.paintNode(myVertex, paper_width/2, paper_height/2);
 		}
 		else {
 			this.displayChildNodes(myVertex.parent, myVertex.parent.svg[0].attr('cx'), myVertex.parent.svg[0].attr('cy'));
 		}
+		return true;
 	},
 
 	paintNode : function(myNode, x, y) {
@@ -443,12 +462,12 @@ var zoomUI = new Class({
 		var toolTip = paper.rect(0, 0, boxWidth, boxHeight, 5).hide();
 		toolTip.attr({fill:'white'});
 		
-		var textTip = paper.text(0, 0, this.formatIntro(intro, lineLength, maxChars)).hide();	
+		var textTip = paper.text(0, 0, myNode.intro).hide();	
 		textTip.attr('text-anchor', 'start');
 		textTip.attr('font-size',12);
 		
 		var over = function(event) {
-			zoomUI.selectedNode = myNode;
+			//zoomUI.selectedNode = myNode;
 			set3.animate({
 				transform : "s1.1"
 			}, 2000, "elastic");
@@ -470,10 +489,22 @@ var zoomUI = new Class({
 			});
 			textTip.toFront();
 			textTip.show();
-		};
+			
+			//Event handler for mouswheel
+			mouse = function(){
+					if (event.preventDefault)
+      					event.preventDefault();
+    				event.returnValue = false;
+    				UI.zoomIn(myNode)
+					document.removeEventListener('mousewheel', mouse, false);
+			};
+			console.log("adding event")
+			document.addEventListener('mousewheel', mouse , false);
+			};
 
 		var out = function(event) {
-			zoomUI.selectedNode = null;
+			//zoomUI.selectedNode = null;
+			document.removeEventListener('mousewheel', mouse, false);
 			set3.animate({
 				transform : "s1"
 			}, 2000, "elastic");
