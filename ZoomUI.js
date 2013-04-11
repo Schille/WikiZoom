@@ -149,6 +149,62 @@ var zoomUI = new Class({
 		return vertex_to_paint;
 
 	},
+	
+	zoomIn : function(vertex) {
+		CUR_LEVEL++;
+		vertex.svg.animate({
+					"cx" : paper_width/2,
+					"cy" : paper_height/2,
+					"x" : paper_width/2,
+					"y" : paper_height/2,
+				}, 500, "linear");
+		vertex.path.remove();
+	this.fadeOutSiblings(vertex);
+	
+	},
+	
+	repaintNode : function(vertex) {
+		
+		
+		
+		circle1.attr({
+			"fill" : this.shadeColor("#CCCCCC", (1 - level_fac) * 35),
+			"stroke" : this.shadeColor("#AAAAAA", (1 - level_fac) * 50)
+		});
+		circle11.attr({
+			"stroke" : this.shadeColor("#AAAAAA", (1 - level_fac) * 50)
+		});
+		text1.attr({
+			"fill" : this.shadeColor("#555555", (1 - level_fac) * 80)
+		});
+	},
+	
+	fadeOutSiblings : function(vertex) {
+		var siblings = vertex.parent.children;
+		var parent = vertex.parent;
+		var temp_scope = this;
+			siblings.forEach(function(temp_vertex) {
+				if(temp_vertex.title != vertex.title) {
+				temp_vertex.svg.animate({opacity : 0,}, 500, "linear");
+				temp_vertex.path.remove();
+				temp_scope.fadeOutChildren(temp_vertex);
+				}
+			});
+			
+			parent.svg.animate({opacity : 0}, 500, "linear");
+		
+	},
+	
+	fadeOutChildren : function(vertex) {
+		var temp_scope = this;
+		vertex.children.forEach(function(temp_vertex) {
+			temp_vertex.svg.animate({opacity : 0,}, 500, "linear");
+			temp_vertex.path.remove();
+			if(temp_vertex.children.length > 0) {
+				temp_scope.fadeOutChildren(temp_vertex);
+			}
+		});
+	},
 
 	moveNode : function(myNode, mx, my) {
 		var gnupsi1 = myNode.svg;
@@ -369,7 +425,7 @@ var zoomUI = new Class({
 		vertex_child1 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
 		//moveNode(vertex_child1, 200, 200);
 
-		var vertex_child2 = new Vertex();
+		vertex_child2 = new Vertex();
 		vertex_child2.title = "Hass";
 		vertex_child2.intro = "introtext";
 		vertex_child2.level = 1;
@@ -444,6 +500,8 @@ var zoomUI = new Class({
 			vertex_child6.parent = vertex_mom;
 			vertex_mom.children.push(vertex_child6);
 			vertex_child6 = scope_zoomUI.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+			
+			
 						
 			// var vertex_child7 = new Vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 2, vertex_child5);
 			// vertex_child5.children.push(vertex_child7);
