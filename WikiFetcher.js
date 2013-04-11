@@ -32,6 +32,7 @@ fetch : function (vertex) {
 				var pageid = Object.keys(JSONdata.query.pages);
 				if(JSONdata.query.pages[pageid].revisions == undefined){
 					console.warn('Can not resolve redlink: ' + vertex.title + ' of ' + vertex.parent.title);
+					delete vertex.parent.outlinks[vertex.parent.outlinks.indexOf(vertex.title)];
 					return;
 				}
 				else{
