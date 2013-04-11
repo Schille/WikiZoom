@@ -1,4 +1,4 @@
-var zoomUI = new Class({
+var ZoomUI = new Class({
 	initialize : function() {
 
 		paper_width = (window.innerWidth - window.innerWidth / 10);
@@ -643,4 +643,3 @@ var zoomUI = new Class({
 	
 	
 });
-
