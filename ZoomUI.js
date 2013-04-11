@@ -514,6 +514,8 @@ var zoomUI = new Class({
 		vertex_mom.intro = "introtext";
 		vertex_mom.level = 0;
 		vertex_mom.link = "https://de.wikipedia.org/wiki/Chaosforschung";
+		this.paint(vertex_mom);
+		
 		
 		vertex_child1 = new Vertex();
 		vertex_child1.title = "Shits";
@@ -522,7 +524,7 @@ var zoomUI = new Class({
 		vertex_child1.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		vertex_child1.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child1);
-		vertext_mom = this.paint(vertex_mom);
+		
 		this.paint(vertex_child1);
 		//moveNode(vertex_child1, 200, 200);
 
