@@ -51,7 +51,7 @@ function testZoomCore_zoomed1(){
 }
 
 function testWikiZoom_integration(){
-	UI = ZoomUI();
-	Core = ZoomCore('Mannheim');
+	UI = new ZoomUI();
+	Core = new ZoomCore('Mannheim');
 
 }
