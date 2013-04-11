@@ -126,11 +126,7 @@ var ZoomUI = new Class({
 		return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (B < 255 ? B < 1 ? 0 : B : 255) * 0x100 + (G < 255 ? G < 1 ? 0 : G : 255)).toString(16).slice(1);
 	},
 
-	displayChildNodes : function(myNode) {
-		
-		console.log(myNode.title + ' ' + myNode.parent.title);
-		var x = myNode.parent.svg[0].attr('cx');
-		var y = myNode.parent.svg[0].attr('cy');
+	displayChildNodes : function(myNode, x, y) {
 		var level_fac = (Math.pow(0.7,  (myNode.level-CUR_LEVEL)));
 
 		var child_count = myNode.children.length;
@@ -380,15 +376,12 @@ var ZoomUI = new Class({
 		if(myVertex.level == 0) {
 			this.paintNode(myVertex, paper_width/2, paper_height/2);
 		}
-		else{
-			this.displayChildNodes(myVertex)
+		else {
+			this.displayChildNodes(myVertex.parent, myVertex.parent.svg[0].attr('cx'), myVertex.parent.svg[0].attr('cy'));
 		}
-		
-		console.log(myVertex.title + ' done.');
 	},
 
-	paintNode : function(myNode, x , y) {
-		
+	paintNode : function(myNode, x, y) {
 		var level_fac = (Math.pow(0.7, (myNode.level-CUR_LEVEL)));
 		var size = 50 * level_fac;
 		var fontsize = 20 * level_fac;
@@ -534,7 +527,6 @@ var ZoomUI = new Class({
 		vertex_mom.level = 0;
 		vertex_mom.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		
-
 		vertex_child1 = new Vertex();
 		vertex_child1.title = "Shits";
 		vertex_child1.intro = "introtext";
@@ -542,7 +534,7 @@ var ZoomUI = new Class({
 		vertex_child1.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		vertex_child1.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child1);
-		this.paint(vertex_mom);
+		vertext_mom = this.paint(vertex_mom);
 		this.paint(vertex_child1);
 		//moveNode(vertex_child1, 200, 200);
 
@@ -553,7 +545,7 @@ var ZoomUI = new Class({
 		vertex_child2.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		vertex_child2.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child2);
-		vertex_child2 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+		this.paint(vertex_child2);
 
 		var vertex_child3 = new Vertex();
 		vertex_child3.title = "Liebe";
@@ -562,7 +554,7 @@ var ZoomUI = new Class({
 		vertex_child3.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		vertex_child3.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child3);
-		vertex_child3 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+		this.paint(vertex_child3);
 
 		var vertex_child4 = new Vertex();
 		vertex_child4.title = "Ahh";
@@ -571,7 +563,7 @@ var ZoomUI = new Class({
 		vertex_child4.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		vertex_child4.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child4);
-		vertex_child4 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+		this.paint(vertex_child4);
 
 		var vertex_child5 = new Vertex();
 		vertex_child5.title = "Mies";
@@ -580,7 +572,7 @@ var ZoomUI = new Class({
 		vertex_child5.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		vertex_child5.parent = vertex_mom;
 		vertex_mom.children.push(vertex_child5);
-		vertex_child5 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+		this.paint(vertex_child5);
 
 		vertex_child11 = new Vertex();
 		vertex_child11.title = "Poop";
@@ -589,7 +581,7 @@ var ZoomUI = new Class({
 		vertex_child11.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		vertex_child11.parent = vertex_child1;
 		vertex_child1.children.push(vertex_child11);
-		vertex_child11 = this.displayChildNodes(vertex_child1, vertex_child1.svg[0].attr("cx"), vertex_child1.svg[0].attr("cy"));
+		this.paint(vertex_child11);
 		
 		
 		vertex_child111 = new Vertex();
@@ -599,7 +591,7 @@ var ZoomUI = new Class({
 		vertex_child111.link = "https://de.wikipedia.org/wiki/Chaosforschung";
 		vertex_child111.parent = vertex_child11;
 		vertex_child11.children.push(vertex_child111);
-		vertex_child111 = this.displayChildNodes(vertex_child11, vertex_child11.svg[0].attr("cx"), vertex_child11.svg[0].attr("cy"));
+		this.paint(vertex_child111);
 		
 		var rect = paper.rect(0, 0, 50, 50);
 		rect.attr({fill:'black'});		
