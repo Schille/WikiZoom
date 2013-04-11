@@ -49,3 +49,8 @@ function testZoomCore_zoomed1(){
 	vertex1 = initialVertex.children[0].children[0];
 	Core.zoomed(vertex1);
 }
+
+function testWikiZoom_integration(){
+	UI = zoomUI();
+	Core = ZoomCore('Mannheim');
+}

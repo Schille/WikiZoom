@@ -23,6 +23,7 @@ var ZoomCore = new Class({
 		} else {
 			console.log('Zooming to vertex: ' + myVertex.id + '(Title: "' + myVertex.title + '" Level:' 
 			+ myVertex.level + ')');
+			CUR_LEVEL += 1;
 			this.iterateChildren(myVertex, this.vertices);
 			//TODO add code here...
 		}
@@ -35,6 +36,7 @@ var ZoomCore = new Class({
 				this.iterateChildren(myVertex, (this.vertices - (myVertex.level - CUR_LEVEL)));
 			}
 		}
+		UI.paint(myVertex)
 	},
 
 	iterateChildren : function(myVertex, f) {

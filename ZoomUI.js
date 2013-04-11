@@ -18,13 +18,13 @@ var zoomUI = new Class({
 			};
 		}
 		
-		window.addEvent('domready', function(){
-  			document.addEvent('mousewheel', function(event){
-  				if(zoomUI.selectedNode != null){
-				    ZoomCore.zoomed(zoomUI.selectedNode);
-			   }
-			});
-		});	
+		//window.addEvent('domready', function(){
+  		//	document.addEvent('mousewheel', function(event){
+  		//		if(zoomUI.selectedNode != null){
+		//		    ZoomCore.zoomed(zoomUI.selectedNode);
+		//	   }
+		//	});
+		//});	
 
 	},
 
@@ -347,7 +347,7 @@ var zoomUI = new Class({
 		textTip.attr('font-size',12);
 		
 		var over = function(event) {
-			zoomUI.selectedNode = myNode;
+			//zoomUI.selectedNode = myNode;
 			set3.animate({
 				transform : "s1.1"
 			}, 2000, "elastic");
@@ -369,10 +369,22 @@ var zoomUI = new Class({
 			});
 			textTip.toFront();
 			textTip.show();
-		};
+			
+			//Event handler for mouswheel
+			mouse = function(){
+					if (event.preventDefault)
+      					event.preventDefault();
+    				event.returnValue = false;
+    				console.log(myNode.title)
+					document.removeEventListener('mousewheel', mouse, false);
+			};
+			console.log("adding event")
+			document.addEventListener('mousewheel', mouse , false);
+			};
 
 		var out = function(event) {
-			zoomUI.selectedNode = null;
+			//zoomUI.selectedNode = null;
+			document.removeEventListener('mousewheel', mouse, false);
 			set3.animate({
 				transform : "s1"
 			}, 2000, "elastic");
@@ -513,3 +525,4 @@ var zoomUI = new Class({
 	
 	
 });
+
