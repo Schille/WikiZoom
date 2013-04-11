@@ -87,7 +87,7 @@ fetch : function (vertex) {
 				var cleanIntro = index.replace(/<ref>[^<]+<\/ref>/gi, '').replace(/\[http[^\]]+]/gi, '').replace(/\[\[[a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+\s?([a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+)?\|/gi, '').replace(/{{[^']+'''/gi, '').replace(/'|{|}/gi, '').replace(/<[^>]+>/gi, '').replace(/\[|\]/gi, '');
 				vertex.intro = cleanIntro;
 				vertex.outlinks = Links;
-				vertex.link = 'http://de.wikipedia.de/wiki/' + vertex.title
+				vertex.link = 'http://de.wikipedia.org/wiki/' + vertex.title
 				//console.info(vertex.intro);
 				//console.info(vertex.outlinks);
 				Core.updated(vertex)
