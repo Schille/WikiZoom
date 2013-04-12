@@ -65,11 +65,15 @@ fetch : function (vertex) {
 				Links = new Array();
 				// go through the introduction String and push every pattern which matches doubleLinkSearch into the array
 				while ( result = doubleLinkSearch.exec(index)) {
-					DoubleLinks.push(result[0]);
+					if(!DoubleLinks.contains(result[0])){
+						DoubleLinks.push(result[0]);
+					}
 				}
 				// put every pattern which matches the singleLinkSearch pattern into the array
 				while ( result = singleLinkSearch.exec(index)) {
-					Links.push(result[0]);
+					if(!Links.contains(result[0])){
+						Links.push(result[0]);
+					}
 				}
 				// go through the DoubleLinks array and split Strings to determine the Link title and the text in the introduction then put them into the Links array
 				for (var k = 0; k < DoubleLinks.length; k++) {
@@ -88,7 +92,7 @@ fetch : function (vertex) {
 				vertex.intro = cleanIntro;
 				vertex.outlinks = Links;
 				vertex.link = 'http://de.wikipedia.org/wiki/' + vertex.title
-				//console.info(vertex.intro);
+				console.info(vertex.intro);
 				//console.info(vertex.outlinks);
 				Core.updated(vertex)
 			}
