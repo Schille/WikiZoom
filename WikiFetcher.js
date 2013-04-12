@@ -92,7 +92,7 @@ fetch : function (vertex) {
 				vertex.intro = cleanIntro;
 				vertex.outlinks = Links;
 				vertex.link = 'http://de.wikipedia.org/wiki/' + vertex.title
-				console.info(vertex.intro);
+				//console.info(vertex.intro);
 				//console.info(vertex.outlinks);
 				Core.updated(vertex)
 			}

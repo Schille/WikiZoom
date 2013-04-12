@@ -3,7 +3,6 @@ var ZoomCore = new Class({
 		console.info('Initialize new ZoomCore with:' + myInitialArticle);
 		CUR_LEVEL = 0;
 		this.fetcher = new WikiFetcher();
-		this.paintStack = new Array();
 		//this.settings = new Settings();
 		this.nextID = 0;
 		this.prefetch = 2;
@@ -38,20 +37,7 @@ var ZoomCore = new Class({
 			}
 		}
 		
-		result = UI.paint(myVertex)
-		if (result == false){
-			console.log('Add vertex to stack: ' + myVertex.title);
-			this.paintStack.push(myVertex);
-		}
-		
-		for (var i = 0; i < this.paintStack.lenght; i++) {
-  			tmp = UI.paint(this.paintStack[i]);
-  			if(tmp == true){
-  				console.log('Remove vertex from stack: ' + this.paintStack[i].title);
-  				delete this.paintStack[i];
-  			}
-		}
-		
+		UI.paint(myVertex);
 	},
 
 	iterateChildren : function(myVertex, f) {
