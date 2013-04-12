@@ -6,7 +6,7 @@ var ZoomCore = new Class({
 		this.paintStack = new Array();
 		//this.settings = new Settings();
 		this.nextID = 0;
-		this.prefetch = 1;
+		this.prefetch = 2;
 		this.vertices = 5;
 		initialVertex = this.createVertex(myInitialArticle, null, 0);
 		this.fetcher.fetch(initialVertex);
