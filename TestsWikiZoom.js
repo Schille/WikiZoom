@@ -52,7 +52,7 @@ function testZoomCore_zoomed1(){
 
 function testWikiZoom_integration(){
 	UI = new ZoomUI();
-	Core = new ZoomCore('Mannheim');
+	Core = new ZoomCore('Erfurt');
 
 }
 
