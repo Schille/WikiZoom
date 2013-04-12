@@ -55,3 +55,10 @@ function testWikiZoom_integration(){
 	Core = new ZoomCore('Mannheim');
 
 }
+
+function testFetch(test){
+	vertex = new Vertex();
+	vertex.title = test;
+	Fetcher = new WikiFetcher();
+	Fetcher.fetch(vertex);
+}
