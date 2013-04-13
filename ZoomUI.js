@@ -1,6 +1,7 @@
 var ZoomUI = new Class({
 	initialize : function() {
 		this.paintStack = new Array();
+		this.createTooltip();
 		paper_width = (window.innerWidth - window.innerWidth / 10);
 		paper_height = (window.innerHeight - window.innerHeight / 10);
 		paper = Raphael(0, 0, paper_width, paper_height);
@@ -28,18 +29,17 @@ var ZoomUI = new Class({
 	getParentY : function(vertex) {
 		return vertex.parent.svg[0].attr("cy");
 	},
-	
+
 	setPaintJob : function(myFlag) {
-	if(this.intervalOn == myFlag)
-		return;	
-	if(myFlag == true) {
-		this.interval = setInterval(this.paintVertices, this.velocity);
-		this.intervalOn = true;
-	}
-	else {
-		clearInterval(this.interval);
-		this.intervalOn = false;
-	}
+		if (this.intervalOn == myFlag)
+			return;
+		if (myFlag == true) {
+			this.interval = setInterval(this.paintVertices, this.velocity);
+			this.intervalOn = true;
+		} else {
+			clearInterval(this.interval);
+			this.intervalOn = false;
+		}
 	},
 
 	createEdge : function(vertexChild) {
@@ -128,16 +128,15 @@ var ZoomUI = new Class({
 	},
 
 	repaintChildren : function(vertex) {
-				
+
 		this.repaintNode(vertex);
 
 		if (vertex.children.length > 0) {
-				for (var i = 0; i < vertex.children.length; i++) {
-					this.repaintChildren(vertex.children[i]);
-				}
+			for (var i = 0; i < vertex.children.length; i++) {
+				this.repaintChildren(vertex.children[i]);
 			}
+		}
 	},
-	
 
 	repaintNode : function(vertex) {
 
@@ -308,7 +307,7 @@ var ZoomUI = new Class({
 				vertex = UI.paintStack[i];
 				UI.paintChildVertex(vertex);
 				UI.paintStack.splice(i, 1);
-				if(UI.paintStack.length == 0) {
+				if (UI.paintStack.length == 0) {
 					UI.setPaintJob(false);
 				}
 				if (Math.random() < 0.8)
@@ -377,6 +376,7 @@ var ZoomUI = new Class({
 		});
 
 		var text1 = paper.text(x, y, myNode.title).toFront();
+
 		text1.attr({
 			"font-size" : 0,
 			"font-family" : "Cabin",
@@ -407,44 +407,47 @@ var ZoomUI = new Class({
 
 		myNode.svg = set3;
 
-		var intro = "Albert Einstein (* 14. März 1879 in Ulm; † 18. April 1955 in Princeton, New Jersey) war ein theoretischer Physiker. Seine Forschungen zur Struktur von Materie, Raum und Zeit sowie dem Wesen der Gravitation veränderten maßgeblich das physikalische Weltbild. Er gilt daher als einer der größten Physiker aller Zeiten.Einsteins Hauptwerk, die Relativitätstheorie, machte ihn weltberühmt. Im Jahr 1905 erschien seine Arbeit mit dem Titel Zur Elektrodynamik bewegter Körper, deren Inhalt heute als spezielle Relativitätstheorie bezeichnet wird. 1915 publizierte Einstein die allgemeine Relativitätstheorie. Auch zur Quantenphysik leistete er wesentliche Beiträge: Für seine Erklärung des photoelektrischen Effekts, die er ebenfalls 1905 publiziert hatte, wurde ihm im November 1922 der Nobelpreis für Physik für 1921 verliehen. Seine theoretischen Arbeiten spielten – im Gegensatz zur verbreiteten Meinung – beim Bau der Atombombe und der Entwicklung der Kernenergie nur eine indirekte Rolle.Albert Einstein gilt als Inbegriff des Forschers und Genies. Er nutzte seine außerordentliche Bekanntheit auch außerhalb der naturwissenschaftlichen Fachwelt bei seinem Einsatz für Völkerverständigung und Frieden. In diesem Zusammenhang verstand er sich selbst als Pazifist, Sozialist, und Zionist.Im Laufe seines Lebens war Einstein Staatsbürger mehrerer Länder: Durch Geburt besaß er die württembergische Staatsbürgerschaft. Von 1896 bis 1901 staatenlos, danach Staatsbürger der Schweiz, war er 1911/12 auch Bürger Österreich-Ungarns. Seit 1914 Mitglied der Akademie der Wissenschaften und Bürger Preußens, war er somit erneut Staatsangehöriger im Deutschen Reich. Mit der Machtergreifung Hitlers gab er 1933 den deutschen Pass endgültig ab. Zum seit 1901 geltenden Schweizer Bürgerrecht trat ab 1940 noch die US-Staatsbürgerschaft.";
-		var lineLength = 80;
-		var maxChars = 500;
-		var boxWidth = 500;
-		var boxHeight = 17 * (maxChars / lineLength + 1);
+		//var intro = "Albert Einstein (* 14. März 1879 in Ulm; † 18. April 1955 in Princeton, New Jersey) war ein theoretischer Physiker. Seine Forschungen zur Struktur von Materie, Raum und Zeit sowie dem Wesen der Gravitation veränderten maßgeblich das physikalische Weltbild. Er gilt daher als einer der größten Physiker aller Zeiten.Einsteins Hauptwerk, die Relativitätstheorie, machte ihn weltberühmt. Im Jahr 1905 erschien seine Arbeit mit dem Titel Zur Elektrodynamik bewegter Körper, deren Inhalt heute als spezielle Relativitätstheorie bezeichnet wird. 1915 publizierte Einstein die allgemeine Relativitätstheorie. Auch zur Quantenphysik leistete er wesentliche Beiträge: Für seine Erklärung des photoelektrischen Effekts, die er ebenfalls 1905 publiziert hatte, wurde ihm im November 1922 der Nobelpreis für Physik für 1921 verliehen. Seine theoretischen Arbeiten spielten – im Gegensatz zur verbreiteten Meinung – beim Bau der Atombombe und der Entwicklung der Kernenergie nur eine indirekte Rolle.Albert Einstein gilt als Inbegriff des Forschers und Genies. Er nutzte seine außerordentliche Bekanntheit auch außerhalb der naturwissenschaftlichen Fachwelt bei seinem Einsatz für Völkerverständigung und Frieden. In diesem Zusammenhang verstand er sich selbst als Pazifist, Sozialist, und Zionist.Im Laufe seines Lebens war Einstein Staatsbürger mehrerer Länder: Durch Geburt besaß er die württembergische Staatsbürgerschaft. Von 1896 bis 1901 staatenlos, danach Staatsbürger der Schweiz, war er 1911/12 auch Bürger Österreich-Ungarns. Seit 1914 Mitglied der Akademie der Wissenschaften und Bürger Preußens, war er somit erneut Staatsangehöriger im Deutschen Reich. Mit der Machtergreifung Hitlers gab er 1933 den deutschen Pass endgültig ab. Zum seit 1901 geltenden Schweizer Bürgerrecht trat ab 1940 noch die US-Staatsbürgerschaft.";
+		//var lineLength = 80;
+		//var maxChars = 500;
+		//var boxWidth = 500;
+		//var boxHeight = 17 * (maxChars / lineLength + 1);
 
-		var toolTip = paper.rect(0, 0, boxWidth, boxHeight, 5).hide();
-		toolTip.attr({
-			fill : 'white'
-		});
+		//var toolTip = paper.rect(0, 0, boxWidth, boxHeight, 5).hide();
+		//toolTip.attr({
+		//	fill : 'white'
+		//});
 
-		var textTip = paper.text(0, 0, myNode.intro).hide();
-		textTip.attr('text-anchor', 'start');
-		textTip.attr('font-size', 12);
+		//var textTip = paper.text(0, 0, myNode.intro).hide();
+		//textTip.attr('text-anchor', 'start');
+		//textTip.attr('font-size', 12);
 
 		var over = function(event) {
 			//zoomUI.selectedNode = myNode;
+
+			UI.showTooltip(myNode.title, myNode.intro);
 			set3.animate({
 				transform : "s1.1"
 			}, 2000, "elastic");
-			var xPos = set3[0].attr('cx') + set3[0].attr('r') - 20 * level_fac;
-			var yPos = set3[0].attr('cy') + set3[0].attr('r') - 20 * level_fac;
-			if (xPos > paper_width / 2)
-				xPos = set3[0].attr('cx') - set3[0].attr('r') + 20 * level_fac - boxWidth;
-			if (yPos > paper_height / 2)
-				yPos = set3[0].attr('cy') - set3[0].attr('r') + 20 * level_fac - boxHeight;
-			toolTip.attr({
-				x : xPos,
-				y : yPos
-			});
-			toolTip.toFront();
-			toolTip.show();
-			textTip.attr({
-				x : xPos,
-				y : yPos
-			});
-			textTip.toFront();
-			textTip.show();
+
+			//var xPos = set3[0].attr('cx') + set3[0].attr('r') - 20 * level_fac;
+			//var yPos = set3[0].attr('cy') + set3[0].attr('r') - 20 * level_fac;
+			//if (xPos > paper_width / 2)
+			//	xPos = set3[0].attr('cx') - set3[0].attr('r') + 20 * level_fac - boxWidth;
+			//if (yPos > paper_height / 2)
+			//	yPos = set3[0].attr('cy') - set3[0].attr('r') + 20 * level_fac - boxHeight;
+			//toolTip.attr({
+			//	x : xPos,
+			//	y : yPos
+			//});
+			//toolTip.toFront();
+			//toolTip.show();
+			//textTip.attr({
+			//	x : xPos,
+			//	y : yPos
+			//});
+			//textTip.toFront();
+			//textTip.show();
 
 			//Event handler for mouswheel
 			mouse = function() {
@@ -460,12 +463,14 @@ var ZoomUI = new Class({
 
 		var out = function(event) {
 			//zoomUI.selectedNode = null;
+			UI.hideTooltip();
 			document.removeEventListener('mousewheel', mouse, false);
 			set3.animate({
 				transform : "s1"
 			}, 2000, "elastic");
-			toolTip.hide();
-			textTip.hide();
+			Tips4 = null;
+			//toolTip.hide();
+			//textTip.hide();
 		};
 
 		set3.mouseover(over);
@@ -491,5 +496,75 @@ var ZoomUI = new Class({
 		}
 		intro = intro.slice(0, lastSpacePos) + '...';
 		return intro;
+	},
+	
+	createTooltip : function(){
+		var content = {
+			'font-family' : 'Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif',
+			'font-size' : '12px',
+			'margin' : '0px 20px',
+			'padding' : '10px',
+			'background' : '#DFE1F0',
+
+			'-webkit-radius' : '3px',
+			'-moz-radius' : '3px',
+			'border-radius' : '3px',
+		};
+		var heading = {
+
+			'font-family' : 'Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif',
+			'font-size' : '15px',
+			'margin' : '0px 20px 10px',
+			'padding' : '5px',
+			'background' : '#DFE1F0',
+
+			'-webkit-radius' : '3px',
+			'-moz-radius' : '3px',
+			'border-radius' : '3px',
+		};
+		var tooltip = {
+			'position' : 'absolute',
+			'display' : 'none',
+			'padding' : '3px',
+			'z-index' : '1000',
+
+			'max-width' : '600px',
+			'-webkit-radius' : '3px',
+			'-moz-radius' : '3px',
+		}
+
+		var tip = new Element('div', {
+			id : 'tip',
+		}).setStyles(tooltip);
+		tip.adopt(new Element('div', {
+			id : 'tip-head',
+		}).setStyles(heading));
+		tip.adopt(new Element('div', {
+			id : 'tip-tail',
+		}).setStyles(content));
+		$(document.body).adopt(tip)
+	},
+
+	hideTooltip : function() {
+		var tip = document.id('tip');
+		tip.hide();
+	},
+
+	showTooltip : function(myHeading, myContent) {
+		var tip = document.id('tip');
+		tip.setStyle("left", event.clientX + 20).setStyle("top", event.clientY + 20);
+		tip.show();
+		this.setTooltipHeading(myHeading);
+		this.setTooltipContent(myContent);
+	},
+
+	setTooltipHeading : function(myHeading) {
+		var heading = document.id('tip-head');
+		heading.set('text', myHeading);
+	},
+
+	setTooltipContent : function(myContent) {
+		var content = document.id('tip-tail');
+		content.set('text', myContent);
 	},
 });
