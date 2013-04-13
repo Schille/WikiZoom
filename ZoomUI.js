@@ -539,7 +539,7 @@ var ZoomUI = new Class({
 			'padding' : '3px',
 			'z-index' : '1000',
 
-			'max-width' : '600px',
+			'max-width' : '400px',
 			'-webkit-radius' : '3px',
 			'-moz-radius' : '3px',
 		}
