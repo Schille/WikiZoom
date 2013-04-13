@@ -436,7 +436,7 @@ var ZoomUI = new Class({
 		var over = function(event) {
 			//zoomUI.selectedNode = myNode;
 
-			UI.showTooltip(myNode.title, myNode.intro);
+			UI.showTooltip(myNode.title, myNode.intro, event);
 			set3.animate({
 				transform : "s1.1"
 			}, 2000, "elastic");
@@ -561,7 +561,7 @@ var ZoomUI = new Class({
 		tip.hide();
 	},
 
-	showTooltip : function(myHeading, myContent) {
+	showTooltip : function(myHeading, myContent, event) {
 		var tip = document.id('tip');
 		tip.setStyle("left", event.clientX + 20).setStyle("top", event.clientY + 20);
 		tip.show();
