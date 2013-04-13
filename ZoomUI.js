@@ -9,6 +9,7 @@ var ZoomUI = new Class({
 		this.velocity = 200;
 		this.IntervalOn = null;
 		this.Interval = null;
+
 		paper.customAttributes.grad = function(colorAngle, startColor, endColor) {
 			return {
 				fill : colorAngle + '-' + startColor + '-' + endColor,
@@ -19,6 +20,12 @@ var ZoomUI = new Class({
 				stroke : 'none',
 			};
 		}
+
+		window.addEvent('resize', function() {
+			paper.setSize((window.innerWidth - window.innerWidth / 10), (window.innerHeight - window.innerHeight / 10));
+			moveNode()
+		});
+
 	},
 
 	getParentX : function(vertex) {
@@ -28,18 +35,17 @@ var ZoomUI = new Class({
 	getParentY : function(vertex) {
 		return vertex.parent.svg[0].attr("cy");
 	},
-	
+
 	setPaintJob : function(myFlag) {
-	if(this.intervalOn == myFlag)
-		return;	
-	if(myFlag == true) {
-		this.Interval = setInterval(this.paintVertices, this.velocity);
-		this.IntervalOn = true;
-	}
-	else {
-		clearInterval(this.Interval);
-		this.IntervalOn = false;
-	}
+		if (this.intervalOn == myFlag)
+			return;
+		if (myFlag == true) {
+			this.Interval = setInterval(this.paintVertices, this.velocity);
+			this.IntervalOn = true;
+		} else {
+			clearInterval(this.Interval);
+			this.IntervalOn = false;
+		}
 	},
 
 	createEdge : function(vertexChild) {
@@ -128,16 +134,15 @@ var ZoomUI = new Class({
 	},
 
 	repaintChildren : function(vertex) {
-				
+
 		this.repaintNode(vertex);
 
 		if (vertex.children.length > 0) {
-				for (var i = 0; i < vertex.children.length; i++) {
-					this.repaintChildren(vertex.children[i]);
-				}
+			for (var i = 0; i < vertex.children.length; i++) {
+				this.repaintChildren(vertex.children[i]);
 			}
+		}
 	},
-	
 
 	repaintNode : function(vertex) {
 
@@ -308,7 +313,7 @@ var ZoomUI = new Class({
 				vertex = UI.paintStack[i];
 				UI.paintChildVertex(vertex);
 				UI.paintStack.splice(i, 1);
-				if(UI.paintStack.length == 0) {
+				if (UI.paintStack.length == 0) {
 					UI.setPaintJob(false);
 				}
 				if (Math.random() < 0.8)
