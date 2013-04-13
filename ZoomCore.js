@@ -47,10 +47,9 @@ var ZoomCore = new Class({
 		else{
 			UI.paint(myVertex);	
 		}
-		if(this.requestsPending > 0)
+		if(this.requestsPending > 0){
 			UI.setPaintJob(true);
-		else
-			UI.setPaintJob(false);
+		}
 		
 	},
 
