@@ -566,6 +566,9 @@ var ZoomUI = new Class({
 		tip.setStyle("left", event.clientX + 20).setStyle("top", event.clientY + 20);
 		tip.show();
 		this.setTooltipHeading(myHeading);
+		if(myContent.length > 300){
+			myContent = myContent.substring(0,300) + " ...";
+		}
 		this.setTooltipContent(myContent);
 	},
 
