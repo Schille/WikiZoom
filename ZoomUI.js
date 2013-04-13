@@ -32,12 +32,14 @@ var ZoomUI = new Class({
 	setPaintJob : function(myFlag) {
 	if(this.intervalOn == myFlag)
 		return;	
-	if(myFlag == true)
+	if(myFlag == true) {
 		this.Interval = setInterval(this.paintVertices, this.velocity);
 		this.IntervalOn = true;
-	else
+	}
+	else {
 		clearInterval(this.Interval);
 		this.IntervalOn = false;
+	}
 	},
 
 	createEdge : function(vertexChild) {
@@ -306,6 +308,9 @@ var ZoomUI = new Class({
 				vertex = UI.paintStack[i];
 				UI.paintChildVertex(vertex);
 				UI.paintStack.splice(i, 1);
+				if(UI.paintStack.length == 0) {
+					UI.setPaintJob(false);
+				}
 				if (Math.random() < 0.8)
 					break;
 			}
