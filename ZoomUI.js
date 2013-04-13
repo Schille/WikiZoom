@@ -420,17 +420,18 @@ var ZoomUI = new Class({
 			"font-size" : fontsize
 		}, 2000, "elastic");
 
+		//Compress all vertex components to one set
 		myNode.svg = set3;
 
+		//Event handler for mouse over
 		var over = function(event) {
-			//zoomUI.selectedNode = myNode;
 
 			UI.showTooltip(myNode.title, myNode.intro, event);
 			set3.animate({
 				transform : "s1.1"
 			}, 2000, "elastic");
 
-			//Event handler for mouswheel
+			//Event handler for mousewheel
 			mouse = function(e) {
 				var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
 				if (delta > 0) {
@@ -440,6 +441,7 @@ var ZoomUI = new Class({
 				else {
 					console.log('zooming out');
 				}
+				//Remove the event listener, since we want to fire this only once
 				if (document.addEventListener) {
 					document.removeEventListener('mousewheel', mouse, false);
 					document.removeEventListener("DOMMouseScroll", mouse, false);
@@ -447,39 +449,49 @@ var ZoomUI = new Class({
 					document.removeEvent("onmousewheel", mouse);
 				}
 			};
+			//Event handler - end
 
+			//Add event handler for mousewheel
 			if (document.addEventListener) {
+				//Chrome, Firefox, IE9
 				document.addEventListener('mousewheel', mouse, false);
 				document.addEventListener("DOMMouseScroll", mouse, false);
 			} else {
+				//IE 6,7,8
 				document.attachEvent("onmousewheel", mouse);
 			}
 
 		};
+		//Event handler for mouse over - end
 
+		//Event handler for mouse out
 		var out = function(event) {
-			//zoomUI.selectedNode = null;
 			UI.hideTooltip();
+			//Remove event listener, since there is no selected vertex yet
 			if (document.addEventListener) {
 				document.removeEventListener('mousewheel', mouse, false);
 				document.removeEventListener("DOMMouseScroll", mouse, false);
 			} else {
 				document.removeEvent("onmousewheel", mouse);
 			}
+			//Shrink the vertex back
 			set3.animate({
 				transform : "s1"
 			}, 2000, "elastic");
 			Tips4 = null;
-			//toolTip.hide();
-			//textTip.hide();
 		};
+		//Event handler for mouse out - end
 
-		set3.mouseover(over);
-		set3.mouseout(out);
+		
 
+		//Event hanbler for click on vertex
 		var click = function(event) {
 			window.open(myNode.link);
 		};
+		
+		//Set events to the above defined event handler
+		set3.mouseover(over);
+		set3.mouseout(out);
 		set3.click(click);
 
 		return myNode;
