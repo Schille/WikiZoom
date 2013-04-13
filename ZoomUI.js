@@ -7,6 +7,7 @@ var ZoomUI = new Class({
 		paths = paper.set();
 		selectedNode = null;
 		this.velocity = 200;
+		this.IntervalOn = null;
 		this.Interval = null;
 		paper.customAttributes.grad = function(colorAngle, startColor, endColor) {
 			return {
@@ -29,10 +30,14 @@ var ZoomUI = new Class({
 	},
 	
 	setPaintJob : function(myFlag) {
+	if(this.intervalOn == myFlag)
+		return;	
 	if(myFlag == true)
 		this.Interval = setInterval(this.paintVertices, this.velocity);
+		this.IntervalOn = true;
 	else
 		clearInterval(this.Interval);
+		this.IntervalOn = false;
 	},
 
 	createEdge : function(vertexChild) {
@@ -42,6 +47,8 @@ var ZoomUI = new Class({
 		var xC = vertexChild.svg[0].attr("cx");
 		var yC = vertexChild.svg[0].attr("cy");
 		var startColor = vertexChild.parent.svg[0].attr("fill");
+		var endColor = vertexChild.svg[0].attr("fill");
+		var colorAngle = Math.ceil(Raphael.angle(xP, yP, xC, yC));
 
 		if (colorAngle > 90 && colorAngle < 270)
 			if (colorAngle > 180)
