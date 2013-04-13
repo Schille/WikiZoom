@@ -122,7 +122,10 @@ var ZoomUI = new Class({
 		var child_count = vertex.children.length;
 
 		var angle_steps = Math.PI * 2 / child_count;
-		var angle = angle_steps;
+		if ((vertex.level - CUR_LEVEL+1)%2==0)
+			{var angle = angle_steps;}
+			else {var angle = Math.ceil(angle_steps/2) ;}
+			
 
 		if (child_count >= 1) {
 			console.log("I'm on");
@@ -283,7 +286,10 @@ var ZoomUI = new Class({
 
 		if (children.length > 0) {
 			var angle_steps = Math.PI * 2 / (children.length + 1);
-			var angle = angle_steps;
+		if ((myNode.level - CUR_LEVEL+1)%2==0)
+			{var angle = angle_steps;}
+			else {var angle = Math.ceil(angle_steps/2) ;}
+			
 			for (var j = 0; j < children.length; j++) {
 				this.moveNode(children[j], Math.ceil((200 * level_fac * Math.cos(angle)) + mx), Math.ceil((200 * level_fac * Math.sin(angle)) + my));
 				angle = angle_steps + angle;
@@ -347,7 +353,11 @@ var ZoomUI = new Class({
 
 			//calculate the new angles for all sibling vertices
 			var angle_steps = Math.PI * 2 / (siblings.length + 1);
-			angle = angle_steps;
+			
+			if ((myVertex.level - CUR_LEVEL+1)%2==0)
+			{angle = angle_steps;}
+			else {angle = Math.ceil(angle_steps/2) ;}
+			
 
 			for (var i = 0; i < siblings.length; i++) {
 				this.moveNode(siblings[i], Math.ceil((300 * level_fac * Math.cos(angle) + x)), Math.ceil((300 * level_fac * Math.sin(angle) + y)));
