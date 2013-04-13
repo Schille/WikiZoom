@@ -5,7 +5,7 @@ var ZoomCore = new Class({
 		this.fetcher = new WikiFetcher();
 		//this.settings = new Settings();
 		this.nextID = 0;
-		this.prefetch = 2;
+		this.prefetch = 3;
 		this.vertices = 5;
 		initialVertex = this.createVertex(myInitialArticle, null, 0);
 		this.fetcher.fetch(initialVertex);

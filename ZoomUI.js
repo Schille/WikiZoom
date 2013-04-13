@@ -7,7 +7,7 @@ var ZoomUI = new Class({
 		paths = paper.set();
 		scope_zoomUI = this;
 		selectedNode = null;
-		this.velocity = 500;
+		this.velocity = 200;
 		paper.customAttributes.grad = function(colorAngle, startColor, endColor) {
 			return {
 				fill : colorAngle + '-' + startColor + '-' + endColor,
@@ -364,7 +364,7 @@ var ZoomUI = new Class({
 			vertex = UI.paintStack[i];
 			UI.paintChildVertex(vertex);
 			UI.paintStack.splice(i, 1);	
-			if(Math.random() > 0.5)
+			if(Math.random() < 0.8)
 				break;
 			}
 		}
