@@ -5,6 +5,7 @@ var ZoomUI = new Class({
 		paper_width = (window.innerWidth - window.innerWidth / 10);
 		paper_height = (window.innerHeight - window.innerHeight / 10);
 		paper = Raphael(0, 0, paper_width, paper_height);
+		paper.renderfix();
 		paths = paper.set();
 		selectedNode = null;
 		this.velocity = 200;

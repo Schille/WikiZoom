@@ -61,8 +61,10 @@ var ZoomCore = new Class({
 				}
 			} else {
 				for (var i = 0; i < (f - myVertex.children.length); i++) {
-					if (myVertex.outlinks[i] == undefined)
+					if (myVertex.outlinks[i] == undefined){
+						console.error('Outlink was undefined.');
 						continue;
+					}
 					var vertex = this.createVertex(myVertex.outlinks[i], myVertex, (myVertex.level + 1));
 					myVertex.children.push(vertex);
 					console.log('Fetching new vertex:' + vertex.title + ' ID:' + vertex.id + ' Level:' + vertex.level);
@@ -74,8 +76,9 @@ var ZoomCore = new Class({
 			if (myVertex.outlinks == null)
 				return;
 			for (var i = 0; i < f; i++) {
-				if(myVertex.outlinks[i] == undefined)
+				if(myVertex.outlinks[i] == undefined){
 					continue;
+				}
 				var vertex = this.createVertex(myVertex.outlinks[i], myVertex, (myVertex.level + 1));
 				myVertex.children.push(vertex);
 				console.log('Fetching new vertex:' + vertex.title + ' ID:' + vertex.id + ' Level:' + vertex.level);

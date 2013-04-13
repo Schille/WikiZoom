@@ -49,7 +49,7 @@ var WikiFetcher = new Class({
 
 					// go back to the first \n and cut off the text in front
 					while (true) {
-						if (k > 1000) {
+						if (k > 100) {
 							var index = intro;
 							break;
 						}
