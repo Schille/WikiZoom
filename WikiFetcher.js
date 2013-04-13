@@ -38,7 +38,7 @@ var WikiFetcher = new Class({
 					} else {
 						var intro = JSONdata.query.pages[pageid].revisions[0]["*"];
 					}
-					
+					// get rid of infobox containing the title
 					var count = intro.match(/'''/g);
 					if (count.length > 2) {
 						intro = intro.replace(/{{.+'''+.+}}/, '');
@@ -49,17 +49,21 @@ var WikiFetcher = new Class({
 
 					// go back to the first \n and cut off the text in front
 					while (true) {
-						if (k > 1000)
+						if (k > 1000) {
+							var index = intro;
 							break;
+						}
 						if (intro.substring(n - k, n - k + 1) == '\n') {
 							var index = intro.substring(n - k + 1, intro.length);
 							break;
+						}
+						if (n - k == 0) {
+							var index = intro;
 						}
 						k++;
 
 					}
 					index = scope.decodeHtml(index);
-
 					// create RegEx patterns for the Wikipedia Link pattern [[Name of Link|text in introduction]]
 					var doubleLinkSearch = /\[\[[a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+\s?([a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+)?\|[a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+\s?([a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+)?\]\]/gi;
 					// pattern for [[Link]], when link = text in introduction
@@ -93,7 +97,8 @@ var WikiFetcher = new Class({
 					}
 					// get rid of every unwanted pattern in the introduction this includes:
 					// href Links, Wikipedia Links, parenthesis patterns and some other formatting
-					var cleanIntro = index.replace(/<ref>[^<]+<\/ref>/gi, '').replace(/\[http[^\]]+]/gi, '').replace(/\[\[[a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+\s?([a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+)?\|/gi, '').replace(/{{[^']+'''/gi, '').replace(/'|{|}/gi, '').replace(/<[^>]+>/gi, '').replace(/\[|\]/gi, '');
+					var cleanIntro = index.replace(/<ref>[^<]+<\/ref>/gi, '').replace(/\[http[^\]]+]/gi, '').replace(/\[\[[a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+\s?([a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+)?\|/gi, '')
+						.replace(/{{[^']+'''/gi, '').replace(/'|{|}/gi, '').replace(/<[^>]+>/gi, '').replace(/\[|\]/gi, '').replace(/\|\sclass="wikitable"(\n|.)+\|/g,'');
 					vertex.intro = cleanIntro;
 					vertex.outlinks = Links;
 					vertex.link = 'http://de.wikipedia.org/wiki/' + vertex.title
