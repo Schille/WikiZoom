@@ -7,7 +7,6 @@ var ZoomUI = new Class({
 		paths = paper.set();
 		selectedNode = null;
 		this.velocity = 200;
-
 		this.intervalOn = null;
 		this.interval = null;
 		paper.customAttributes.grad = function(colorAngle, startColor, endColor) {
@@ -20,12 +19,6 @@ var ZoomUI = new Class({
 				stroke : 'none',
 			};
 		}
-
-		window.addEvent('resize', function() {
-			paper.setSize((window.innerWidth - window.innerWidth / 10), (window.innerHeight - window.innerHeight / 10));
-			moveNode()
-		});
-
 	},
 
 	getParentX : function(vertex) {
@@ -35,9 +28,8 @@ var ZoomUI = new Class({
 	getParentY : function(vertex) {
 		return vertex.parent.svg[0].attr("cy");
 	},
-
+	
 	setPaintJob : function(myFlag) {
-
 	if(this.intervalOn == myFlag)
 		return;	
 	if(myFlag == true) {
@@ -131,7 +123,7 @@ var ZoomUI = new Class({
 			console.log("I'm on");
 			for (var i = 0; i < child_count; i++) {
 				console.log("I'm in ya");
-				this.moveNode(vertex.children[i], Math.ceil((200 * level_fac * Math.cos(angle) + vertex.svg[0].attr('cx'))), Math.ceil((200 * level_fac * Math.sin(angle) + vertex.svg[0].attr('cy'))));
+				this.moveNode(vertex.children[i], Math.ceil((window.innerHeight/4 * level_fac * Math.cos(angle) + vertex.svg[0].attr('cx'))), Math.ceil((window.innerHeight/4 * level_fac * Math.sin(angle) + vertex.svg[0].attr('cy'))));
 				angle = angle_steps + angle;
 				this.repaintChildren(vertex.children[i]);
 			}
@@ -139,20 +131,21 @@ var ZoomUI = new Class({
 	},
 
 	repaintChildren : function(vertex) {
-
+				
 		this.repaintNode(vertex);
 
 		if (vertex.children.length > 0) {
-			for (var i = 0; i < vertex.children.length; i++) {
-				this.repaintChildren(vertex.children[i]);
+				for (var i = 0; i < vertex.children.length; i++) {
+					this.repaintChildren(vertex.children[i]);
+				}
 			}
-		}
 	},
+	
 
 	repaintNode : function(vertex) {
 
 		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL)));
-		var size = 50 * level_fac;
+		var size = window.innerHeight/16 * level_fac;
 		var fontsize = 20 * level_fac;
 		var temp_scope = this;
 
@@ -291,7 +284,7 @@ var ZoomUI = new Class({
 			else {var angle = Math.ceil(angle_steps/2) ;}
 			
 			for (var j = 0; j < children.length; j++) {
-				this.moveNode(children[j], Math.ceil((200 * level_fac * Math.cos(angle)) + mx), Math.ceil((200 * level_fac * Math.sin(angle)) + my));
+				this.moveNode(children[j], Math.ceil((window.innerHeight/4 * level_fac * Math.cos(angle)) + mx), Math.ceil((window.innerHeight/4 * level_fac * Math.sin(angle)) + my));
 				angle = angle_steps + angle;
 			}
 		}
@@ -321,7 +314,7 @@ var ZoomUI = new Class({
 				vertex = UI.paintStack[i];
 				UI.paintChildVertex(vertex);
 				UI.paintStack.splice(i, 1);
-				if (UI.paintStack.length == 0) {
+				if(UI.paintStack.length == 0) {
 					UI.setPaintJob(false);
 				}
 				if (Math.random() < 0.8)
@@ -360,20 +353,20 @@ var ZoomUI = new Class({
 			
 
 			for (var i = 0; i < siblings.length; i++) {
-				this.moveNode(siblings[i], Math.ceil((300 * level_fac * Math.cos(angle) + x)), Math.ceil((300 * level_fac * Math.sin(angle) + y)));
+				this.moveNode(siblings[i], Math.ceil((window.innerHeight/3 * level_fac * Math.cos(angle) + x)), Math.ceil((window.innerHeight/3 * level_fac * Math.sin(angle) + y)));
 				angle = angle_steps + angle;
 			}
 
 		}
 
 		//paint actual vertex and create its edge
-		this.paintNode(myVertex, Math.ceil((300 * level_fac * Math.cos(angle) + x)), Math.ceil((300 * level_fac * Math.sin(angle) + y)));
+		this.paintNode(myVertex, Math.ceil((window.innerHeight/3 * level_fac * Math.cos(angle) + x)), Math.ceil((window.innerHeight/3 * level_fac * Math.sin(angle) + y)));
 		this.createEdge(myVertex);
 	},
 
 	paintNode : function(myNode, x, y) {
 		var level_fac = (Math.pow(0.7, (myNode.level - CUR_LEVEL)));
-		var size = 50 * level_fac;
+		var size = window.innerHeight/16 * level_fac;
 		var fontsize = 20 * level_fac;
 
 		paper.setStart();
