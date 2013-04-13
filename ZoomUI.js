@@ -5,9 +5,9 @@ var ZoomUI = new Class({
 		paper_height = (window.innerHeight - window.innerHeight / 10);
 		paper = Raphael(0, 0, paper_width, paper_height);
 		paths = paper.set();
-		scope_zoomUI = this;
 		selectedNode = null;
 		this.velocity = 200;
+		this.Interval = null;
 		paper.customAttributes.grad = function(colorAngle, startColor, endColor) {
 			return {
 				fill : colorAngle + '-' + startColor + '-' + endColor,
@@ -18,35 +18,30 @@ var ZoomUI = new Class({
 				stroke : 'none',
 			};
 		}
-		//window.addEvent('domready', function(){
-		//	document.addEvent('mousewheel', function(event){
-		//		if(zoomUI.selectedNode != null){
-		//		    ZoomCore.zoomed(zoomUI.selectedNode);
-		//	   }
-		//	});
-		//});
-		setInterval(this.paintVertices, this.velocity);
 	},
 
-	calcIPoint : function(myNode1, myNode2) {
-		if (Math.sqrt((myNode2.svg[0].attr("cx") - (myNode1.svg[0].attr("cx")) ^ 2 + ((myNode2.svg[0].attr("cy") - (myNode1.svg[0].attr("cy")) ^ 2) >= ((myNode2.svg[0].attr("r") + (myNode1.svg[0].attr("r")))))))) {
+	getParentX : function(vertex) {
+		return vertex.parent.svg[0].attr("cx");
+	},
 
-			return true;
-		} else {
-			return true;
-		}
-
+	getParentY : function(vertex) {
+		return vertex.parent.svg[0].attr("cy");
+	},
+	
+	setPaintJob : function(myFlag) {
+	if(myFlag == true)
+		this.Interval = setInterval(this.paintVertices, this.velocity);
+	else
+		clearInterval(this.Interval);
 	},
 
 	createEdge : function(vertexChild) {
 
-		var xP = vertexChild.parent.svg[0].attr("cx");
-		var yP = vertexChild.parent.svg[0].attr("cy");
+		var xP = this.getParentX(vertexChild);
+		var yP = this.getParentY(vertexChild);
 		var xC = vertexChild.svg[0].attr("cx");
 		var yC = vertexChild.svg[0].attr("cy");
 		var startColor = vertexChild.parent.svg[0].attr("fill");
-		var endColor = vertexChild.svg[0].attr("fill");
-		var colorAngle = Math.ceil(Raphael.angle(xP, yP, xC, yC));
 
 		if (colorAngle > 90 && colorAngle < 270)
 			if (colorAngle > 180)
@@ -60,59 +55,25 @@ var ZoomUI = new Class({
 
 		if (xP <= xC && yP < yC) {
 			var path = paper.path("M" + (xP - 10) + "," + yP + " L" + xC + "," + yC + " L" + xP + "," + (yP - 10));
-			path.attr({
-				'fill' : 'white',
-				stroke : 'none',
-			});
-			path.animate({
-				'fill' : startColor,
-				stroke1 : 'none',
-			}, 2000, ">").toBack();
-			paths.push(path);
-			vertexChild.path = path;
 		}
 		if (xP >= xC && yP <= yC) {
 			var path = paper.path("M" + xP + "," + (yP - 10) + " L" + xC + "," + yC + " L" + (xP + 10) + "," + yP);
-			path.attr({
-				'fill' : 'white',
-				stroke : 'none',
-			});
-			path.animate({
-				'fill' : startColor,
-				stroke1 : 'none',
-			}, 2000, ">").toBack();
-			paths.push(path);
-			vertexChild.path = path;
-
 		}
 		if (xP >= xC && yP > yC) {
 			var path = paper.path("M" + xP + "," + (yP + 10) + " L" + xC + "," + yC + " L" + (xP + 10) + "," + yP);
-			path.attr({
-				'fill' : 'white',
-				stroke : 'none',
-			});
-			path.animate({
-				'fill' : startColor,
-				stroke1 : 'none',
-			}, 2000, ">").toBack();
-			paths.push(path);
-			vertexChild.path = path;
-
 		}
 		if (xP <= xC && yP >= yC) {
 			var path = paper.path("M" + (xP - 10) + "," + yP + " L" + xC + "," + yC + " L" + xP + "," + (yP + 10));
-			path.attr({
-				'fill' : 'white',
-				stroke : 'none',
-			});
-			path.animate({
-				'fill' : startColor,
-				stroke1 : 'none',
-			}, 2000, ">").toBack();
-			paths.push(path);
-			vertexChild.path = path;
 		}
-
+		path.attr({
+			'fill' : 'white',
+			stroke : 'none',
+		});
+		path.animate({
+			'fill' : startColor,
+			stroke1 : 'none',
+		}, 2000, ">").toBack();
+		vertexChild.path = path;
 		return path;
 
 	},
@@ -158,42 +119,16 @@ var ZoomUI = new Class({
 	},
 
 	repaintChildren : function(vertex) {
+				
+		this.repaintNode(vertex);
 
-		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL)));
-		var size = 50 * level_fac;
-		var fontsize = 20 * level_fac;
-		var temp_scope = this;
-
-		vertex.svg.forEach(function(element) {
-			if (element.attr('text') == undefined) {
-				if (element.attr("stroke-dasharray") == "- ") {
-					element.animate({
-						"stroke" : temp_scope.shadeColor("#AAAAAA", (1 - level_fac) * 50),
-						"r" : size - 4,
-					}, 500, "linear");
-				} else {
-					element.animate({
-						"fill" : temp_scope.shadeColor("#CCCCCC", (1 - level_fac) * 35),
-						"stroke" : temp_scope.shadeColor("#AAAAAA", (1 - level_fac) * 50),
-						"r" : size
-					}, 500, "linear");
-					element.attr('fill', temp_scope.shadeColor("#CCCCCC", (1 - level_fac) * 35));
-					console.log()
-				}
-			} else {
-				element.animate({
-					"fill" : temp_scope.shadeColor("#555555", (1 - level_fac) * 80),
-					"font-size" : fontsize
-				}, 500, "linear");
-
-			}
-			if (vertex.children.length > 0) {
+		if (vertex.children.length > 0) {
 				for (var i = 0; i < vertex.children.length; i++) {
-					temp_scope.repaintChildren(vertex.children[i]);
+					this.repaintChildren(vertex.children[i]);
 				}
 			}
-		});
 	},
+	
 
 	repaintNode : function(vertex) {
 
@@ -264,8 +199,8 @@ var ZoomUI = new Class({
 	moveNode : function(myNode, mx, my) {
 		var gnupsi1 = myNode.svg;
 		var nodePath = myNode.path;
-		var xP = myNode.parent.svg[0].attr("cx");
-		var yP = myNode.parent.svg[0].attr("cy");
+		var xP = this.getParentX(myNode);
+		var yP = this.getParentY(myNode);
 
 		var startColor = myNode.parent.svg[0].attr("fill");
 		console.log(myNode.title);
@@ -360,12 +295,12 @@ var ZoomUI = new Class({
 			if (UI.paintStack[i].parent.svg == null) {
 				console.error('Parent was not painted yet, ' + UI.paintStack[i].parent.title);
 			} else {
-				
-			vertex = UI.paintStack[i];
-			UI.paintChildVertex(vertex);
-			UI.paintStack.splice(i, 1);	
-			if(Math.random() < 0.8)
-				break;
+
+				vertex = UI.paintStack[i];
+				UI.paintChildVertex(vertex);
+				UI.paintStack.splice(i, 1);
+				if (Math.random() < 0.8)
+					break;
 			}
 		}
 
@@ -373,8 +308,8 @@ var ZoomUI = new Class({
 
 	paintChildVertex : function(myVertex) {
 		var parent = myVertex.parent;
-		var x = parent.svg[0].attr('cx');
-		var y = parent.svg[0].attr('cy');
+		var x = this.getParentX(myVertex);
+		var y = this.getParentY(myVertex);
 		console.info('Painting ' + myVertex.title + 'to x:' + x + ' y:' + y);
 		var level_fac = (Math.pow(0.7, (myVertex.level - CUR_LEVEL)));
 
@@ -386,7 +321,7 @@ var ZoomUI = new Class({
 		}
 
 		console.info(myVertex.title + ' : ' + siblings.length);
-		
+
 		var angle = 0;
 		//eventually move siblings
 		if (siblings.length > 0) {
@@ -544,123 +479,5 @@ var ZoomUI = new Class({
 		}
 		intro = intro.slice(0, lastSpacePos) + '...';
 		return intro;
-	},
-
-	test : function() {
-
-		var vertex_mom = new Vertex();
-		vertex_mom.title = "Chaostheorie";
-		vertex_mom.intro = "introtext";
-		vertex_mom.level = 0;
-		vertex_mom.link = "https://de.wikipedia.org/wiki/Chaosforschung";
-		this.paint(vertex_mom);
-		
-		
-
-		vertex_child1 = new Vertex();
-		vertex_child1.title = "Shits";
-		vertex_child1.intro = "introtext";
-		vertex_child1.level = 1;
-		vertex_child1.link = "https://de.wikipedia.org/wiki/Chaosforschung";
-		vertex_child1.parent = vertex_mom;
-		vertex_mom.children.push(vertex_child1);
-		
-		this.paint(vertex_child1);
-		//moveNode(vertex_child1, 200, 200);
-
-		vertex_child2 = new Vertex();
-		vertex_child2.title = "Hass";
-		vertex_child2.intro = "introtext";
-		vertex_child2.level = 1;
-		vertex_child2.link = "https://de.wikipedia.org/wiki/Chaosforschung";
-		vertex_child2.parent = vertex_mom;
-		vertex_mom.children.push(vertex_child2);
-		this.paint(vertex_child2);
-
-		var vertex_child3 = new Vertex();
-		vertex_child3.title = "Liebe";
-		vertex_child3.intro = "introtext";
-		vertex_child3.level = 1;
-		vertex_child3.link = "https://de.wikipedia.org/wiki/Chaosforschung";
-		vertex_child3.parent = vertex_mom;
-		vertex_mom.children.push(vertex_child3);
-		this.paint(vertex_child3);
-
-		var vertex_child4 = new Vertex();
-		vertex_child4.title = "Ahh";
-		vertex_child4.intro = "introtext";
-		vertex_child4.level = 1;
-		vertex_child4.link = "https://de.wikipedia.org/wiki/Chaosforschung";
-		vertex_child4.parent = vertex_mom;
-		vertex_mom.children.push(vertex_child4);
-		this.paint(vertex_child4);
-
-		var vertex_child5 = new Vertex();
-		vertex_child5.title = "Mies";
-		vertex_child5.intro = "introtext";
-		vertex_child5.level = 1;
-		vertex_child5.link = "https://de.wikipedia.org/wiki/Chaosforschung";
-		vertex_child5.parent = vertex_mom;
-		vertex_mom.children.push(vertex_child5);
-		this.paint(vertex_child5);
-
-		vertex_child11 = new Vertex();
-		vertex_child11.title = "Poop";
-		vertex_child11.intro = "introtext";
-		vertex_child11.level = 2;
-		vertex_child11.link = "https://de.wikipedia.org/wiki/Chaosforschung";
-		vertex_child11.parent = vertex_child1;
-		vertex_child1.children.push(vertex_child11);
-		this.paint(vertex_child11);
-
-		vertex_child111 = new Vertex();
-		vertex_child111.title = "Poope die 2.";
-		vertex_child111.intro = "introtext";
-		vertex_child111.level = 3;
-		vertex_child111.link = "https://de.wikipedia.org/wiki/Chaosforschung";
-		vertex_child111.parent = vertex_child11;
-		vertex_child11.children.push(vertex_child111);
-		this.paint(vertex_child111);
-
-		var rect = paper.rect(0, 0, 50, 50);
-		rect.attr({
-			fill : 'black'
-		});
-
-		rect.click(function() {
-			var vertex_child6 = new Vertex();
-			vertex_child6.title = "New Stuff";
-			vertex_child6.intro = "introtext";
-			vertex_child6.level = 2;
-			vertex_child6.link = "https://de.wikipedia.org/wiki/Chaosforschung";
-			vertex_child6.parent = vertex_child1;
-			vertex_child1.children.push(vertex_child6);
-			vertex_child6 = scope_zoomUI.displayChildNodes(vertex_child1, vertex_child1.svg[0].attr("cx"), vertex_child1.svg[0].attr("cy"));
-
-			// var vertex_child7 = new Vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 2, vertex_child5);
-			// vertex_child5.children.push(vertex_child7);
-			// vertex_child7 = scope.displayChildNodes(vertex_child5, vertex_child5.svg[0].attr("cx"), vertex_child5.svg[0].attr("cy"));
-			//
-		});
-		var rect1 = paper.rect(60, 0, 50, 50);
-		rect1.attr({
-			fill : 'black'
-		});
-		rect1.click(function(event) {
-			var vertex_child6 = new Vertex();
-			vertex_child6.title = "New Stuff";
-			vertex_child6.intro = "introtext";
-			vertex_child6.level = 1;
-			vertex_child6.link = "https://de.wikipedia.org/wiki/Chaosforschung";
-			vertex_child6.parent = vertex_mom;
-			vertex_mom.children.push(vertex_child6);
-			vertex_child6 = scope_zoomUI.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
-
-			// var vertex_child7 = new Vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 2, vertex_child5);
-			// vertex_child5.children.push(vertex_child7);
-			// vertex_child7 = scope.displayChildNodes(vertex_child5, vertex_child5.svg[0].attr("cx"), vertex_child5.svg[0].attr("cy"));
-			//
-		});
-
 	},
 });
