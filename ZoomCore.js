@@ -6,6 +6,8 @@ var ZoomCore = new Class({
 		//this.settings = new Settings();
 		this.nextID = 0;
 		this.prefetch = 3;
+		this.requestsPending = 0;
+		this.prefetchStack = new Array();
 		this.vertices = 5;
 		initialVertex = this.createVertex(myInitialArticle, null, 0);
 		this.fetcher.fetch(initialVertex);
@@ -25,19 +27,30 @@ var ZoomCore = new Class({
 			+ myVertex.level + ')');
 			CUR_LEVEL += 1;
 			this.iterateChildren(myVertex, this.vertices);
-			//TODO add code here...
+			UI.paint(Object.clone(this.prefetchStack));
+			this.prefetchStack.length = 0;
 		}
 
 	},
 
 	updated : function(myVertex) {
-		if (myVertex.link != undefined) {
+		this.requestsPending -= 1;
+		if (myVertex.link != null) {
 			if (myVertex.level < (CUR_LEVEL + (this.prefetch))) {
 				this.iterateChildren(myVertex, (this.vertices - (myVertex.level - CUR_LEVEL)));
 			}
 		}
 		
-		UI.paint(myVertex);
+		if(myVertex.level >= (CUR_LEVEL + this.prefetch)){
+			this.prefetchStack.push(myVertex);
+		}
+		else{
+			UI.paint(myVertex);	
+		}
+		if(this.requestsPending > 0){
+			UI.setPaintJob(true);
+		}
+		
 	},
 
 	iterateChildren : function(myVertex, f) {
@@ -54,10 +67,11 @@ var ZoomCore = new Class({
 					myVertex.children.push(vertex);
 					console.log('Fetching new vertex:' + vertex.title + ' ID:' + vertex.id + ' Level:' + vertex.level);
 					this.fetcher.fetch(vertex);
+					this.requestsPending += 1;
 				}
 			}
 		} else {
-			if (myVertex.outlinks == undefined)
+			if (myVertex.outlinks == null)
 				return;
 			for (var i = 0; i < f; i++) {
 				if(myVertex.outlinks[i] == undefined)
@@ -66,6 +80,7 @@ var ZoomCore = new Class({
 				myVertex.children.push(vertex);
 				console.log('Fetching new vertex:' + vertex.title + ' ID:' + vertex.id + ' Level:' + vertex.level);
 				this.fetcher.fetch(vertex);
+				this.requestsPending += 1;
 			}
 		}
 	},

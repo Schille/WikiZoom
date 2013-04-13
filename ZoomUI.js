@@ -7,9 +7,9 @@ var ZoomUI = new Class({
 		paths = paper.set();
 		selectedNode = null;
 		this.velocity = 200;
-		this.IntervalOn = null;
-		this.Interval = null;
 
+		this.intervalOn = null;
+		this.interval = null;
 		paper.customAttributes.grad = function(colorAngle, startColor, endColor) {
 			return {
 				fill : colorAngle + '-' + startColor + '-' + endColor,
@@ -37,15 +37,17 @@ var ZoomUI = new Class({
 	},
 
 	setPaintJob : function(myFlag) {
-		if (this.intervalOn == myFlag)
-			return;
-		if (myFlag == true) {
-			this.Interval = setInterval(this.paintVertices, this.velocity);
-			this.IntervalOn = true;
-		} else {
-			clearInterval(this.Interval);
-			this.IntervalOn = false;
-		}
+
+	if(this.intervalOn == myFlag)
+		return;	
+	if(myFlag == true) {
+		this.interval = setInterval(this.paintVertices, this.velocity);
+		this.intervalOn = true;
+	}
+	else {
+		clearInterval(this.interval);
+		this.intervalOn = false;
+	}
 	},
 
 	createEdge : function(vertexChild) {
