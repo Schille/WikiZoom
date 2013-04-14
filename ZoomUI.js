@@ -32,14 +32,14 @@ var ZoomUI = new Class({
 	},
 
 	setPaintJob : function(myFlag) {
-		if (this.intervalOn == myFlag)
+		if (UI.intervalOn == myFlag)
 			return;
 		if (myFlag == true) {
-			this.interval = setInterval(this.paintVertices, this.velocity);
-			this.intervalOn = true;
+			UI.interval = setInterval(this.paintVertices, this.velocity);
+			UI.intervalOn = true;
 		} else {
-			clearInterval(this.interval);
-			this.intervalOn = false;
+			clearInterval(UI.interval);
+			UI.intervalOn = false;
 		}
 	},
 
@@ -115,16 +115,17 @@ var ZoomUI = new Class({
 		var child_count = vertex.children.length;
 
 		var angle_steps = Math.PI * 2 / child_count;
-		if ((vertex.level - CUR_LEVEL+1)%2==0)
-			{var angle = angle_steps;}
-			else {var angle = Math.ceil(angle_steps/2) ;}
-			
+		if ((vertex.level - CUR_LEVEL + 1) % 2 == 0) {
+			var angle = angle_steps;
+		} else {
+			var angle = Math.ceil(angle_steps / 2);
+		}
 
 		if (child_count >= 1) {
 			console.log("I'm on");
 			for (var i = 0; i < child_count; i++) {
 				console.log("I'm in ya");
-				this.moveNode(vertex.children[i], Math.ceil((window.innerHeight/4 * level_fac * Math.cos(angle) + vertex.svg[0].attr('cx'))), Math.ceil((window.innerHeight/4 * level_fac * Math.sin(angle) + vertex.svg[0].attr('cy'))));
+				this.moveNode(vertex.children[i], Math.ceil((window.innerHeight / 4 * level_fac * Math.cos(angle) + vertex.svg[0].attr('cx'))), Math.ceil((window.innerHeight / 4 * level_fac * Math.sin(angle) + vertex.svg[0].attr('cy'))));
 				angle = angle_steps + angle;
 				this.repaintChildren(vertex.children[i]);
 			}
@@ -145,7 +146,7 @@ var ZoomUI = new Class({
 	repaintNode : function(vertex) {
 
 		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL)));
-		var size = window.innerHeight/16 * level_fac;
+		var size = window.innerHeight / 16 * level_fac;
 		var fontsize = 20 * level_fac;
 		var temp_scope = this;
 
@@ -283,12 +284,14 @@ var ZoomUI = new Class({
 
 		if (children.length > 0) {
 			var angle_steps = Math.PI * 2 / (children.length + 1);
-		if ((myNode.level - CUR_LEVEL+1)%2==0)
-			{var angle = angle_steps;}
-			else {var angle = Math.ceil(angle_steps/2) ;}
-			
+			if ((myNode.level - CUR_LEVEL + 1) % 2 == 0) {
+				var angle = angle_steps;
+			} else {
+				var angle = Math.ceil(angle_steps / 2);
+			}
+
 			for (var j = 0; j < children.length; j++) {
-				this.moveNode(children[j], Math.ceil((window.innerHeight/4 * level_fac * Math.cos(angle)) + mx), Math.ceil((window.innerHeight/4 * level_fac * Math.sin(angle)) + my));
+				this.moveNode(children[j], Math.ceil((window.innerHeight / 4 * level_fac * Math.cos(angle)) + mx), Math.ceil((window.innerHeight / 4 * level_fac * Math.sin(angle)) + my));
 				angle = angle_steps + angle;
 			}
 		}
@@ -318,12 +321,13 @@ var ZoomUI = new Class({
 				vertex = UI.paintStack[i];
 				UI.paintChildVertex(vertex);
 				UI.paintStack.splice(i, 1);
-				if (UI.paintStack.length == 0) {
-					UI.setPaintJob(false);
-				}
+
 				if (Math.random() < 0.8)
 					break;
 			}
+		}
+		if (UI.paintStack.length == 0) {
+			UI.setPaintJob(false);
 		}
 
 	},
@@ -350,27 +354,28 @@ var ZoomUI = new Class({
 
 			//calculate the new angles for all sibling vertices
 			var angle_steps = Math.PI * 2 / (siblings.length + 1);
-			
-			if ((myVertex.level - CUR_LEVEL+1)%2==0)
-			{angle = angle_steps;}
-			else {angle = Math.ceil(angle_steps/2) ;}
-			
+
+			if ((myVertex.level - CUR_LEVEL + 1) % 2 == 0) {
+				angle = angle_steps;
+			} else {
+				angle = Math.ceil(angle_steps / 2);
+			}
 
 			for (var i = 0; i < siblings.length; i++) {
-				this.moveNode(siblings[i], Math.ceil((window.innerHeight/3 * level_fac * Math.cos(angle) + x)), Math.ceil((window.innerHeight/3 * level_fac * Math.sin(angle) + y)));
+				this.moveNode(siblings[i], Math.ceil((window.innerHeight / 3 * level_fac * Math.cos(angle) + x)), Math.ceil((window.innerHeight / 3 * level_fac * Math.sin(angle) + y)));
 				angle = angle_steps + angle;
 			}
 
 		}
 
 		//paint actual vertex and create its edge
-		this.paintNode(myVertex, Math.ceil((window.innerHeight/3 * level_fac * Math.cos(angle) + x)), Math.ceil((window.innerHeight/3 * level_fac * Math.sin(angle) + y)));
+		this.paintNode(myVertex, Math.ceil((window.innerHeight / 3 * level_fac * Math.cos(angle) + x)), Math.ceil((window.innerHeight / 3 * level_fac * Math.sin(angle) + y)));
 		this.createEdge(myVertex);
 	},
 
 	paintNode : function(myNode, x, y) {
 		var level_fac = (Math.pow(0.7, (myNode.level - CUR_LEVEL)));
-		var size = window.innerHeight/16 * level_fac;
+		var size = window.innerHeight / 16 * level_fac;
 		var fontsize = 20 * level_fac;
 
 		paper.setStart();
@@ -420,80 +425,76 @@ var ZoomUI = new Class({
 			"font-size" : fontsize
 		}, 2000, "elastic");
 
+		//Compress all vertex components to one set
 		myNode.svg = set3;
 
-		//var intro = "Albert Einstein (* 14. März 1879 in Ulm; † 18. April 1955 in Princeton, New Jersey) war ein theoretischer Physiker. Seine Forschungen zur Struktur von Materie, Raum und Zeit sowie dem Wesen der Gravitation veränderten maßgeblich das physikalische Weltbild. Er gilt daher als einer der größten Physiker aller Zeiten.Einsteins Hauptwerk, die Relativitätstheorie, machte ihn weltberühmt. Im Jahr 1905 erschien seine Arbeit mit dem Titel Zur Elektrodynamik bewegter Körper, deren Inhalt heute als spezielle Relativitätstheorie bezeichnet wird. 1915 publizierte Einstein die allgemeine Relativitätstheorie. Auch zur Quantenphysik leistete er wesentliche Beiträge: Für seine Erklärung des photoelektrischen Effekts, die er ebenfalls 1905 publiziert hatte, wurde ihm im November 1922 der Nobelpreis für Physik für 1921 verliehen. Seine theoretischen Arbeiten spielten – im Gegensatz zur verbreiteten Meinung – beim Bau der Atombombe und der Entwicklung der Kernenergie nur eine indirekte Rolle.Albert Einstein gilt als Inbegriff des Forschers und Genies. Er nutzte seine außerordentliche Bekanntheit auch außerhalb der naturwissenschaftlichen Fachwelt bei seinem Einsatz für Völkerverständigung und Frieden. In diesem Zusammenhang verstand er sich selbst als Pazifist, Sozialist, und Zionist.Im Laufe seines Lebens war Einstein Staatsbürger mehrerer Länder: Durch Geburt besaß er die württembergische Staatsbürgerschaft. Von 1896 bis 1901 staatenlos, danach Staatsbürger der Schweiz, war er 1911/12 auch Bürger Österreich-Ungarns. Seit 1914 Mitglied der Akademie der Wissenschaften und Bürger Preußens, war er somit erneut Staatsangehöriger im Deutschen Reich. Mit der Machtergreifung Hitlers gab er 1933 den deutschen Pass endgültig ab. Zum seit 1901 geltenden Schweizer Bürgerrecht trat ab 1940 noch die US-Staatsbürgerschaft.";
-		//var lineLength = 80;
-		//var maxChars = 500;
-		//var boxWidth = 500;
-		//var boxHeight = 17 * (maxChars / lineLength + 1);
-
-		//var toolTip = paper.rect(0, 0, boxWidth, boxHeight, 5).hide();
-		//toolTip.attr({
-		//	fill : 'white'
-		//});
-
-		//var textTip = paper.text(0, 0, myNode.intro).hide();
-		//textTip.attr('text-anchor', 'start');
-		//textTip.attr('font-size', 12);
-
+		//Event handler for mouse over
 		var over = function(event) {
-			//zoomUI.selectedNode = myNode;
 
 			UI.showTooltip(myNode.title, myNode.intro, event);
 			set3.animate({
 				transform : "s1.1"
 			}, 2000, "elastic");
 
-			//var xPos = set3[0].attr('cx') + set3[0].attr('r') - 20 * level_fac;
-			//var yPos = set3[0].attr('cy') + set3[0].attr('r') - 20 * level_fac;
-			//if (xPos > paper_width / 2)
-			//	xPos = set3[0].attr('cx') - set3[0].attr('r') + 20 * level_fac - boxWidth;
-			//if (yPos > paper_height / 2)
-			//	yPos = set3[0].attr('cy') - set3[0].attr('r') + 20 * level_fac - boxHeight;
-			//toolTip.attr({
-			//	x : xPos,
-			//	y : yPos
-			//});
-			//toolTip.toFront();
-			//toolTip.show();
-			//textTip.attr({
-			//	x : xPos,
-			//	y : yPos
-			//});
-			//textTip.toFront();
-			//textTip.show();
-
-			//Event handler for mouswheel
-			mouse = function() {
-				if (event.preventDefault)
-					event.preventDefault();
-				event.returnValue = false;
-				UI.zoomIn(myNode)
-				document.removeEventListener('mousewheel', mouse, false);
+			//Event handler for mousewheel
+			mouse = function(e) {
+				var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+				if (delta > 0) {
+					console.log('zooming in');
+				}
+				/* Mousewheel DOWN*/
+				else {
+					console.log('zooming out');
+				}
+				//Remove the event listener, since we want to fire this only once
+				if (document.addEventListener) {
+					document.removeEventListener('mousewheel', mouse, false);
+					document.removeEventListener("DOMMouseScroll", mouse, false);
+				} else {
+					document.removeEvent("onmousewheel", mouse);
+				}
 			};
-			console.log("adding event")
-			document.addEventListener('mousewheel', mouse, false);
-		};
+			//Event handler - end
 
+			//Add event handler for mousewheel
+			if (document.addEventListener) {
+				//Chrome, Firefox, IE9
+				document.addEventListener('mousewheel', mouse, false);
+				document.addEventListener("DOMMouseScroll", mouse, false);
+			} else {
+				//IE 6,7,8
+				document.attachEvent("onmousewheel", mouse);
+			}
+
+		};
+		//Event handler for mouse over - end
+
+		//Event handler for mouse out
 		var out = function(event) {
-			//zoomUI.selectedNode = null;
 			UI.hideTooltip();
-			document.removeEventListener('mousewheel', mouse, false);
+			//Remove event listener, since there is no selected vertex yet
+			if (document.addEventListener) {
+				document.removeEventListener('mousewheel', mouse, false);
+				document.removeEventListener("DOMMouseScroll", mouse, false);
+			} else {
+				document.removeEvent("onmousewheel", mouse);
+			}
+			//Shrink the vertex back
 			set3.animate({
 				transform : "s1"
 			}, 2000, "elastic");
 			Tips4 = null;
-			//toolTip.hide();
-			//textTip.hide();
 		};
+		//Event handler for mouse out - end
 
-		set3.mouseover(over);
-		set3.mouseout(out);
-
+		//Event hanbler for click on vertex
 		var click = function(event) {
 			window.open(myNode.link);
 		};
+
+		//Set events to the above defined event handler
+		set3.mouseover(over);
+		set3.mouseout(out);
 		set3.click(click);
 
 		return myNode;
@@ -512,8 +513,8 @@ var ZoomUI = new Class({
 		intro = intro.slice(0, lastSpacePos) + '...';
 		return intro;
 	},
-	
-	createTooltip : function(){
+
+	createTooltip : function() {
 		var content = {
 			'font-family' : 'Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif',
 			'font-size' : '12px',
@@ -570,8 +571,8 @@ var ZoomUI = new Class({
 		tip.setStyle("left", event.clientX + 20).setStyle("top", event.clientY + 20);
 		tip.show();
 		this.setTooltipHeading(myHeading);
-		if(myContent.length > 300){
-			myContent = myContent.substring(0,300) + " ...";
+		if (myContent.length > 300) {
+			myContent = myContent.substring(0, 300) + " ...";
 		}
 		this.setTooltipContent(myContent);
 	},
