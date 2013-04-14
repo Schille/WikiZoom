@@ -45,8 +45,8 @@ var ZoomUI = new Class({
 
 	createEdge : function(vertexChild) {
 
-		var xP = this.getParentX(vertexChild);
-		var yP = this.getParentY(vertexChild);
+		var xP = vertex.parent.svg[0].attr("cx");
+		var yP = vertex.parent.svg[0].attr("cy");
 		var xC = vertexChild.svg[0].attr("cx");
 		var yC = vertexChild.svg[0].attr("cy");
 		var startColor = vertexChild.parent.svg[0].attr("fill");
@@ -149,6 +149,7 @@ var ZoomUI = new Class({
 		var fontsize = 20 * level_fac;
 		var temp_scope = this;
 
+		if(vertex.svg != undefined)
 		vertex.svg.forEach(function(element) {
 			if (element.attr('text') == undefined) {
 				if (element.attr("stroke-dasharray") == "- ") {
@@ -197,7 +198,9 @@ var ZoomUI = new Class({
 
 	fadeOutChildren : function(vertex) {
 		var temp_scope = this;
+
 		vertex.children.forEach(function(temp_vertex) {
+			if (temp_vertex.svg != undefined) {
 			temp_vertex.svg.animate({
 				opacity : 0,
 			}, 500, "linear");
@@ -205,14 +208,15 @@ var ZoomUI = new Class({
 			if (temp_vertex.children.length > 0) {
 				temp_scope.fadeOutChildren(temp_vertex);
 			}
+			}
 		});
 	},
 
 	moveNode : function(myNode, mx, my) {
 		var gnupsi1 = myNode.svg;
 		var nodePath = myNode.path;
-		var xP = this.getParentX(myNode);
-		var yP = this.getParentY(myNode);
+		var xP = vertex.parent.svg[0].attr("cx");
+		var yP = vertex.parent.svg[0].attr("cy");
 
 		var startColor = myNode.parent.svg[0].attr("fill");
 		console.log(myNode.title);
@@ -326,8 +330,8 @@ var ZoomUI = new Class({
 
 	paintChildVertex : function(myVertex) {
 		var parent = myVertex.parent;
-		var x = this.getParentX(myVertex);
-		var y = this.getParentY(myVertex);
+		var x = vertex.parent.svg[0].attr("cx");
+		var y = vertex.parent.svg[0].attr("cy");
 		console.info('Painting ' + myVertex.title + 'to x:' + x + ' y:' + y);
 		var level_fac = (Math.pow(0.7, (myVertex.level - CUR_LEVEL)));
 
