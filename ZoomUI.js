@@ -215,8 +215,8 @@ var ZoomUI = new Class({
 	moveNode : function(myNode, mx, my) {
 		var gnupsi1 = myNode.svg;
 		var nodePath = myNode.path;
-		var xP = vertex.parent.svg[0].attr("cx");
-		var yP = vertex.parent.svg[0].attr("cy");
+		var xP = myNode.parent.svg[0].attr("cx");
+		var yP = myNode.parent.svg[0].attr("cy");
 
 		var startColor = myNode.parent.svg[0].attr("fill");
 		console.log(myNode.title);
