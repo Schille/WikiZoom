@@ -150,30 +150,30 @@ var ZoomUI = new Class({
 		var fontsize = 20 * level_fac;
 		var temp_scope = this;
 
-		if(vertex.svg != undefined)
-		vertex.svg.forEach(function(element) {
-			if (element.attr('text') == undefined) {
-				if (element.attr("stroke-dasharray") == "- ") {
-					element.animate({
-						"stroke" : temp_scope.shadeColor("#AAAAAA", (1 - level_fac) * 50),
-						"r" : size - 4,
-					}, 500, "linear");
+		if (vertex.svg != undefined)
+			vertex.svg.forEach(function(element) {
+				if (element.attr('text') == undefined) {
+					if (element.attr("stroke-dasharray") == "- ") {
+						element.animate({
+							"stroke" : temp_scope.shadeColor("#AAAAAA", (1 - level_fac) * 50),
+							"r" : size - 4,
+						}, 500, "linear");
+					} else {
+						element.animate({
+							"fill" : temp_scope.shadeColor("#CCCCCC", (1 - level_fac) * 35),
+							"stroke" : temp_scope.shadeColor("#AAAAAA", (1 - level_fac) * 50),
+							"r" : size
+						}, 500, "linear");
+						element.attr('fill', temp_scope.shadeColor("#CCCCCC", (1 - level_fac) * 35));
+					}
 				} else {
 					element.animate({
-						"fill" : temp_scope.shadeColor("#CCCCCC", (1 - level_fac) * 35),
-						"stroke" : temp_scope.shadeColor("#AAAAAA", (1 - level_fac) * 50),
-						"r" : size
+						"fill" : temp_scope.shadeColor("#555555", (1 - level_fac) * 80),
+						"font-size" : fontsize
 					}, 500, "linear");
-					element.attr('fill', temp_scope.shadeColor("#CCCCCC", (1 - level_fac) * 35));
 				}
-			} else {
-				element.animate({
-					"fill" : temp_scope.shadeColor("#555555", (1 - level_fac) * 80),
-					"font-size" : fontsize
-				}, 500, "linear");
-			}
 
-		});
+			});
 
 	},
 
@@ -202,13 +202,13 @@ var ZoomUI = new Class({
 
 		vertex.children.forEach(function(temp_vertex) {
 			if (temp_vertex.svg != undefined) {
-			temp_vertex.svg.animate({
-				opacity : 0,
-			}, 500, "linear");
-			temp_vertex.path.remove();
-			if (temp_vertex.children.length > 0) {
-				temp_scope.fadeOutChildren(temp_vertex);
-			}
+				temp_vertex.svg.animate({
+					opacity : 0,
+				}, 500, "linear");
+				temp_vertex.path.remove();
+				if (temp_vertex.children.length > 0) {
+					temp_scope.fadeOutChildren(temp_vertex);
+				}
 			}
 		});
 	},
@@ -304,9 +304,14 @@ var ZoomUI = new Class({
 			this.paintNode(myVertex, paper_width / 2, paper_height / 2);
 			return;
 		}
-		if(myVertex instanceof Array) {
-			UI.paintStack.push(myVertex);
+
+		if ( myVertex instanceof Array) {
+			for (var i = 0; i < myVertex.length; i++) {
+				UI.paintStack.push(myVertex[i]);
+			}
+			return;
 		}
+		
 		if (myVertex.parent == undefined)
 			console.error("who is my daddy " + myVertex.title);
 		UI.paintStack.push(myVertex)
@@ -455,7 +460,7 @@ var ZoomUI = new Class({
 				else {
 					console.log('zooming out');
 				}
-				
+
 			};
 			//Event handler - end
 
