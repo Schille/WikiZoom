@@ -304,13 +304,6 @@ var ZoomUI = new Class({
 			this.paintNode(myVertex, paper_width / 2, paper_height / 2);
 			return;
 		}
-
-		if ( myVertex instanceof Array) {
-			for (var i = 0; i < myVertex.length; i++) {
-				UI.paintStack.push(myVertex[i]);
-			}
-			return;
-		}
 		
 		if (myVertex.parent == undefined)
 			console.error("who is my daddy " + myVertex.title);

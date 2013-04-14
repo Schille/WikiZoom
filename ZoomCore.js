@@ -25,19 +25,31 @@ var ZoomCore = new Class({
 		} else {
 			console.log('Zooming to vertex: ' + myVertex.id + '(Title: "' + myVertex.title + '" Level:' 
 			+ myVertex.level + ')');
-			CUR_LEVEL += 1;
+			CUR_LEVEL = myVertex.level;
+			this.printSuccessors(myVertex);
 			this.iterateChildren(myVertex, this.vertices);
-			UI.paint(this.prefetchStack);
-			UI.setPaintJob(true);
 			this.prefetchStack.length = 0;
 		}
 
+	},
+	
+	printSuccessors : function(myVertex){
+		if(myVertex.level == ((this.prefetch + 1) - CUR_LEVEL)){
+			UI.paint(myVertex);
+			UI.setPaintJob(true);
+		}
+			
+		
+		for(var i = 0; i < myVertex.children.length; i++){
+			this.printSuccessors(myVertex.children[i]);
+		}
+		
 	},
 
 	updated : function(myVertex) {
 		this.requestsPending -= 1;
 		if (myVertex.link != null) {
-			if (myVertex.level < (CUR_LEVEL + (this.prefetch))) {
+			if (myVertex.level < (CUR_LEVEL + (this.prefetch + 1))) {
 				this.iterateChildren(myVertex, (this.vertices - (myVertex.level - CUR_LEVEL)));
 			}
 		}
@@ -61,16 +73,22 @@ var ZoomCore = new Class({
 					this.iterateChildren(myVertex.children[i], f - 1);
 				}
 			} else {
-				for (var i = 0; i < (f - myVertex.children.length); i++) {
+				for (var i = 0; i < f; i++) {
 					if (myVertex.outlinks[i] == undefined){
 						console.error('Outlink was undefined.');
 						continue;
 					}
-					var vertex = this.createVertex(myVertex.outlinks[i], myVertex, (myVertex.level + 1));
-					myVertex.children.push(vertex);
-					console.log('Fetching new vertex:' + vertex.title + ' ID:' + vertex.id + ' Level:' + vertex.level);
-					this.fetcher.fetch(vertex);
-					this.requestsPending += 1;
+					if(myVertex.children[i] != undefined){
+						this.iterateChildren(myVertex.children[i], f -1);
+					}
+					else
+					{
+						var vertex = this.createVertex(myVertex.outlinks[i], myVertex, (myVertex.level + 1));
+						myVertex.children.push(vertex);
+						console.log('Fetching new vertex:' + vertex.title + ' ID:' + vertex.id + ' Level:' + vertex.level);
+						this.fetcher.fetch(vertex);
+						this.requestsPending += 1;
+					}
 				}
 			}
 		} else {
