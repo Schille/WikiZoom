@@ -305,7 +305,7 @@ var ZoomUI = new Class({
 			return;
 		}
 		if(myVertex instanceof Array) {
-			alert('got an array here');
+			UI.paintStack.push(myVertex);
 		}
 		if (myVertex.parent == undefined)
 			console.error("who is my daddy " + myVertex.title);
