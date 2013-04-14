@@ -27,7 +27,8 @@ var ZoomCore = new Class({
 			+ myVertex.level + ')');
 			CUR_LEVEL += 1;
 			this.iterateChildren(myVertex, this.vertices);
-			UI.paint(Object.clone(this.prefetchStack));
+			UI.paint(this.prefetchStack);
+			UI.setPaintJob(true);
 			this.prefetchStack.length = 0;
 		}
 
