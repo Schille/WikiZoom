@@ -32,14 +32,14 @@ var ZoomUI = new Class({
 	},
 
 	setPaintJob : function(myFlag) {
-		if (this.intervalOn == myFlag)
+		if (UI.intervalOn == myFlag)
 			return;
 		if (myFlag == true) {
-			this.interval = setInterval(this.paintVertices, this.velocity);
-			this.intervalOn = true;
+			UI.interval = setInterval(this.paintVertices, this.velocity);
+			UI.intervalOn = true;
 		} else {
-			clearInterval(this.interval);
-			this.intervalOn = false;
+			clearInterval(UI.interval);
+			UI.intervalOn = false;
 		}
 	},
 
@@ -317,12 +317,13 @@ var ZoomUI = new Class({
 				vertex = UI.paintStack[i];
 				UI.paintChildVertex(vertex);
 				UI.paintStack.splice(i, 1);
-				if (UI.paintStack.length == 0) {
-					UI.setPaintJob(false);
-				}
+
 				if (Math.random() < 0.8)
 					break;
 			}
+		}
+		if (UI.paintStack.length == 0) {
+			UI.setPaintJob(false);
 		}
 
 	},
@@ -482,13 +483,11 @@ var ZoomUI = new Class({
 		};
 		//Event handler for mouse out - end
 
-		
-
 		//Event hanbler for click on vertex
 		var click = function(event) {
 			window.open(myNode.link);
 		};
-		
+
 		//Set events to the above defined event handler
 		set3.mouseover(over);
 		set3.mouseout(out);
