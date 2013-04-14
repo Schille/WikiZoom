@@ -94,7 +94,7 @@ var ZoomUI = new Class({
 	},
 
 	zoomIn : function(vertex) {
-		CUR_LEVEL++;
+		Core.zoomed(vertex);
 		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL)));
 		vertex.svg.animate({
 			"cx" : paper_width / 2,
@@ -304,7 +304,9 @@ var ZoomUI = new Class({
 			this.paintNode(myVertex, paper_width / 2, paper_height / 2);
 			return;
 		}
-
+		if(myVertex instanceof Array) {
+			alert('got an array here');
+		}
 		if (myVertex.parent == undefined)
 			console.error("who is my daddy " + myVertex.title);
 		UI.paintStack.push(myVertex)
@@ -438,14 +440,6 @@ var ZoomUI = new Class({
 
 			//Event handler for mousewheel
 			mouse = function(e) {
-				var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-				if (delta > 0) {
-					console.log('zooming in');
-				}
-				/* Mousewheel DOWN*/
-				else {
-					console.log('zooming out');
-				}
 				//Remove the event listener, since we want to fire this only once
 				if (document.addEventListener) {
 					document.removeEventListener('mousewheel', mouse, false);
@@ -453,6 +447,15 @@ var ZoomUI = new Class({
 				} else {
 					document.removeEvent("onmousewheel", mouse);
 				}
+				var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+				if (delta > 0) {
+					UI.zoomIn(myNode);
+				}
+				/* Mousewheel DOWN*/
+				else {
+					console.log('zooming out');
+				}
+				
 			};
 			//Event handler - end
 
