@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<script src="dependencies/raphael-min.js" type="text/javascript"></script>
+		<script src="dependencies/mootools-core-1.4.5.js" type="text/javascript"></script>
+		<script src="dependencies/mootools-more-1.4.0.1.js" type="text/javascript"></script>
+		<script src="vertex.js" type="text/javascript"></script>
+		<script src="ZoomCore.js" type="text/javascript"></script>
+		<script src="ZoomUI.js" type="text/javascript"></script>
+		<script src="WikiFetcher.js" type="text/javascript"></script>
+		<script src="Settings.js"></script>
+		<script src="TestsWikiZoom.js" type="text/javascript"></script>
+		<meta charset="utf-8">
+		<title>WikiZoom</title>
+		<link href="dependencies/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+
+	</head>
+	<body>
+		<div class="container">
+			<div class="masthead">
+				<h3 class="muted"><a class="brand" href="#">WikiZoom</a></h3>
+				<!-- /.navbar -->
+			</div>
+			<!-- Jumbotron -->
+			<div>
+				<div class="hero-unit">
+					<h1 class="text-center"> WikiZoom
+					<br>
+					</h1>
+					<p class="lead text-center">
+						&nbsp; Die innovative Art Wissen zu erleben!
+
+					</p>
+
+					<a href="" role="button" class="badge pull-left">Help!</a>
+				</div>
+				<div class="span4"></div>
+			</div>
+			<div id="raus" class="row">
+				<form class="form-search span1">
+					<div class="input-append" id="inputApp">
+						<input type="text" id="search" autocomplete="off" class="search-query">
+
+						<button id="fade" type="submit" onclick="template1_initialize()" class="btn btn-primary">
+							Search
+						</button>
+
+					</div>
+
+				</form>
+			</div>
+			
+			<script>
+				function template1_initialize(){
+	Core = new ZoomCore($('search').value);
+	UI = new ZoomUI();
+
+	$$('div').fade('out');
+
+	
+}
+				
+			</script>
+			
+			<div id="raus" class="row">
+				<div class="span5"></div>
+				<div class="span1 ">
+					<ul class="nav nav-list" id="selects"></ul>	
+				</div>
+			</div>
+
+			<script type="text/javascript">
+				var selects = $('selects');
+				var searchBox = $('search')
+
+			
+				searchBox.addEvents({
+					//New Request at keystroke
+					'keyup' : function() {
+						var searchKey = $('search');
+
+						//Create API-Request
+						var searchRequest = new Request.JSONP({
+							
+							url : "http://de.wikipedia.org/w/api.php?action=opensearch&format=json&limit=10&search=" + searchKey.value,
+							
+							onComplete : function(data) {
+								//Delete container content
+								selects.set('html', '');
+								for (var counter = 0; counter < 4; counter++) {
+									
+									//Check if there is content in the Array
+									if (data[1][counter] == undefined) {
+										selects.set('style','border-bottom: 0px solid rgba(175,175,175,1)')
+										break;
+									}
+									//Insert 
+									selects.set('html', selects.get('html') + '<li class="nav-header" ><a id=\'typeahead' + counter + '\'>' + data[1][counter] + '</a></li>');
+									//Add bottom border
+									selects.set('style','border-bottom: 2px solid rgba(175,175,175,1)')
+								}
+								
+								
+								//EventListener 
+								var type0 = $('typeahead0');
+								type0.addEvents({
+									'click' : function() {
+										searchBox.set('value', type0.get('html'));
+										selects.set('html','');
+										selects.set('style','border-bottom: 0px')
+									}
+								})
+
+								var type1 = $('typeahead1');
+								type1.addEvents({
+									'click' : function() {
+										searchBox.set('value', type1.get('html'));
+										selects.set('html','');
+										selects.set('style','border-bottom: 0px')
+									}
+								})
+
+								var type2 = $('typeahead2');
+								type2.addEvents({
+									'click' : function() {
+										searchBox.set('value', type2.get('html'));
+										selects.set('html','');
+										selects.set('style','border-bottom: 0px')
+									}
+								})
+
+								var type3 = $('typeahead3');
+								type3.addEvents({
+									'click' : function() {
+										searchBox.set('value', type3.get('html'));
+										selects.set('html','');
+										selects.set('style','border-bottom: 0px')
+									}
+								})
+	
+							
+							}
+						});
+						searchRequest.send();
+
+					}
+				})
+
+			</script>
+
+			<div class="span"></div>
+			<!-- Button to trigger modal -->
+			<!-- Modal -->
+			
+
+			<div class="jumbotron">
+
+				<div class="row-fluid">
+					<div id="aotd" class="span6">
+						<h2> Artikel des Tages ...
+						<br>
+						</h2>
+						<p class="text-left">
+
+							Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas
+							eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus,
+							tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum
+							massa.
+
+						</p>
+
+						<p>
+							<a class="btn" id="makeRequest" href="# ">Mehr »</a>
+						<p>
+
+						</p>
+
+						<div id="gallery"></div>
+						</p>
+					</div>
+
+					<div class="span6">
+						<h2> Was geschah am ...
+						<br>
+						</h2>
+						<p class="text-left">
+							Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas
+							eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus,
+							tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum
+							massa.
+						</p>
+						<p>
+							<a class="btn" href="# ">Mehr »</a>
+						</p>
+					</div>
+				</div>
+			</div>
+			<!-- Example row of columns -->
+			<div class="footer">
+				<p>
+					© WikiZoom 2013
+				</p>
+			</div>
+		</div>
+	  <div class="span">
+</div>	
+		<style>
+
+		body {
+		padding-top: 20px;
+		padding-bottom: 60px;
+		}
+
+
+		.jumbotron {
+		margin: 80px 0;
+		text-align: center;
+		}
+		.jumbotron h1 {
+		font-size: 100px;
+		line-height: 1;
+		}
+		.jumbotron .lead {
+		font-size: 24px;
+		line-height: 1.25;
+		}
+		.jumbotron .btn {
+		font-size: 21px;
+		padding: 14px 24px;
+		}
+		
+		#selects {
+		position:absolute;
+		margin-left:-4%;
+		margin-top:-20px;
+		border:2px;
+		border-right: 2px solid rgba(175,175,175,5);
+		border-left: 2px solid rgba(175,175,175,5);
+		border-bottom: 0px solid rgba(175,175,175,5);
+		border-radius:3px;
+		}
+		
+		#selects li {
+		z-index: -1051;
+		margin-top: -7px;
+		-webkit-border-radius: 4px;
+		-moz-border-radius: 4px;
+		border-radius: 4px;
+		}
+
+		</style>
+
+		
+
+	</body>
+</html>
