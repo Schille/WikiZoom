@@ -7,10 +7,10 @@ var Vertex = new Class({
 		this.title;
 		this.intro;
 		this.link;
-		this.outlinks
-		this.svg
+		this.outlinks = new Array();;
+		this.svg;
 		this.level;
-		this.path
+		this.path;
 	},
 
 }); 

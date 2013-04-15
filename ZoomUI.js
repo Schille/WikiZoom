@@ -1,11 +1,16 @@
-var zoomUI = new Class({
+var ZoomUI = new Class({
 	initialize : function() {
-
+		this.paintStack = new Array();
+		this.createTooltip();
 		paper_width = (window.innerWidth - window.innerWidth / 10);
 		paper_height = (window.innerHeight - window.innerHeight / 10);
 		paper = Raphael(0, 0, paper_width, paper_height);
+		paper.renderfix();
 		paths = paper.set();
-		scope_zoomUI = this;
+		selectedNode = null;
+		this.velocity = 200;
+		this.intervalOn = null;
+		this.interval = null;
 		paper.customAttributes.grad = function(colorAngle, startColor, endColor) {
 			return {
 				fill : colorAngle + '-' + startColor + '-' + endColor,
@@ -18,94 +23,68 @@ var zoomUI = new Class({
 		}
 	},
 
-	calcIPoint : function(myNode1, myNode2) {
-		if (Math.sqrt((myNode2.svg[0].attr("cx") - (myNode1.svg[0].attr("cx")) ^ 2 + ((myNode2.svg[0].attr("cy") - (myNode1.svg[0].attr("cy")) ^ 2) >= ((myNode2.svg[0].attr("r") + (myNode1.svg[0].attr("r")))))))) {
+	getParentX : function(vertex) {
+		return vertex.parent.svg[0].attr("cx");
+	},
 
-			return true;
+	getParentY : function(vertex) {
+		return vertex.parent.svg[0].attr("cy");
+	},
+
+	setPaintJob : function(myFlag) {
+		if (UI.intervalOn == myFlag)
+			return;
+		if (myFlag == true) {
+			UI.interval = setInterval(this.paintVertices, this.velocity);
+			UI.intervalOn = true;
 		} else {
-			return true;
+			clearInterval(UI.interval);
+			UI.intervalOn = false;
 		}
-
 	},
 
 	createEdge : function(vertexChild) {
 
-		var xP = vertexChild.parent.svg[0].attr("cx");
-		var yP = vertexChild.parent.svg[0].attr("cy");
+		var xP = vertex.parent.svg[0].attr("cx");
+		var yP = vertex.parent.svg[0].attr("cy");
 		var xC = vertexChild.svg[0].attr("cx");
 		var yC = vertexChild.svg[0].attr("cy");
 		var startColor = vertexChild.parent.svg[0].attr("fill");
-		var endColor = vertexChild.parent.svg[0].attr("fill");
+		var endColor = vertexChild.svg[0].attr("fill");
 		var colorAngle = Math.ceil(Raphael.angle(xP, yP, xC, yC));
-	
-		
-	
+
 		if (colorAngle > 90 && colorAngle < 270)
 			if (colorAngle > 180)
 				colorAngle = colorAngle - 90 + 180;
 			else
 				colorAngle = colorAngle - 180;
-		else 
-			if (colorAngle < 180)
-				colorAngle = colorAngle + 90 + 180;
-			else
-				colorAngle = colorAngle + 90;
+		else if (colorAngle < 180)
+			colorAngle = colorAngle + 90 + 180;
+		else
+			colorAngle = colorAngle + 90;
 
 		if (xP <= xC && yP < yC) {
 			var path = paper.path("M" + (xP - 10) + "," + yP + " L" + xC + "," + yC + " L" + xP + "," + (yP - 10));
-			path.attr({
-				'fill' : 'white',
-				stroke : 'none',
-			});
-			path.animate({
-				grad : [colorAngle, startColor, endColor],
-				stroke1 : 'none',
-			}, 2000, ">").toBack();
-			paths.push(path);
-			vertexChild.path = path;
 		}
 		if (xP >= xC && yP <= yC) {
 			var path = paper.path("M" + xP + "," + (yP - 10) + " L" + xC + "," + yC + " L" + (xP + 10) + "," + yP);
-			path.attr({
-				'fill' : 'white',
-				stroke : 'none',
-			});
-			path.animate({
-				grad : [colorAngle, startColor, endColor],
-				stroke1 : 'none',
-			}, 2000, ">").toBack();
-			paths.push(path);
-			vertexChild.path = path;
-			
 		}
 		if (xP >= xC && yP > yC) {
 			var path = paper.path("M" + xP + "," + (yP + 10) + " L" + xC + "," + yC + " L" + (xP + 10) + "," + yP);
-			path.attr({
-				'fill' : 'white',
-				stroke : 'none',
-			});
-			path.animate({
-				grad : [colorAngle, startColor, endColor],
-				stroke1 : 'none',
-			}, 2000, ">").toBack();
-			paths.push(path);
-			vertexChild.path = path;
-
 		}
 		if (xP <= xC && yP >= yC) {
 			var path = paper.path("M" + (xP - 10) + "," + yP + " L" + xC + "," + yC + " L" + xP + "," + (yP + 10));
-			path.attr({
-				'fill' : 'white',
-				stroke : 'none',
-			});
-			path.animate({
-				grad : [colorAngle, startColor, endColor],
-				stroke1 : 'none',
-			}, 2000, ">").toBack();
-			paths.push(path);
-			vertexChild.path = path;
 		}
-
+		path.attr({
+			'fill' : 'white',
+			stroke : 'none',
+		});
+		path.animate({
+			'fill' : startColor,
+			stroke1 : 'none',
+		}, 2000, ">").toBack();
+		vertexChild.path = path;
+		return path;
 
 	},
 
@@ -114,27 +93,124 @@ var zoomUI = new Class({
 		return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (B < 255 ? B < 1 ? 0 : B : 255) * 0x100 + (G < 255 ? G < 1 ? 0 : G : 255)).toString(16).slice(1);
 	},
 
-	displayChildNodes : function(myNode, x, y) {
-		var level_fac = (Math.pow(0.7, myNode.level));
+	zoomIn : function(vertex) {
+		Core.zoomed(vertex);
+		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL)));
+		vertex.svg.animate({
+			"cx" : paper_width / 2,
+			"cy" : paper_height / 2,
+			"x" : paper_width / 2,
+			"y" : paper_height / 2,
+		}, 2000, "backOut");
+		vertex.svg.attr({
+			"cx" : paper_width / 2,
+			"cy" : paper_height / 2,
+			"x" : paper_width / 2,
+			"y" : paper_height / 2,
+		});
+		vertex.path.remove();
+		this.fadeOutSiblings(vertex);
+		this.repaintNode(vertex);
 
-		var child_count = myNode.children.length;
+		var child_count = vertex.children.length;
 
 		var angle_steps = Math.PI * 2 / child_count;
-		var angle = angle_steps;
-
-		if (child_count > 1) {
-
-			for ( i = 0; i < child_count - 1; i++) {
-				this.moveNode(myNode.children[i], Math.ceil((200 * level_fac * Math.cos(angle) + x)), Math.ceil((200 * level_fac * Math.sin(angle) + y)));
-				angle = angle_steps + angle;
-			}
-
+		if ((vertex.level - CUR_LEVEL + 1) % 2 == 0) {
+			var angle = angle_steps;
+		} else {
+			var angle = Math.ceil(angle_steps / 2);
 		}
 
-		var vertex_to_paint = this.paintNode(myNode.children[child_count - 1], Math.ceil((200 * level_fac * Math.cos(angle) + x)), Math.ceil((200 * level_fac * Math.sin(angle) + y)), myNode)
-		this.createEdge(myNode.children[child_count - 1]);
-		return vertex_to_paint;
+		if (child_count >= 1) {
+			console.log("I'm on");
+			for (var i = 0; i < child_count; i++) {
+				console.log("I'm in ya");
+				this.moveNode(vertex.children[i], Math.ceil((window.innerHeight / 4 * level_fac * Math.cos(angle) + vertex.svg[0].attr('cx'))), Math.ceil((window.innerHeight / 4 * level_fac * Math.sin(angle) + vertex.svg[0].attr('cy'))));
+				angle = angle_steps + angle;
+				this.repaintChildren(vertex.children[i]);
+			}
+		}
+	},
 
+	repaintChildren : function(vertex) {
+
+		this.repaintNode(vertex);
+
+		if (vertex.children.length > 0) {
+			for (var i = 0; i < vertex.children.length; i++) {
+				this.repaintChildren(vertex.children[i]);
+			}
+		}
+	},
+
+	repaintNode : function(vertex) {
+
+		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL)));
+		var size = window.innerHeight / 16 * level_fac;
+		var fontsize = 20 * level_fac;
+		var temp_scope = this;
+
+		if (vertex.svg != undefined)
+			vertex.svg.forEach(function(element) {
+				if (element.attr('text') == undefined) {
+					if (element.attr("stroke-dasharray") == "- ") {
+						element.animate({
+							"stroke" : temp_scope.shadeColor("#AAAAAA", (1 - level_fac) * 50),
+							"r" : size - 4,
+						}, 500, "linear");
+					} else {
+						element.animate({
+							"fill" : temp_scope.shadeColor("#CCCCCC", (1 - level_fac) * 35),
+							"stroke" : temp_scope.shadeColor("#AAAAAA", (1 - level_fac) * 50),
+							"r" : size
+						}, 500, "linear");
+						element.attr('fill', temp_scope.shadeColor("#CCCCCC", (1 - level_fac) * 35));
+					}
+				} else {
+					element.animate({
+						"fill" : temp_scope.shadeColor("#555555", (1 - level_fac) * 80),
+						"font-size" : fontsize
+					}, 500, "linear");
+				}
+
+			});
+
+	},
+
+	fadeOutSiblings : function(vertex) {
+		var siblings = vertex.parent.children;
+		var parent = vertex.parent;
+		var temp_scope = this;
+		siblings.forEach(function(temp_vertex) {
+			if (temp_vertex.title != vertex.title) {
+				temp_vertex.svg.animate({
+					opacity : 0,
+				}, 500, "linear");
+				temp_vertex.path.remove();
+				temp_scope.fadeOutChildren(temp_vertex);
+			}
+		});
+
+		parent.svg.animate({
+			opacity : 0
+		}, 500, "linear");
+
+	},
+
+	fadeOutChildren : function(vertex) {
+		var temp_scope = this;
+
+		vertex.children.forEach(function(temp_vertex) {
+			if (temp_vertex.svg != undefined) {
+				temp_vertex.svg.animate({
+					opacity : 0,
+				}, 500, "linear");
+				temp_vertex.path.remove();
+				if (temp_vertex.children.length > 0) {
+					temp_scope.fadeOutChildren(temp_vertex);
+				}
+			}
+		});
 	},
 
 	moveNode : function(myNode, mx, my) {
@@ -142,14 +218,12 @@ var zoomUI = new Class({
 		var nodePath = myNode.path;
 		var xP = myNode.parent.svg[0].attr("cx");
 		var yP = myNode.parent.svg[0].attr("cy");
-		
-		
-		var level_fac = (Math.pow(0.7, myNode.level));
-		var child_count = myNode.children.length;
 
-		var angle_steps = Math.PI * 2 / child_count;
-		var angle = angle_steps;
-		
+		var startColor = myNode.parent.svg[0].attr("fill");
+		console.log(myNode.title);
+
+		var level_fac = (Math.pow(0.7, (myNode.level - CUR_LEVEL)));
+
 		gnupsi1.forEach(function(element) {
 			if (element.attr("text") != undefined) {
 				var move1 = element.animate({
@@ -164,63 +238,152 @@ var zoomUI = new Class({
 			}
 
 		});
-		
+
 		myNode.svg.attr({
-					"cx" : (mx),
-					"cy" : (my),
-					"x" : (mx),
-					"y" : (my)
-				});
-		
-		
-		
+			"cx" : (mx),
+			"cy" : (my),
+			"x" : (mx),
+			"y" : (my)
+		});
+
 		if (xP <= mx && yP <= my) {
 			nodePath.animate({
-				path : "M" + (xP - 10) + "," + yP + " L" + mx + "," + my + " L" + xP  + "," + (yP - 10),
+				path : "M" + (xP - 10) + "," + yP + " L" + mx + "," + my + " L" + xP + "," + (yP - 10),
+				fill : startColor,
 			}, 2000, "backOut").toBack();
-			
 
 		}
 		if (xP >= mx && yP <= my) {
 			nodePath.animate({
 				path : "M" + xP + "," + (yP - 10) + " L" + mx + "," + my + " L" + (xP + 10) + "," + yP,
+				fill : startColor,
 			}, 2000, "backOut").toBack();
-			
+
 		}
 		if (xP >= mx && yP >= my) {
 			nodePath.animate({
-			path : "M" + xP + "," + (yP + 10) + " L" + mx + "," + my + " L" + (xP + 10) + "," + yP,
+				path : "M" + xP + "," + (yP + 10) + " L" + mx + "," + my + " L" + (xP + 10) + "," + yP,
+				fill : startColor,
 			}, 2000, "backOut").toBack();
-			
 
 		}
 		if (xP <= mx && yP >= my) {
 			nodePath.animate({
 				path : "M" + (xP - 10) + "," + yP + " L" + mx + "," + my + " L" + xP + "," + (yP + 10),
+				fill : startColor,
 			}, 2000, "backOut").toBack();
-			
+
 		}
-		
-		if(myNode.children.length > 0) {
-			
-			for(var j = 0; j < myNode.children.length; j++) {
-				this.moveNode(myNode.children[i],Math.ceil((200 * level_fac * Math.cos(angle)) + mx), Math.ceil((200 * level_fac * Math.sin(angle)) + my));
+
+		//collect all already painted children of myVertex
+		var children = new Array()
+		for (var i = 0; i < myNode.children.length; i++) {
+			if (myNode.children[i].svg != null)
+				children.push(myNode.children[i]);
+		}
+
+		if (children.length > 0) {
+			var angle_steps = Math.PI * 2 / (children.length + 1);
+			if ((myNode.level - CUR_LEVEL + 1) % 2 == 0) {
+				var angle = angle_steps;
+			} else {
+				var angle = Math.ceil(angle_steps / 2);
+			}
+
+			for (var j = 0; j < children.length; j++) {
+				this.moveNode(children[j], Math.ceil((window.innerHeight / 4 * level_fac * Math.cos(angle)) + mx), Math.ceil((window.innerHeight / 4 * level_fac * Math.sin(angle)) + my));
+				angle = angle_steps + angle;
 			}
 		}
+
+	},
+
+	paint : function(myVertex) {
+
+		if (myVertex.level == 0) {
+			this.paintNode(myVertex, paper_width / 2, paper_height / 2);
+			return;
+		}
 		
+		if (myVertex.parent == undefined)
+			console.error("who is my daddy " + myVertex.title);
+		UI.paintStack.push(myVertex)
+
+	},
+
+	paintVertices : function() {
+		console.info("Running paint job.")
+		for (var i = 0; i < UI.paintStack.length; i++) {
+			if (UI.paintStack[i].parent.svg == null) {
+				console.error('Parent was not painted yet, ' + UI.paintStack[i].parent.title);
+			} else {
+
+				vertex = UI.paintStack[i];
+				UI.paintChildVertex(vertex);
+				UI.paintStack.splice(i, 1);
+
+				if (Math.random() < 0.8)
+					break;
+			}
+		}
+		if (UI.paintStack.length == 0) {
+			UI.setPaintJob(false);
+		}
+
+	},
+
+	paintChildVertex : function(myVertex) {
+		var parent = myVertex.parent;
+		var x = vertex.parent.svg[0].attr("cx");
+		var y = vertex.parent.svg[0].attr("cy");
+		console.info('Painting ' + myVertex.title + 'to x:' + x + ' y:' + y);
+		var level_fac = (Math.pow(0.7, (myVertex.level - CUR_LEVEL)));
+
+		//collect all already painted siblings of myVertex
+		var siblings = new Array()
+		for (var i = 0; i < myVertex.parent.children.length; i++) {
+			if (myVertex.parent.children[i].svg != null)
+				siblings.push(myVertex.parent.children[i]);
+		}
+
+		console.info(myVertex.title + ' : ' + siblings.length);
+
+		var angle = 0;
+		//eventually move siblings
+		if (siblings.length > 0) {
+
+			//calculate the new angles for all sibling vertices
+			var angle_steps = Math.PI * 2 / (siblings.length + 1);
+
+			if ((myVertex.level - CUR_LEVEL + 1) % 2 == 0) {
+				angle = angle_steps;
+			} else {
+				angle = Math.ceil(angle_steps / 2);
+			}
+
+			for (var i = 0; i < siblings.length; i++) {
+				this.moveNode(siblings[i], Math.ceil((window.innerHeight / 3 * level_fac * Math.cos(angle) + x)), Math.ceil((window.innerHeight / 3 * level_fac * Math.sin(angle) + y)));
+				angle = angle_steps + angle;
+			}
+
+		}
+
+		//paint actual vertex and create its edge
+		this.paintNode(myVertex, Math.ceil((window.innerHeight / 3 * level_fac * Math.cos(angle) + x)), Math.ceil((window.innerHeight / 3 * level_fac * Math.sin(angle) + y)));
+		this.createEdge(myVertex);
 	},
 
 	paintNode : function(myNode, x, y) {
-		var level_fac = (Math.pow(0.7, myNode.level));
-		var size = 50 * level_fac;
+		var level_fac = (Math.pow(0.7, (myNode.level - CUR_LEVEL)));
+		var size = window.innerHeight / 16 * level_fac;
 		var fontsize = 20 * level_fac;
-		
+
 		paper.setStart();
 		var circle1 = paper.circle(x, y, 0);
 
 		circle1.attr({
 			"fill" : "#CCCCCC",
-			"fill-opacity" : 1,
+
 			"stroke" : '#AAAAAA',
 			"stroke-width" : 2,
 		});
@@ -233,6 +396,7 @@ var zoomUI = new Class({
 		});
 
 		var text1 = paper.text(x, y, myNode.title).toFront();
+
 		text1.attr({
 			"font-size" : 0,
 			"font-family" : "Cabin",
@@ -261,106 +425,166 @@ var zoomUI = new Class({
 			"font-size" : fontsize
 		}, 2000, "elastic");
 
+		//Compress all vertex components to one set
 		myNode.svg = set3;
 
+		//Event handler for mouse over
 		var over = function(event) {
+
+			UI.showTooltip(myNode.title, myNode.intro, event);
 			set3.animate({
 				transform : "s1.1"
 			}, 2000, "elastic");
 
-		};
+			//Event handler for mousewheel
+			mouse = function(e) {
+				//Remove the event listener, since we want to fire this only once
+				if (document.addEventListener) {
+					document.removeEventListener('mousewheel', mouse, false);
+					document.removeEventListener("DOMMouseScroll", mouse, false);
+				} else {
+					document.removeEvent("onmousewheel", mouse);
+				}
+				var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+				if (delta > 0) {
+					UI.zoomIn(myNode);
+				}
+				/* Mousewheel DOWN*/
+				else {
+					console.log('zooming out');
+				}
 
+			};
+			//Event handler - end
+
+			//Add event handler for mousewheel
+			if (document.addEventListener) {
+				//Chrome, Firefox, IE9
+				document.addEventListener('mousewheel', mouse, false);
+				document.addEventListener("DOMMouseScroll", mouse, false);
+			} else {
+				//IE 6,7,8
+				document.attachEvent("onmousewheel", mouse);
+			}
+
+		};
+		//Event handler for mouse over - end
+
+		//Event handler for mouse out
 		var out = function(event) {
+			UI.hideTooltip();
+			//Remove event listener, since there is no selected vertex yet
+			if (document.addEventListener) {
+				document.removeEventListener('mousewheel', mouse, false);
+				document.removeEventListener("DOMMouseScroll", mouse, false);
+			} else {
+				document.removeEvent("onmousewheel", mouse);
+			}
+			//Shrink the vertex back
 			set3.animate({
 				transform : "s1"
 			}, 2000, "elastic");
+			Tips4 = null;
+		};
+		//Event handler for mouse out - end
+
+		//Event hanbler for click on vertex
+		var click = function(event) {
+			window.open(myNode.link);
 		};
 
+		//Set events to the above defined event handler
 		set3.mouseover(over);
 		set3.mouseout(out);
-		
-	
-		
-		
-		
+		set3.click(click);
 
 		return myNode;
 	},
 
-	test : function() {
-		var vertex_mom = new Vertex();
-		vertex_mom.title = "Chaostheorie";
-		vertex_mom.intro = "introtext";
-		vertex_mom.level = 0;
-		
-		var vertex_child1 = new Vertex();
-		vertex_child1.title = "Shits";
-		vertex_child1.intro = "introtext";
-		vertex_child1.level = 1;
-		vertex_child1.parent = vertex_mom;
-		vertex_mom.children.push(vertex_child1);
-		vertext_mom = this.paintNode(vertex_mom, paper_width / 2, paper_height / 2, null, null);
-		vertex_child1 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
-		//moveNode(vertex_child1, 200, 200);
+	formatIntro : function(intro, lineLength, maxChars) {
+		var currentPos = 0;
+		var lastSpacePos = 0;
+		for ( currentPos = 0; currentPos < maxChars; currentPos++) {
+			if (intro.charAt(currentPos) == ' ')
+				lastSpacePos = currentPos;
+			if (currentPos % lineLength == 0) {
+				intro = intro.slice(0, lastSpacePos) + '\n' + intro.slice(lastSpacePos, intro.length);
+			}
+		}
+		intro = intro.slice(0, lastSpacePos) + '...';
+		return intro;
+	},
 
-		var vertex_child2 = new Vertex();
-		vertex_child2.title = "Hass";
-		vertex_child2.intro = "introtext";
-		vertex_child2.level = 1;
-		vertex_child2.parent = vertex_mom;
-		vertex_mom.children.push(vertex_child2);
-		vertex_child2 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+	createTooltip : function() {
+		var content = {
+			'font-family' : 'Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif',
+			'font-size' : '12px',
+			'margin' : '0px 20px',
+			'padding' : '10px',
+			'background' : '#DFE1F0',
 
-		var vertex_child3 = new Vertex();
-		vertex_child3.title = "Liebe";
-		vertex_child3.intro = "introtext";
-		vertex_child3.level = 1;
-		vertex_child3.parent = vertex_mom;
-		vertex_mom.children.push(vertex_child3);
-		vertex_child3 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+			'-webkit-radius' : '3px',
+			'-moz-radius' : '3px',
+			'border-radius' : '3px',
+		};
+		var heading = {
 
-		var vertex_child4 = new Vertex();
-		vertex_child4.title = "Ahh";
-		vertex_child4.intro = "introtext";
-		vertex_child4.level = 1;
-		vertex_child4.parent = vertex_mom;
-		vertex_mom.children.push(vertex_child4);
-		vertex_child4 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+			'font-family' : 'Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif',
+			'font-size' : '15px',
+			'margin' : '0px 20px 10px',
+			'padding' : '5px',
+			'background' : '#DFE1F0',
 
-		var vertex_child5 = new Vertex();
-		vertex_child5.title = "Mies";
-		vertex_child5.intro = "introtext";
-		vertex_child5.level = 1;
-		vertex_child5.parent = vertex_mom;
-		vertex_mom.children.push(vertex_child5);
-		vertex_child5 = this.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
+			'-webkit-radius' : '3px',
+			'-moz-radius' : '3px',
+			'border-radius' : '3px',
+		};
+		var tooltip = {
+			'position' : 'absolute',
+			'display' : 'none',
+			'padding' : '3px',
+			'z-index' : '1000',
 
-		var vertex_child11 = new Vertex();
-		vertex_child11.title = "Poop";
-		vertex_child11.intro = "introtext";
-		vertex_child11.level = 2;
-		vertex_child11.parent = vertex_child1;
-		vertex_child1.children.push(vertex_child11);
-		vertex_child11 = this.displayChildNodes(vertex_child1, vertex_child1.svg[0].attr("cx"), vertex_child1.svg[0].attr("cy"));
-		
-		
-		var rect = paper.rect(0, 0, 50, 50);
-		rect.attr({fill:'black'});
-		rect.click(function() {
-			var vertex_child6 = new Vertex();
-			vertex_child6.title = "New Stuff";
-			vertex_child6.intro = "introtext";
-			vertex_child6.level = 1;
-			vertex_child6.parent = vertex_mom;
-			vertex_mom.children.push(vertex_child6);
-			vertex_child6 = scope_zoomUI.displayChildNodes(vertex_mom, vertex_mom.svg[0].attr("cx"), vertex_mom.svg[0].attr("cy"));
-			
-			// var vertex_child7 = new Vertex("New Stuff", "Some things about hass", "http://wikipedia.org/hass", 2, vertex_child5);
-			// vertex_child5.children.push(vertex_child7);
-			// vertex_child7 = scope.displayChildNodes(vertex_child5, vertex_child5.svg[0].attr("cx"), vertex_child5.svg[0].attr("cy"));
-// 			
-		});
-		
+			'max-width' : '400px',
+			'-webkit-radius' : '3px',
+			'-moz-radius' : '3px',
+		}
 
+		var tip = new Element('div', {
+			id : 'tip',
+		}).setStyles(tooltip);
+		tip.adopt(new Element('div', {
+			id : 'tip-head',
+		}).setStyles(heading));
+		tip.adopt(new Element('div', {
+			id : 'tip-tail',
+		}).setStyles(content));
+		$(document.body).adopt(tip)
+	},
+
+	hideTooltip : function() {
+		var tip = document.id('tip');
+		tip.hide();
+	},
+
+	showTooltip : function(myHeading, myContent, event) {
+		var tip = document.id('tip');
+		tip.setStyle("left", event.clientX + 20).setStyle("top", event.clientY + 20);
+		tip.show();
+		this.setTooltipHeading(myHeading);
+		if (myContent.length > 300) {
+			myContent = myContent.substring(0, 300) + " ...";
+		}
+		this.setTooltipContent(myContent);
+	},
+
+	setTooltipHeading : function(myHeading) {
+		var heading = document.id('tip-head');
+		heading.set('text', myHeading);
+	},
+
+	setTooltipContent : function(myContent) {
+		var content = document.id('tip-tail');
+		content.set('text', myContent);
 	},
 });
