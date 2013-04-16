@@ -65,7 +65,7 @@ var ZoomCore = new Class({
 		//Traverse recursively downwards the tree in order to paint the next visible 
 		//level
 		for(var i = 0; i < myVertex.children.length; i++){
-			this.printSuccessors(myVertex.children[i]);
+			this.paintSuccessors(myVertex.children[i]);
 		}
 		
 	},
