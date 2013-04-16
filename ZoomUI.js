@@ -9,16 +9,22 @@ var ZoomUI = new Class({
 	initialize : function() {
 		this.paintVector = new Array();
 		this.createTooltip();
-		paper_width = (window.innerWidth - window.innerWidth / 10);		//width of raphael paper
-		paper_height = (window.innerHeight - window.innerHeight / 10);  //height of raphael paper
+		paper_width = (window.innerWidth - window.innerWidth / 10);
+		//width of raphael paper
+		paper_height = (window.innerHeight - window.innerHeight / 10);
+		//height of raphael paper
 		paper = Raphael(0, 0, paper_width, paper_height);
-		paper.renderfix();		//In order to solve some rendering bugs. For more information take a look at raphael's doc.
-		this.velocity = 200;		//time in ms between paintVertices function calls
-		this.intervalOn = null; //flag to determine if interval function calls should be executed (of paintVertices)
-		this.interval = null;   //interval function call reference
-		
+		paper.renderfix();
+		//In order to solve some rendering bugs. For more information take a look at raphael's doc.
+		this.velocity = 50;
+		//time in ms between paintVertices function calls
+		this.intervalOn = null;
+		//flag to determine if interval function calls should be executed (of paintVertices)
+		this.interval = null;
+		//interval function call reference
+
 	},
-	
+
 	/**
 	 * Determines whether paintVertices() is called or not + at which speed.
 	 * @param{Boolean} myFlag
@@ -35,7 +41,7 @@ var ZoomUI = new Class({
 			UI.intervalOn = false;
 		}
 	},
-	
+
 	/**
 	 * Creates edge from child to parent node.
 	 * @param{Vertex} vertexChild
@@ -50,7 +56,7 @@ var ZoomUI = new Class({
 		var startColor = vertexChild.parent.svg[0].attr("fill");
 		var endColor = vertexChild.svg[0].attr("fill");
 		var colorAngle = Math.ceil(Raphael.angle(xP, yP, xC, yC));
-		
+
 		//Detect quadrant which edge aims to.
 
 		if (colorAngle > 90 && colorAngle < 270)
@@ -83,12 +89,12 @@ var ZoomUI = new Class({
 			'fill' : startColor,
 			stroke1 : 'none',
 		}, 2000, ">").toBack();
-		
+
 		//Append svg of edge to its vertex (child).
 		vertexChild.path = path;
 
 	},
-	
+
 	/**
 	 * Used to calculate color for fading effect.
 	 * @param{#RGB} rgb color code
@@ -100,7 +106,7 @@ var ZoomUI = new Class({
 		var num = parseInt(color.slice(1), 16), amt = Math.round(2.55 * percent), R = (num >> 16) + amt, B = (num >> 8 & 0x00FF) + amt, G = (num & 0x0000FF) + amt;
 		return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (B < 255 ? B < 1 ? 0 : B : 255) * 0x100 + (G < 255 ? G < 1 ? 0 : G : 255)).toString(16).slice(1);
 	},
-	
+
 	/**
 	 * Updates rendering of the graph on inzoom event.
 	 * @param{Vertex} vertex - svg which was zoomed on
@@ -110,7 +116,7 @@ var ZoomUI = new Class({
 		Core.zoomed(vertex);
 		//Factor to calculate distance between father and child node and color fading.
 		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL)));
-		
+
 		//Relocate zoomed on svg to middle of paper.
 		vertex.svg.animate({
 			"cx" : paper_width / 2,
@@ -142,13 +148,15 @@ var ZoomUI = new Class({
 			console.log("I'm on");
 			for (var i = 0; i < child_count; i++) {
 				console.log("I'm in ya");
-				this.moveNode(vertex.children[i], Math.ceil((window.innerHeight / 4 * level_fac * Math.cos(angle) + vertex.svg[0].attr('cx'))), Math.ceil((window.innerHeight / 4 * level_fac * Math.sin(angle) + vertex.svg[0].attr('cy'))));
-				angle = angle_steps + angle;
-				this.repaintChildren(vertex.children[i]);
+				if (vertex.children[i].svg != undefined) {
+					this.moveNode(vertex.children[i], Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.4, (vertex.level - CUR_LEVEL))) * Math.cos(angle) + vertex.svg[0].attr('cx'))), Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.4, (vertex.level - CUR_LEVEL))) * Math.sin(angle) + vertex.svg[0].attr('cy'))));
+					angle = angle_steps + angle;
+					this.repaintChildren(vertex.children[i]);
+				}
 			}
 		}
 	},
-	
+
 	/**
 	 * Recursively calls repaint node to update style of every node.
 	 */
@@ -163,14 +171,13 @@ var ZoomUI = new Class({
 			}
 		}
 	},
-	
+
 	/**
 	 * Updates style of nodes.
 	 * @param{Vertex} vertex
 	 */
 
 	repaintNode : function(vertex) {
-
 
 		//Factor to calculate distance between father and child node and color fading.
 		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL)));
@@ -179,8 +186,8 @@ var ZoomUI = new Class({
 		var temp_scope = this;
 
 		if (vertex.svg != undefined)
-		
-		//Adapt every element in set of vertex.svg
+
+			//Adapt every element in set of vertex.svg
 			vertex.svg.forEach(function(element) {
 				if (element.attr('text') == undefined) {
 					if (element.attr("stroke-dasharray") == "- ") {
@@ -206,7 +213,7 @@ var ZoomUI = new Class({
 			});
 
 	},
-	
+
 	/**
 	 * Fades out given sibilings of @param{Vertex} vertex.
 	 */
@@ -230,7 +237,7 @@ var ZoomUI = new Class({
 		}, 500, "linear");
 
 	},
-	
+
 	/**
 	 * Fades out children of given @param{Vertex} vertex,
 	 */
@@ -250,7 +257,7 @@ var ZoomUI = new Class({
 			}
 		});
 	},
-	
+
 	/**
 	 * Moves @param{Vertex} myNode's svg and path to parent to the given
 	 * @param{Number} mx,my.
@@ -264,7 +271,7 @@ var ZoomUI = new Class({
 
 		var startColor = myNode.parent.svg[0].attr("fill");
 		console.log(myNode.title);
-		
+
 		//Factor to calculate distance between father and child node and color fading.
 		var level_fac = (Math.pow(0.7, (myNode.level - CUR_LEVEL)));
 
@@ -291,8 +298,8 @@ var ZoomUI = new Class({
 			"x" : (mx),
 			"y" : (my)
 		});
-		
-		//Check which quadrant path (is an triangle) shows to. 
+
+		//Check which quadrant path (is an triangle) shows to.
 		//Depending on which direction paint path with given paramters..
 
 		if (xP <= mx && yP <= my) {
@@ -338,16 +345,17 @@ var ZoomUI = new Class({
 			} else {
 				var angle = Math.ceil(angle_steps / 2);
 			}
-			
-			
+
 			for (var j = 0; j < children.length; j++) {
-				this.moveNode(children[j], Math.ceil((window.innerHeight / 4 * level_fac * Math.cos(angle)) + mx), Math.ceil((window.innerHeight / 4 * level_fac * Math.sin(angle)) + my));
-				angle = angle_steps + angle;
+				if (children[j].svg != undefined) {
+					this.moveNode(children[j], Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.4, (myNode.level - CUR_LEVEL))) * Math.cos(angle)) + mx), Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.4, (myNode.level - CUR_LEVEL))) * Math.sin(angle)) + my));
+					angle = angle_steps + angle;
+				}
 			}
 		}
 
 	},
-	
+
 	/**
 	 * Called by ZoomCore in order to paint the fetched vertices.
 	 * If input @param {Vertex} is not the initial one it is pushed
@@ -364,17 +372,17 @@ var ZoomUI = new Class({
 		UI.paintVector.push(myVertex)
 
 	},
-	
+
 	/**
 	 * Empties the paintVector in order to paint all vertices.
 	 */
 
 	paintVertices : function() {
 		console.info("Running paint job.")
-		
+
 		//Look if there are unpainted elements in paintVector which parent is painted.
 		//If there are, paint.
-		
+
 		for (var i = 0; i < UI.paintVector.length; i++) {
 			if (UI.paintVector[i].parent.svg == null) {
 				console.error('Parent was not painted yet, ' + UI.paintVector[i].parent.title);
@@ -383,22 +391,22 @@ var ZoomUI = new Class({
 				vertex = UI.paintVector[i];
 				UI.paintChildVertex(vertex);
 				UI.paintVector.splice(i, 1);
-				
+
 				//To control with which probability more then one element is painted.
 
 				if (Math.random() < 0.8)
 					break;
 			}
 		}
-		
+
 		//Stop paintVertices() iteration if there is no element left to paint.
-		
+
 		if (UI.paintVector.length == 0) {
 			UI.setPaintJob(false);
 		}
 
 	},
-	
+
 	/**
 	 * Attaches @param{Vertex} myVertex as child node to its father, recursively.
 	 * Calls moveNode to relocate its sibling nodes.
@@ -409,7 +417,7 @@ var ZoomUI = new Class({
 		var x = vertex.parent.svg[0].attr("cx");
 		var y = vertex.parent.svg[0].attr("cy");
 		console.info('Painting ' + myVertex.title + 'to x:' + x + ' y:' + y);
-		
+
 		//Factor to calculate distance between father and child node and color fading.
 		var level_fac = (Math.pow(0.7, (myVertex.level - CUR_LEVEL)));
 
@@ -436,21 +444,23 @@ var ZoomUI = new Class({
 			}
 
 			for (var i = 0; i < siblings.length; i++) {
-				this.moveNode(siblings[i], Math.ceil((window.innerHeight / 3 * level_fac * Math.cos(angle) + x)), Math.ceil((window.innerHeight / 3 * level_fac * Math.sin(angle) + y)));
-				angle = angle_steps + angle;
+				if (siblings[i].svg != undefined) {
+					this.moveNode(siblings[i], Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.4, (myVertex.level - CUR_LEVEL))) * Math.cos(angle) + x)), Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.4, (myVertex.level - CUR_LEVEL))) * Math.sin(angle) + y)));
+					angle = angle_steps + angle;
+				}
 			}
 
 		}
 
 		//paint actual vertex and create its edge
-		this.paintNode(myVertex, Math.ceil((window.innerHeight / 3 * level_fac * Math.cos(angle) + x)), Math.ceil((window.innerHeight / 3 * level_fac * Math.sin(angle) + y)));
+		this.paintNode(myVertex, Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.4, (myVertex.level - CUR_LEVEL))) * Math.cos(angle) + x)), Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.4, (myVertex.level - CUR_LEVEL))) * Math.sin(angle) + y)));
 		this.createEdge(myVertex);
 	},
-	
+
 	/**
 	 * Creates the actual svg-elements with its style specification and synthesizes them to a set.
 	 * @param{Vertex} myNode
-	 * @param{number} x,y 
+	 * @param{number} x,y
 	 */
 
 	paintNode : function(myNode, x, y) {
@@ -584,7 +594,7 @@ var ZoomUI = new Class({
 	/**
 	 * Create and attach css for tooltips.
 	 */
-	
+
 	createTooltip : function() {
 		var content = {
 			'font-family' : 'Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif',
@@ -631,8 +641,7 @@ var ZoomUI = new Class({
 		}).setStyles(content));
 		$(document.body).adopt(tip)
 	},
-	
-	
+
 	/**
 	 * Hides tooltip when called.
 	 */
@@ -641,40 +650,40 @@ var ZoomUI = new Class({
 		var tip = document.id('tip');
 		tip.hide();
 	},
-	
+
 	/**
 	 * Displays tooltip depending on mouseposition.
- 	 * @param {String} myHeading
- 	 * @param {String} myContent
- 	 * @param {Event} event - mouseover event
+	 * @param {String} myHeading
+	 * @param {String} myContent
+	 * @param {Event} event - mouseover event
 	 */
-	
+
 	showTooltip : function(myHeading, myContent, event) {
 		var tip = document.id('tip');
 		tip.setStyle("left", event.clientX + 20).setStyle("top", event.clientY + 20);
 		tip.show();
 		this.setTooltipHeading(myHeading);
-		
+
 		//Cut text of tooltip at 300st character.
 		if (myContent.length > 300) {
 			myContent = myContent.substring(0, 300) + " ...";
 		}
 		this.setTooltipContent(myContent);
 	},
-	
+
 	/**
 	 * Fills tip-head div with content of myHeading.
- 	 * @param {String} myHeading
+	 * @param {String} myHeading
 	 */
 
 	setTooltipHeading : function(myHeading) {
 		var heading = document.id('tip-head');
 		heading.set('text', myHeading);
 	},
-	
+
 	/**
 	 * Fills tip-tail div with content of myContent.
-     * @param {String} myContent
+	 * @param {String} myContent
 	 */
 
 	setTooltipContent : function(myContent) {
@@ -682,3 +691,4 @@ var ZoomUI = new Class({
 		content.set('text', myContent);
 	},
 });
+
