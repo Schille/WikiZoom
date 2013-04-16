@@ -15,7 +15,6 @@
 		<title>WikiZoom</title>
 		<link href="dependencies/bootstrap/css/bootstrap.css" rel="stylesheet">
 
-
 	</head>
 	<body>
 		<div class="container">
@@ -43,31 +42,28 @@
 					<div class="input-append" id="inputApp">
 						<input type="text" id="search" autocomplete="off" class="search-query">
 
-						<button id="fade" type="submit" onclick="template1_initialize()" class="btn btn-primary">
-							Search
-						</button>
-
+						<button type="button" id="fade" type="search" onclick="template1_init()" class="btn btn-primary">
+						Search
+					</button>
 					</div>
 
 				</form>
 			</div>
-			
-			<script>
-				function template1_initialize(){
-	Core = new ZoomCore($('search').value);
-	UI = new ZoomUI();
 
-	$$('div').fade('out');
+			<script type="text/javascript">
+				function template1_init() {
 
-	
-}
-				
+					$$('div').fade('out');
+					start($('search').value);
+				}
+
+
 			</script>
-			
+
 			<div id="raus" class="row">
 				<div class="span5"></div>
 				<div class="span1 ">
-					<ul class="nav nav-list" id="selects"></ul>	
+					<ul class="nav nav-list" id="selects"></ul>
 				</div>
 			</div>
 
@@ -75,7 +71,6 @@
 				var selects = $('selects');
 				var searchBox = $('search')
 
-			
 				searchBox.addEvents({
 					//New Request at keystroke
 					'keyup' : function() {
@@ -83,33 +78,32 @@
 
 						//Create API-Request
 						var searchRequest = new Request.JSONP({
-							
+
 							url : "http://de.wikipedia.org/w/api.php?action=opensearch&format=json&limit=10&search=" + searchKey.value,
-							
+
 							onComplete : function(data) {
 								//Delete container content
 								selects.set('html', '');
 								for (var counter = 0; counter < 4; counter++) {
-									
+
 									//Check if there is content in the Array
 									if (data[1][counter] == undefined) {
-										selects.set('style','border-bottom: 0px solid rgba(175,175,175,1)')
+										selects.set('style', 'border-bottom: 0px solid rgba(175,175,175,1)')
 										break;
 									}
-									//Insert 
+									//Insert
 									selects.set('html', selects.get('html') + '<li class="nav-header" ><a id=\'typeahead' + counter + '\'>' + data[1][counter] + '</a></li>');
 									//Add bottom border
-									selects.set('style','border-bottom: 2px solid rgba(175,175,175,1)')
+									selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)')
 								}
-								
-								
-								//EventListener 
+
+								//EventListener
 								var type0 = $('typeahead0');
 								type0.addEvents({
 									'click' : function() {
 										searchBox.set('value', type0.get('html'));
-										selects.set('html','');
-										selects.set('style','border-bottom: 0px')
+										selects.set('html', '');
+										selects.set('style', 'border-bottom: 0px')
 									}
 								})
 
@@ -117,8 +111,8 @@
 								type1.addEvents({
 									'click' : function() {
 										searchBox.set('value', type1.get('html'));
-										selects.set('html','');
-										selects.set('style','border-bottom: 0px')
+										selects.set('html', '');
+										selects.set('style', 'border-bottom: 0px')
 									}
 								})
 
@@ -126,8 +120,8 @@
 								type2.addEvents({
 									'click' : function() {
 										searchBox.set('value', type2.get('html'));
-										selects.set('html','');
-										selects.set('style','border-bottom: 0px')
+										selects.set('html', '');
+										selects.set('style', 'border-bottom: 0px')
 									}
 								})
 
@@ -135,12 +129,11 @@
 								type3.addEvents({
 									'click' : function() {
 										searchBox.set('value', type3.get('html'));
-										selects.set('html','');
-										selects.set('style','border-bottom: 0px')
+										selects.set('html', '');
+										selects.set('style', 'border-bottom: 0px')
 									}
 								})
-	
-							
+
 							}
 						});
 						searchRequest.send();
@@ -151,9 +144,6 @@
 			</script>
 
 			<div class="span"></div>
-			<!-- Button to trigger modal -->
-			<!-- Modal -->
-			
 
 			<div class="jumbotron">
 
@@ -197,62 +187,57 @@
 					</div>
 				</div>
 			</div>
-			<!-- Example row of columns -->
+
 			<div class="footer">
 				<p>
 					© WikiZoom 2013
 				</p>
 			</div>
 		</div>
-	  <div class="span">
-</div>	
+		<div class="span"></div>
 		<style>
+			body {
+				padding-top: 20px;
+				padding-bottom: 60px;
+			}
 
-		body {
-		padding-top: 20px;
-		padding-bottom: 60px;
-		}
+			.jumbotron {
+				margin: 80px 0;
+				text-align: center;
+			}
+			.jumbotron h1 {
+				font-size: 100px;
+				line-height: 1;
+			}
+			.jumbotron .lead {
+				font-size: 24px;
+				line-height: 1.25;
+			}
+			.jumbotron .btn {
+				font-size: 21px;
+				padding: 14px 24px;
+			}
 
+			#selects {
+				position: absolute;
+				margin-left: -4%;
+				margin-top: -20px;
+				border: 2px;
+				border-right: 2px solid rgba(175,175,175,5);
+				border-left: 2px solid rgba(175,175,175,5);
+				border-bottom: 0px solid rgba(175,175,175,5);
+				border-radius: 3px;
+			}
 
-		.jumbotron {
-		margin: 80px 0;
-		text-align: center;
-		}
-		.jumbotron h1 {
-		font-size: 100px;
-		line-height: 1;
-		}
-		.jumbotron .lead {
-		font-size: 24px;
-		line-height: 1.25;
-		}
-		.jumbotron .btn {
-		font-size: 21px;
-		padding: 14px 24px;
-		}
-		
-		#selects {
-		position:absolute;
-		margin-left:-4%;
-		margin-top:-20px;
-		border:2px;
-		border-right: 2px solid rgba(175,175,175,5);
-		border-left: 2px solid rgba(175,175,175,5);
-		border-bottom: 0px solid rgba(175,175,175,5);
-		border-radius:3px;
-		}
-		
-		#selects li {
-		z-index: -1051;
-		margin-top: -7px;
-		-webkit-border-radius: 4px;
-		-moz-border-radius: 4px;
-		border-radius: 4px;
-		}
+			#selects li {
+				z-index: -1051;
+				margin-top: -7px;
+				-webkit-border-radius: 4px;
+				-moz-border-radius: 4px;
+				border-radius: 4px;
+			}
 
 		</style>
-
-		
 
 	</body>
 </html>

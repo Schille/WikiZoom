@@ -13,7 +13,7 @@ var ZoomUI = new Class({
 		paper_height = (window.innerHeight - window.innerHeight / 10);  //height of raphael paper
 		paper = Raphael(0, 0, paper_width, paper_height);
 		paper.renderfix();		//In order to solve some rendering bugs. For more information take a look at raphael's doc.
-		this.velocity = 50;		//time in ms between paintVertices function calls
+		this.velocity = 200;		//time in ms between paintVertices function calls
 		this.intervalOn = null; //flag to determine if interval function calls should be executed (of paintVertices)
 		this.interval = null;   //interval function call reference
 		
