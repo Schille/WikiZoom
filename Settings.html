@@ -1,0 +1,32 @@
+<html>
+	<head>
+		<script src="dependencies/raphael-min.js" type="text/javascript"></script>
+		<script src="dependencies/mootools-more-1.4.0.1.js" type="text/javascript"></script>
+		<script src="dependencies/mootools-core-1.4.5.js" type="text/javascript"></script>
+		<script src="ZoomCore.js" type="text/javascript"></script>
+		<script src="ZoomUI.js" type="text/javascript"></script>
+		<script src="WikiFetcher.js" type="text/javascript"></script>
+		<script src="Settings.js" type="text/javascript"></script>
+	</head>
+	<body>
+    <script type="text/javascript">
+       var settings = new Settings();
+       settings.checkCookie();
+       settings.test(); 
+        </script>
+
+        Level: 
+        <input type="text" name="newLevel" id="newLevel" value="" maxlength="5" onkeyup="settings.checkNumberLevel()"/>
+        <button type="button" onclick="settings.setLevelCookie()">Level!</button>
+        <br>
+        Knoten: <input type="text" name="newKnoten" id="newKnoten" value="" maxlength="5" onkeyup="settings.checkNumberKnoten()"/>
+        <button type="button" onclick="settings.setKnotenCookie()">Knoten!</button> 
+        <br>
+        Beide: 
+        <button type="button" onclick="settings.setBeideCookie()">Beide!</button>
+        <br>
+    </body>
+
+	</body>
+
+</html>
