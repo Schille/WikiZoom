@@ -49,8 +49,8 @@ var ZoomUI = new Class({
 
 	createEdge : function(vertexChild) {
 
-		var xP = vertex.parent.svg[0].attr("cx");
-		var yP = vertex.parent.svg[0].attr("cy");
+		var xP = vertexChild.parent.svg[0].attr("cx");
+		var yP = vertexChild.parent.svg[0].attr("cy");
 		var xC = vertexChild.svg[0].attr("cx");
 		var yC = vertexChild.svg[0].attr("cy");
 		var startColor = vertexChild.parent.svg[0].attr("fill");
