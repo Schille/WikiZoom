@@ -18,6 +18,8 @@
 	</head>
 	<body>
 		
+		
+		
 		<!-- Begin navbar (Bottom) -->
 		<div class="navbar navbar_hide navbar-fixed-bottom">
 			<div class="navbar-inner navbar_hide">
@@ -136,6 +138,12 @@
 					</p>
 
 					<a role="button" onclick="toggle_help()" class="badge pull-left">Help!</a>
+				</div><div class="row">
+				<div class="span5"></div>
+				
+				
+				<div id="alert" class="alert-error span text-center">Wort nicht gefunden!</div>
+				
 				</div>
 				<div class="span4"></div>
 			</div>
@@ -153,8 +161,10 @@
 			</div>
 
 			<script type="text/javascript">
+			
 				function template1_init() {
 					if ($('search').value != '') {
+						
 						$$('div').fade('out');
 						$$('div.navbar_hide').show();
 						start($('search').value);
@@ -171,9 +181,10 @@
 			</div>
 
 			<script type="text/javascript">
+				var alert = $('alert');
 				var selects = $('selects');
 				var searchBox = $('search')
-
+				alert.hide();
 				searchBox.addEvents({
 					//New Request at keystroke
 					'keyup' : function() {
@@ -391,6 +402,13 @@
 				-moz-border-radius: 4px;
 				border-radius: 5px;
 				background-color: #F0F0F0;
+			}
+
+			#alert{
+			
+				-webkit-border-radius: 4px;
+				-moz-border-radius: 4px;
+				border-radius: 5px;
 			}
 
 			#selects li {
