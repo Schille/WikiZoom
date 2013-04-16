@@ -40,7 +40,7 @@ var WikiFetcher = new Class({
 					}
 					// get rid of infobox containing the title
 					var count = intro.match(/'''/g);
-					if (count.length > 2) {
+					if (count != null && count.length > 2) {
 						intro = intro.replace(/{{.+'''+.+}}/, '');
 					}
 					// then search for the ''' Pattern to determine the start of the introduction
