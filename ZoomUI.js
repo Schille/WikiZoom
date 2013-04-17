@@ -113,6 +113,7 @@ var ZoomUI = new Class({
 	 */
 
 	zoomIn : function(vertex) {
+		console.debug('zoomIn : ' + vertex.title);
 		Core.zoomed(vertex);
 		//Factor to calculate distance between father and child node and color fading.
 		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL)));
@@ -130,6 +131,7 @@ var ZoomUI = new Class({
 			"x" : paper_width / 2,
 			"y" : paper_height / 2,
 		});
+		
 		
 		vertex.svg.x = paper_width/2;
 		vertex.svg.y = paper_height/2;
@@ -232,6 +234,7 @@ var ZoomUI = new Class({
 					opacity : 0,
 				}, 500, "linear");
 				temp_vertex.path.remove();
+				temp_vertex.svg.remove();
 				temp_scope.fadeOutChildren(temp_vertex);
 			}
 		});
@@ -255,6 +258,7 @@ var ZoomUI = new Class({
 					opacity : 0,
 				}, 500, "linear");
 				temp_vertex.path.remove();
+				temp_vertex.svg.remove();
 				if (temp_vertex.children.length > 0) {
 					temp_scope.fadeOutChildren(temp_vertex);
 				}
@@ -273,11 +277,11 @@ var ZoomUI = new Class({
 		var xP = myNode.parent.svg.x;
 		var yP = myNode.parent.svg.y;
 		
-		console.debug(myNode.title + ' Parent ' + xP + ' ' + yP);
-		console.debug(myNode.title + ' ' + mx + ' ' + my);
+		
 
 		var startColor = myNode.parent.svg[0].attr("fill");
 		console.log(myNode.title);
+
 
 		//Factor to calculate distance between father and child node and color fading.
 		var level_fac = (Math.pow(0.7, (myNode.level - CUR_LEVEL)));
@@ -379,6 +383,7 @@ var ZoomUI = new Class({
 			return;
 		}
 
+
 		UI.paintVector.push(myVertex)
 
 	},
@@ -399,9 +404,14 @@ var ZoomUI = new Class({
 			} else {
 
 				vertex = UI.paintVector[i];
+				if(vertex.svg == null) {
 				UI.paintChildVertex(vertex);
-				UI.paintVector.splice(i, 1);
-
+				UI.paintVector.splice(i, 1)
+				}
+				else {
+					UI.repaintNode(vertex);	
+			 		UI.paintVector.splice(i, 1)
+				}
 				//To control with which probability more then one element is painted.
 
 				if (Math.random() < 0.8)
@@ -423,11 +433,13 @@ var ZoomUI = new Class({
 	 */
 
 	paintChildVertex : function(myVertex) {
+		
 		var parent = myVertex.parent;
-		var x = vertex.parent.svg.x;
-		var y = vertex.parent.svg.y;
+		var x = myVertex.parent.svg.x;
+		var y = myVertex.parent.svg.y;
 		console.info('Painting ' + myVertex.title + 'to x:' + x + ' y:' + y);
-
+			
+		console.warn('Last paintChildVertex ' + myVertex.title);
 		//Factor to calculate distance between father and child node and color fading.
 		var level_fac = (Math.pow(0.7, (myVertex.level - CUR_LEVEL)));
 
@@ -552,6 +564,7 @@ var ZoomUI = new Class({
 				}
 				var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
 				if (delta > 0) {
+					console.debug('Zoom on ' + myNode.title);
 					UI.zoomIn(myNode);
 				}
 				/* Mousewheel DOWN*/
