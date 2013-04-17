@@ -40,7 +40,7 @@ var WikiFetcher = new Class({
 					}
 					// get rid of infobox containing the title
 					var count = intro.match(/'''/g);
-					if (count != null && count.length > 2) {
+					if (count != null && count.length > 1) {
 						intro = intro.replace(/{{.+'''+.+}}/, '');
 					}
 					intro = intro.replace(/{{Infobox(.|\n)+}}\n/gi,'');
@@ -97,10 +97,10 @@ var WikiFetcher = new Class({
 						var clean = element.replace(/\[|\]/gi, '')
 						Links[k] = clean;
 					}
-					//console.info("Indeeeex: " + index);
+					
 					// get rid of every unwanted pattern in the introduction this includes:
 					// href Links, Wikipedia Links, parenthesis patterns and some other formatting
-					var cleanIntro = index.replace(/<ref>[^<]+<\/ref>/gi, '').replace(/\[http[^\]]+]/gi, '').replace(/\[\[[a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+\s?([a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+)?\|/gi, '')
+					var cleanIntro = index.replace(/\[\[Datei:.+\]\]/g,'').replace(/<ref>[^<]+<\/ref>/gi, '').replace(/\[http[^\]]+]/gi, '').replace(/\[\[[a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+\s?([a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+)?\|/gi, '')
 						.replace(/{{[^']+'''/gi, '').replace(/'|{|}/gi, '').replace(/<[^>]+>/gi, '').replace(/\[|\]/gi, '').replace(/\|\sclass="wikitable"(\n|.)+\|/g,'').replace(/\|[A-Z\u00c4\u00d6\u00dc][A-Z\u00c4\u00d6\u00dc][A-Z\u00c4\u00d6\u00dc].+\n/g,'')
 						.replace(/\*.+\n/gi,'').replace(/Positionskarte.+\n/g,'').replace(/(\n|\t)/g,'');
 					vertex.intro = cleanIntro;
