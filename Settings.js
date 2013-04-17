@@ -1,80 +1,86 @@
 var Settings = new Class({
-
     initialize: function () {
-
+        
     },
 
-    getCookie: function (c_name) {
-        var i, x, y, ARRcookies = document.cookie.split(";");
-        for (i = 0; i < ARRcookies.length; i++) {
-            x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
-            y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
-            x = x.replace(/^\s+|\s+$/g, "");
-            if (x == c_name) {
-                return unescape(y);
+     updateVars:function() {
+            if (document.getElementById("levelSettings").value != "" && !isNaN(document.getElementById("levelSettings").value)) {
+                this.setCookie('Level', document.getElementById('levelSettings').value, 365);
             }
+            if (document.getElementById("vertexSettings").value != "" && !isNaN(document.getElementById("vertexSettings").value)) {
+                this.setCookie('Knoten', document.getElementById('vertexSettings').value, 365);
+            }
+            document.getElementById("nodes").innerHTML = this.getCookie("Knoten");
+            document.getElementById("level").innerHTML = this.getCookie("Level");
+            document.getElementById("levelSettings").value = "";
+            document.getElementById("vertexSettings").value = "";
+
+        },
+         getCookie:function(c_name) {
+            var c_value = document.cookie;
+            var c_start = c_value.indexOf(" " + c_name + "=");
+            if (c_start == -1) {
+                c_start = c_value.indexOf(c_name + "=");
+            }
+            if (c_start == -1) {
+                c_value = null;
+            }
+            else {
+                c_start = c_value.indexOf("=", c_start) + 1;
+                var c_end = c_value.indexOf(";", c_start);
+                if (c_end == -1) {
+                    c_end = c_value.length;
+                }
+                c_value = unescape(c_value.substring(c_start, c_end));
+            }
+            return c_value;
+        },
+
+         setCookie:function(c_name, value, exdays) {
+            var exdate = new Date();
+            exdate.setDate(exdate.getDate() + exdays);
+            var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+            document.cookie = c_name + "=" + c_value;
+        },
+
+         init:function() {
+            var tempUserName = this.getCookie("username");
+            if (tempUserName == null) {
+                tempUserName = prompt("Welcome to WikiZoom, please feel free to change settings =).", "Enter your username here!");
+                this.setCookie('username', tempUserName, 365);
+            }
+            var tempLevel = this.getCookie("Level");
+            var tempNode = this.getCookie("Knoten");
+            if (tempLevel == null) {
+                this.setCookie("Level", 3, 365);
+            }
+            if (tempNode == null) {
+                this.setCookie("Knoten", 5, 365);
+            }
+            document.getElementById("userName").innerHTML = this.getCookie("username");
+            document.getElementById("nodes").innerHTML = this.getCookie("Knoten");
+            document.getElementById("level").innerHTML = this.getCookie("Level");
+        },
+
+         checkNumber:function(checkValue) {
+            if (isNaN(document.getElementById(checkValue).value)) {
+                document.getElementById(checkValue).value = "";
+                document.getElementById(checkValue).focus();
+                return false;
+            }
+        },
+
+         changeUsername:function() {
+            var currentUser = this.getCookie("username");
+            var tempUserName;
+            if (currentUser == null) {
+                (tempUserName = prompt("Welcome to WikiZoom, please feel free to change settings =).", "Enter your username here!")) != null ? currentUser = tempUserName : "";
+            } else {
+                (tempUserName = prompt("Welcome to WikiZoom, please feel free to change settings =).", currentUser)) != null ? currentUser = tempUserName : "";
+            }
+            this.setCookie('username', currentUser, 365);
+            document.getElementById("userName").innerHTML = this.getCookie("username");
         }
-    },
-
-    setCookie: function (c_name, value, exdays) {
-        var exdate = new Date();
-        exdate.setDate(exdate.getDate() + exdays);
-        var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
-        document.cookie = c_name + "=" + c_value;
-    },
-
-    checkCookie: function () {
-        var knoten = getCookie("Knoten");
-        var level = getCookie("Level");
-        if (knoten != null && knoten != "" && level != null && level != "") {
-            alert(" Du hast so viele Knoten eingestellt: " + knoten + " Und Level: " + level);
-        }
-        else {
-            alert("Hallo, du hast noch keine Einstellungen gespeichert und jetzt die Möglichkeit dazu! Viel Spaß!");
-        }
-    },
-
-    setLevelCookie: function () {
-        var newLevel = document.getElementById('newLevel').value;
-        if (newLevel != null && newLevel != "") {
-            setCookie("Level", newKnoten, 365);
-        }
-    },
-
-    setKnotenCookie: function () {
-        var newKnoten = document.getElementById('newKnoten').value;
-        if (newKnoten != null && newKnoten != "") {
-            setCookie("Knoten", newKnoten, 365);
-        }
-
-    },
-
-    setBeideCookie: function () {
-        var newKnoten = document.getElementById('newKnoten').value;
-        setCookie("Knoten", newKnoten, 365);
-        var newLevel = document.getElementById('newLevel').value;
-        setCookie("Level", newLevel, 365);
-    },
-
-    checkNumberLevel: function () {
-        if (document.getElementById('newLevel').value < "0" || "9" < document.getElementById('newLevel').value) {
-            document.getElementById('newLevel').value = "";
-            document.getElementById('newLevel').focus();
-            return false;
-        }
-    },
-
-    checkNumberKnoten: function () {
-        if (document.getElementById('newKnoten').value < "0" || "9" < document.getElementById('newKnoten').value) {
-            document.getElementById('newKnoten').value = "";
-            document.getElementById('newKnoten').focus();
-            return false;
-        }
-    },
-
-    test: function () {
-        alert("Hallo");
-    }
-
-
 });
+     
+       
