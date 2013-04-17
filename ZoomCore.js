@@ -96,12 +96,11 @@ var ZoomCore = new Class({
 				if(myVertex.level == 0)
 					this.iterateChildren(myVertex, this.vertices);
 				else
-					this.iterateChildren(myVertex, myVertex.parent.children.length - 1);
+					this.iterateChildren(myVertex,  this.vertices - (myVertex.level - CUR_LEVEL));
 			}
 		}
 		//In case the current vertex is within the visible levels, just paint it
 		if(myVertex.level < (CUR_LEVEL + this.prefetch)){
-			console.warn('you get' + myVertex.title);
 			UI.paint(myVertex);
 			//Activate the cyclic paint 'thread', since a new vertex was added
 			UI.setPaintJob(true);

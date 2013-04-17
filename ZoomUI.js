@@ -161,8 +161,19 @@ var ZoomUI = new Class({
 		vertex.svg.y = paper_height/2;
 
 		vertex.path.remove();
+		
+		
 		this.fadeOutSiblings(vertex,false);
 		this.repaintNode(vertex);
+		
+		var oneparent = vertex.parent;
+		for(var i = 0; i < ((CUR_LEVEL)  - vertex.level);i++){
+			this.fadeOutSiblings(oneparent,false);
+			oneparent.path.remove();
+			this.repaintNode(oneparent);
+			var oneparent = oneparent.parent;
+		}
+		
 
 		var child_count = vertex.children.length;
 
@@ -263,7 +274,7 @@ var ZoomUI = new Class({
 						opacity : 0,
 					}, 500, "linear");
 					temp_vertex.path.remove();
-					temp_vertex.svg = null;
+					temp_vertex.svg.remove();
 					temp_scope.fadeOutChildren(temp_vertex);
 				}
 			});
