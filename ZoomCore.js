@@ -15,7 +15,8 @@ var ZoomCore = new Class({
 		//Measure how many requests are still pending
 		this.requestsPending = 0;
 		//The initial amount of vertices in level 1
-		this.vertices = 5;
+		this.vertices = 2;
+		
 		//Create and fetch the initial article
 		initialVertex = this.createVertex(myInitialArticle, null, 0);
 		this.fetcher.fetch(initialVertex);
@@ -36,14 +37,14 @@ var ZoomCore = new Class({
 			console.log('Zooming back to vertex: ' + myVertex.id + '(Title:' + myVertex.title + ' Level:' 
 			+ myVertex.level + ')');
 			CUR_LEVEL = myVertex.level;
-			return;
+			this.paintSuccessors(myVertex, true);
 		} else {
 			//This code will be reached if the user performed an zoom (in) action on a certain vertex
 			console.log('Zooming to vertex: ' + myVertex.id + '(Title: "' + myVertex.title + '" Level:' 
 			+ myVertex.level + ')');
 			CUR_LEVEL = myVertex.level;
 			//Now we have to paint all the vertices, which have not been painted yet
-			this.paintSuccessors(myVertex);
+			this.paintSuccessors(myVertex, false);
 			//Requests the missing vertices
 			this.iterateChildren(myVertex, this.vertices);
 		}
@@ -55,18 +56,26 @@ var ZoomCore = new Class({
 	 * yet. 
 	 * @param {Vertex} The actual 'ancestor' of the to be painted vertices 
 	 */
-	paintSuccessors : function(myVertex){
-		//Decided whether the vertex's level is on the upcoming
-		if(myVertex.level == ((this.prefetch + 1) - CUR_LEVEL)){
-			console.warn('I give you ' + myVertex.title);
+
+	paintSuccessors : function(myVertex, myPaintAll){
+	
+		if(myPaintAll == true){
 			UI.paint(myVertex);
-			//Activate the cyclic paint 'thread'
 			UI.setPaintJob(true);
 		}
+		else{
+			//Decided whether the vertex's level is on the upcoming
+			if(myVertex.level == ((this.prefetch + 1) - CUR_LEVEL)){
+				UI.paint(myVertex);
+				//Activate the cyclic paint 'thread'
+				UI.setPaintJob(true);
+			}
+		}
+			
 		//Traverse recursively downwards the tree in order to paint the next visible 
 		//level
 		for(var i = 0; i < myVertex.children.length; i++){
-			this.paintSuccessors(myVertex.children[i]);
+			this.paintSuccessors(myVertex.children[i], myPaintAll);
 		}
 		
 	},
