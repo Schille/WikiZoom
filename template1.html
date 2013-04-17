@@ -17,9 +17,7 @@
 
 	</head>
 	<body>
-		
-		
-		
+
 		<!-- Begin navbar (Bottom) -->
 		<div class="navbar navbar_hide navbar-fixed-bottom">
 			<div class="navbar-inner navbar_hide">
@@ -41,7 +39,7 @@
 				</div>
 			</div>
 		</div>
-<!-- Begin navbar -->
+		<!-- Begin navbar -->
 		<div class="modal help-over overlay_window">
 			<div class="help-over overlay_header">
 				Hilfefenster
@@ -57,11 +55,9 @@
 
 		</div>
 		<div class="modal-backdrop help-over overlay_background"></div>
-<!-- End help-overlay -->
+		<!-- End help-overlay -->
 
-
-
-<!-- Begin about-overlay -->
+		<!-- Begin about-overlay -->
 		<div class="modal about-over overlay_window">
 			<div class="about-over overlay_header">
 				Aboutfenster
@@ -78,10 +74,9 @@
 		</div>
 		<div class="modal-backdrop about-over overlay_background"></div>
 
-<!-- End about-overlay -->
+		<!-- End about-overlay -->
 
-
-<!-- Begin settings-overlay -->
+		<!-- Begin settings-overlay -->
 		<div class="modal settings-over overlay_window">
 			<div class="settings-over overlay_header">
 				Settingsfenster
@@ -97,8 +92,7 @@
 
 		</div>
 		<div class="modal-backdrop settings-over overlay_background"></div>
-<!-- End settings-overlay -->
-
+		<!-- End settings-overlay -->
 
 		<script>
 			var help_over = $$("div.help-over");
@@ -109,14 +103,16 @@
 			about_over.hide();
 			settings_over.hide();
 			//navbar.toggle();
-			
+
 			function toggle_help() {
 				help_over.toggle();
 			}
-			function toggle_about(){
+
+			function toggle_about() {
 				about_over.toggle();
 			}
-			function toggle_settings(){
+
+			function toggle_settings() {
 				settings_over.toggle();
 			}
 		</script>
@@ -124,7 +120,7 @@
 		<div class="container">
 			<div class="masthead">
 				<h3 class="muted"><a class="brand" href="#">WikiZoom</a></h3>
-				
+
 			</div>
 			<!-- Jumbotron -->
 			<div>
@@ -138,19 +134,22 @@
 					</p>
 
 					<a role="button" onclick="toggle_help()" class="badge pull-left">Help!</a>
-				</div><div class="row">
-				<div class="span5"></div>
-				
-				
-				<div id="alert" class="alert-error span text-center">Wort nicht gefunden!</div>
-				
 				</div>
-				<div class="span4"></div>
+				<div class="row">
+					<div class="span5"></div>
+
+					<div id="alert" class="alert-error span text-center">
+						Wort nicht gefunden!
+					</div>
+
+				</div>
+
 			</div>
 			<div id="raus" class="row">
-				<form class="form-search span1">
-					<div class="input-append" id="inputApp">
-						<input type="text" id="search" autocomplete="off" class="search-query">
+				<div class="span3"></div>
+				<form class="form-search center">
+					<div class="input-append center" id="inputApp">
+						<input type="text" id="search" autocomplete="off"  class="input-xxlarge c search-query">
 
 						<button type="button"  type="search" onclick="template1_init()" class="btn btn-primary">
 							Search
@@ -161,10 +160,11 @@
 			</div>
 
 			<script type="text/javascript">
+				
 			
 				function template1_init() {
 					if ($('search').value != '') {
-						
+
 						$$('div').fade('out');
 						$$('div.navbar_hide').show();
 						start($('search').value);
@@ -175,19 +175,30 @@
 
 			<div id="raus" class="row">
 				<div class="span5"></div>
-				<div class="span1 ">
-					<ul class="nav nav-list" id="selects"></ul>
+				<div class="span3">
+					<ul class="nav nav-list span4" id="selects"></ul>
 				</div>
 			</div>
+			
 
 			<script type="text/javascript">
-				var alert = $('alert');
+				
+			
+			
+				var alert1 = $('alert');
 				var selects = $('selects');
 				var searchBox = $('search')
-				alert.hide();
+				
+				
+				
+				alert1.hide();
 				searchBox.addEvents({
-					//New Request at keystroke
-					'keyup' : function() {
+					'input' : function(e) {
+						
+						
+						
+							
+						
 						var searchKey = $('search');
 
 						//Create API-Request
@@ -242,6 +253,7 @@
 
 								var type3 = $('typeahead3');
 								type3.addEvents({
+									
 									'click' : function() {
 										searchBox.set('value', type3.get('html'));
 										selects.set('html', '');
@@ -309,7 +321,7 @@
 				</p>
 			</div>
 		</div>
-		
+
 		<div class="span"></div>
 		<style>
 			.navbar .nav {
@@ -358,16 +370,13 @@
 				padding: 14px 24px;
 			}
 
-			#selects {
-				position: absolute;
-				margin-left: -4%;
-				margin-top: -20px;
-				border: 2px;
-				border-right: 2px solid rgba(175,175,175,5);
-				border-left: 2px solid rgba(175,175,175,5);
-				border-bottom: 0px solid rgba(175,175,175,5);
-				border-radius: 3px;
+			.center {
+
+				float: none;
+				margin-left: auto;
+				margin-right: auto;
 			}
+
 			.overlay_window {
 
 				background-color: #FFFFFF;
@@ -404,11 +413,22 @@
 				background-color: #F0F0F0;
 			}
 
-			#alert{
-			
+			#alert {
+
 				-webkit-border-radius: 4px;
 				-moz-border-radius: 4px;
 				border-radius: 5px;
+			}
+
+			#selects {
+				position: absolute;
+				margin-left: -12%;
+				margin-top: -20px;
+				border: 2px;
+				border-right: 2px solid rgba(175,175,175,5);
+				border-left: 2px solid rgba(175,175,175,5);
+				border-bottom: 0px solid rgba(175,175,175,5);
+				border-radius: 3px;
 			}
 
 			#selects li {
