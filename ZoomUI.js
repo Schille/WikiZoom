@@ -8,6 +8,7 @@ var ZoomUI = new Class({
 	 */
 	initialize : function() {
 		this.paintVector = new Array();
+		this.currentVertex = null;
 		this.createTooltip();
 		paper_width = (window.innerWidth - window.innerWidth / 100);
 		//width of raphael paper
@@ -111,8 +112,13 @@ var ZoomUI = new Class({
 	 * Updates rendering of the graph on inzoom event.
 	 * @param{Vertex} vertex - svg which was zoomed on
 	 */
-
+	zoomOut : function(){
+		var vertex = this.currentVertex;
+		
+	},
+	
 	zoomIn : function(vertex) {
+		this.currentVertex = vertex;
 		Core.zoomed(vertex);
 		//Factor to calculate distance between father and child node and color fading.
 		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL)));
@@ -375,6 +381,7 @@ var ZoomUI = new Class({
 	paint : function(myVertex) {
 
 		if (myVertex.level == 0) {
+			this.currentVertex = myVertex;
 			this.paintNode(myVertex, paper_width / 2, paper_height / 2);
 			return;
 		}
