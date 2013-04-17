@@ -15,7 +15,7 @@ var ZoomCore = new Class({
 		//Measure how many requests are still pending
 		this.requestsPending = 0;
 		//The initial amount of vertices in level 1
-		this.vertices = 2;
+		this.vertices = 4;
 		
 		//Create and fetch the initial article
 		initialVertex = this.createVertex(myInitialArticle, null, 0);
@@ -65,7 +65,7 @@ var ZoomCore = new Class({
 		}
 		else{
 			//Decided whether the vertex's level is on the upcoming
-			if(myVertex.level == ((this.prefetch + 1) - CUR_LEVEL)){
+			if(myVertex.level <= (CUR_LEVEL + this.prefetch + 1)){
 				UI.paint(myVertex);
 				//Activate the cyclic paint 'thread'
 				UI.setPaintJob(true);
@@ -91,15 +91,16 @@ var ZoomCore = new Class({
 		//The wikipedia link will only be set, in case everything went just fine 
 		if (myVertex.link != null) {
 			//Check whether the next vertex will not be beyond the prefetch level
-			if (myVertex.level < (CUR_LEVEL + (this.prefetch + 1))) {
+			if (myVertex.level < (CUR_LEVEL + (this.prefetch))) {
 				//Go through the successors for this vertex
-				this.iterateChildren(myVertex, (this.vertices - (myVertex.level - CUR_LEVEL)));
+				if(myVertex.level == 0)
+					this.iterateChildren(myVertex, this.vertices);
+				else
+					this.iterateChildren(myVertex,  this.vertices - (myVertex.level - CUR_LEVEL));
 			}
 		}
-		
 		//In case the current vertex is within the visible levels, just paint it
 		if(myVertex.level < (CUR_LEVEL + this.prefetch)){
-			console.warn('you get' + myVertex.title);
 			UI.paint(myVertex);
 			//Activate the cyclic paint 'thread', since a new vertex was added
 			UI.setPaintJob(true);
@@ -119,8 +120,8 @@ var ZoomCore = new Class({
 		//catch them the all
 		if (myVertex.children.length != 0) {
 			//If the given vertex has already the required (or more) count of children, only the successors have to be checked
-			if (myVertex.children.length >= f) {
-				for (var i = 0; i < myVertex.children.length; i++) {
+			if (myVertex.children.length > f) {
+				for (var i = 0; i < f; i++) {
 					this.iterateChildren(myVertex.children[i], f - 1);
 				}
 			} else {
@@ -128,11 +129,11 @@ var ZoomCore = new Class({
 				//However, the children also have to be checked
 				for (var i = 0; i < f; i++) {
 					if (myVertex.outlinks[i] == undefined){
-						console.error('Outlink was undefined. ' +myVertex.title);
+						console.warn('Outlink was undefined. ' + myVertex.title);
 						continue;
 					}
 					if(myVertex.children[i] != undefined){
-						this.iterateChildren(myVertex.children[i], f -1);
+						this.iterateChildren(myVertex.children[i], f - 1);
 					}
 					else
 					{

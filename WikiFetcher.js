@@ -36,7 +36,7 @@ var WikiFetcher = new Class({
 						delete vertex.parent.outlinks[vertex.parent.outlinks.indexOf(vertex.title)];
 						return;
 					} else {
-						var intro = JSONdata.query.pages[pageid].revisions[0]["*"];
+						var intro = JSONdata.query.pages[pageid].revisions;
 					}
 					// get rid of infobox containing the title
 					var count = intro.match(/'''/g);
