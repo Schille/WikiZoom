@@ -137,13 +137,16 @@ var ZoomUI = new Class({
 	},
 
 	zoomIn : function(vertex) {
+		if (UI.zoompending == true)
+			return;
+
 		UI.zoompending = true;
-		setTimeout(function(){
+		setTimeout(function() {
 			UI.zoompending = false;
-		},2000);
-		
+		}, 5000);
+
 		this.currentVertex = vertex;
-		
+
 		// Factor to calculate distance between father and child node
 		// and color fading.
 		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL + 1)));
@@ -170,16 +173,15 @@ var ZoomUI = new Class({
 		//this.fadeOutSiblings(vertex,false);
 		//this.repaintNode(vertex);
 
-		
 		var tmp = vertex.level - CUR_LEVEL;
 		var oneparent = vertex;
-		for(var i = 0; i < tmp; i++){
+		for (var i = 0; i < tmp; i++) {
 			this.repaintNode(oneparent);
-			this.fadeOutSiblings(oneparent,false);
+			this.fadeOutSiblings(oneparent, false);
 			oneparent.path.remove();
 			var oneparent = oneparent.parent;
 		}
-		
+
 		Core.zoomed(vertex);
 
 		var child_count = vertex.children.length;
@@ -426,15 +428,14 @@ var ZoomUI = new Class({
 		}
 
 		// collect all already painted children of myVertex
-		
-		
+
 		var children = new Array();
 		for (var i = 0; i < myNode.children.length; i++) {
 			if (myNode.children[i].svg != null)
 				children.push(myNode.children[i]);
 		}
 
-if (children.length > 0) {
+		if (children.length > 0) {
 
 			// calculate the new angles for all sibling vertices
 			var angle_steps = Math.PI * 2 / (children.length);
@@ -462,10 +463,6 @@ if (children.length > 0) {
 			}
 		}
 
-
-
-	
-
 	},
 
 	/**
@@ -485,7 +482,12 @@ if (children.length > 0) {
 			return;
 		}
 
-		UI.paintVector.push(myVertex)
+		UI.paintVector.push(myVertex);
+
+		UI.zoompending = true;
+		setTimeout(function() {
+			UI.zoompending = false;
+		}, 4000);
 
 	},
 
@@ -668,7 +670,7 @@ if (children.length > 0) {
 
 			// Event handler for mousewheel
 			mouse = function(e) {
-				if(UI.zoompending == true)
+				if (UI.zoompending == true)
 					return;
 				// Remove the event listener, since we want to fire this
 				// only once
