@@ -11,11 +11,11 @@ var ZoomCore = new Class({
 		//These are the values, loaded with the Setting component 
 		this.nextID = 0;
 		//Defines the actual prefetch level - in which the vertex will not be painted
-		this.prefetch = 3;
+		this.prefetch = 4;
 		//Measure how many requests are still pending
 		this.requestsPending = 0;
 		//The initial amount of vertices in level 1
-		this.vertices = 5;
+		this.vertices = 7;
 		//Create and fetch the initial article
 		initialVertex = this.createVertex(myInitialArticle, null, 0);
 		this.fetcher.fetch(initialVertex);
