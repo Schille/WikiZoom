@@ -187,7 +187,7 @@ var ZoomUI = new Class({
 		if (child_count > 0) {
 
 			// calculate the new angles for all sibling vertices
-			var angle_steps = Math.PI * 2 / (child_count + 1);
+			var angle_steps = Math.PI * 2 / (child_count);
 
 			if (vertex.level - CUR_LEVEL <= 1) {
 				if ((vertex.level - CUR_LEVEL + 1) % 2 == 0) {
