@@ -43,6 +43,7 @@ var WikiFetcher = new Class({
 					if (count != null && count.length > 2) {
 						intro = intro.replace(/{{.+'''+.+}}/, '');
 					}
+					intro = intro.replace(/{{Infobox(.|\n)+}}\n/gi,'');
 
 					// then search for the ''' Pattern to determine the start of the introduction
 					var n = intro.indexOf("'''");
@@ -96,6 +97,7 @@ var WikiFetcher = new Class({
 						var clean = element.replace(/\[|\]/gi, '')
 						Links[k] = clean;
 					}
+					//console.info("Indeeeex: " + index);
 					// get rid of every unwanted pattern in the introduction this includes:
 					// href Links, Wikipedia Links, parenthesis patterns and some other formatting
 					var cleanIntro = index.replace(/<ref>[^<]+<\/ref>/gi, '').replace(/\[http[^\]]+]/gi, '').replace(/\[\[[a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+\s?([a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+)?\|/gi, '')
@@ -104,7 +106,7 @@ var WikiFetcher = new Class({
 					vertex.intro = cleanIntro;
 					vertex.outlinks = Links;
 					vertex.link = 'http://de.wikipedia.org/wiki/' + vertex.title
-					console.info(vertex.intro);
+					//console.info(vertex.intro);
 					//console.info(vertex.outlinks);
 					Core.updated(vertex)
 				}
