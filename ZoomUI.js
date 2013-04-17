@@ -131,7 +131,7 @@ var ZoomUI = new Class({
 	zoomOut : function() {
 		var vertex = this.currentVertex;
 		this.currentVertex = vertex.parent;
-		this.fadeOutSiblings(vertex.children[1], true);
+		this.fadeOutSiblings(vertex);
 		Core.zoomed(vertex.parent);
 	},
 
@@ -462,6 +462,7 @@ var ZoomUI = new Class({
 				UI.paintVector.splice(i, 1)
 				}
 				else {
+					console.debug('Deleting: ' + vertex.title);
 					UI.repaintNode(vertex);	
 			 		UI.paintVector.splice(i, 1)
 				}
