@@ -137,6 +137,9 @@ var ZoomUI = new Class({
 	},
 
 	zoomIn : function(vertex) {
+		if (UI.zoompending == true)
+			return;
+
 		UI.zoompending = true;
 		setTimeout(function() {
 			UI.zoompending = false;
@@ -480,7 +483,7 @@ var ZoomUI = new Class({
 		}
 
 		UI.paintVector.push(myVertex);
-		
+
 		UI.zoompending = true;
 		setTimeout(function() {
 			UI.zoompending = false;
