@@ -52,8 +52,8 @@ var Settings = new Class({
         var tempUserName;
        /* if (currentUser == null) {
             (tempUserName = prompt("Welcome to WikiZoom, please feel free to change settings =).", "Enter your username here!")) != null ? currentUser = tempUserName : currentUser = "";
-            this.setCookie('username', currentUser, 365);*/
-        }
+            this.setCookie('username', currentUser, 365);
+        }*/
         var tempLevel = this.getCookie("Level");
         var tempNode = this.getCookie("Knoten");
         var tempSpeed = this.getCookie("Speed");
