@@ -8,6 +8,7 @@ var ZoomUI = new Class({
 	initialize : function() {
 		this.paintVector = new Array();
 		this.currentVertex = null;
+		this.zoompending = false;
 		this.createTooltip();
 		paper_width = (window.innerWidth - window.innerWidth / 100);
 		// width of raphael paper
@@ -136,11 +137,16 @@ var ZoomUI = new Class({
 	},
 
 	zoomIn : function(vertex) {
+		UI.zoompending = true;
+		setTimeout(function(){
+			UI.zoompending = false;
+		},2000);
+		
 		this.currentVertex = vertex;
-		Core.zoomed(vertex);
+		
 		// Factor to calculate distance between father and child node
 		// and color fading.
-		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL)));
+		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL + 1)));
 
 		// Relocate zoomed on svg to middle of paper.
 		vertex.svg.animate({
@@ -163,17 +169,19 @@ var ZoomUI = new Class({
 		vertex.path.remove();
 		
 		
-		this.fadeOutSiblings(vertex,false);
-		this.repaintNode(vertex);
+		//this.fadeOutSiblings(vertex,false);
+		//this.repaintNode(vertex);
 		
-		var oneparent = vertex.parent;
-		for(var i = 0; i < ((CUR_LEVEL)  - vertex.level);i++){
+		var tmp = vertex.level - CUR_LEVEL;
+		var oneparent = vertex;
+		for(var i = 0; i < tmp; i++){
+			this.repaintNode(oneparent);
 			this.fadeOutSiblings(oneparent,false);
 			oneparent.path.remove();
-			this.repaintNode(oneparent);
 			var oneparent = oneparent.parent;
 		}
 		
+		Core.zoomed(vertex);
 
 		var child_count = vertex.children.length;
 
@@ -196,6 +204,7 @@ var ZoomUI = new Class({
 				}
 			}
 		}
+		
 	},
 
 	/**
@@ -644,6 +653,8 @@ var ZoomUI = new Class({
 
 			// Event handler for mousewheel
 			mouse = function(e) {
+				if(UI.zoompending == true)
+					return;
 				// Remove the event listener, since we want to fire this
 				// only once
 				if (document.addEventListener) {
