@@ -43,6 +43,7 @@ var WikiFetcher = new Class({
 					if (count != null && count.length > 2) {
 						intro = intro.replace(/{{.+'''+.+}}/, '');
 					}
+
 					// then search for the ''' Pattern to determine the start of the introduction
 					var n = intro.indexOf("'''");
 					var k = 1;
@@ -98,7 +99,8 @@ var WikiFetcher = new Class({
 					// get rid of every unwanted pattern in the introduction this includes:
 					// href Links, Wikipedia Links, parenthesis patterns and some other formatting
 					var cleanIntro = index.replace(/<ref>[^<]+<\/ref>/gi, '').replace(/\[http[^\]]+]/gi, '').replace(/\[\[[a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+\s?([a-z,.\(\)\s\-\u00e4\u00f6\u00fc\u00df#]+)?\|/gi, '')
-						.replace(/{{[^']+'''/gi, '').replace(/'|{|}/gi, '').replace(/<[^>]+>/gi, '').replace(/\[|\]/gi, '').replace(/\|\sclass="wikitable"(\n|.)+\|/g,'');
+						.replace(/{{[^']+'''/gi, '').replace(/'|{|}/gi, '').replace(/<[^>]+>/gi, '').replace(/\[|\]/gi, '').replace(/\|\sclass="wikitable"(\n|.)+\|/g,'').replace(/\|[A-Z\u00c4\u00d6\u00dc][A-Z\u00c4\u00d6\u00dc][A-Z\u00c4\u00d6\u00dc].+\n/g,'')
+						.replace(/\*.+\n/gi,'').replace(/Positionskarte.+\n/g,'').replace(/(\n|\t)/g,'');
 					vertex.intro = cleanIntro;
 					vertex.outlinks = Links;
 					vertex.link = 'http://de.wikipedia.org/wiki/' + vertex.title

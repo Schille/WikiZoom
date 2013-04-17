@@ -62,9 +62,9 @@ function testWikiZoom(article){
 
 }
 
-function testFetch(test){
+function testFetch(title){
 	vertex = new Vertex();
-	vertex.title = test;
+	vertex.title = title;
 	Fetcher = new WikiFetcher();
 	Fetcher.fetch(vertex);
 }
