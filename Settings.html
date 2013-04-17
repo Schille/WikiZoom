@@ -29,21 +29,27 @@
 						</h2>
 						Hallo <span id="userName"></span>,
                         <p class="text-left">
-                        Hier kannst du deine Settings einstellen.
-                        Die Grundeinstellungen (Knoten: 5, Level: 3) ermöglichen das optimale Zoomerlebnis.<br>
-                        Deine letzten Einstellungen lauten: <br>
-                        Knotenanzahl: <span id="nodes"></span><br>
-                        Levelanzahl: <span id="level"></span>
+                        Hier kannst du deine Settings einstellen.<br>
+                        Die Grundeinstellungen (Knoten: 5, Level: 3, Geschwindigkeit: 500) ermöglichen das optimale Zoomerlebnis.<br>
+                        
+                        
+                        
+                        
 				</div>
 			</div>
     </div>
-Knoten: <input type="text" name="vertexSettings" id="vertexSettings" value="" maxlength="5" onkeyup="settings.checkNumber('vertexSettings')"/>
+    Knoten: <input type="text" name="vertexSettings" id="vertexSettings" value="" maxlength="5" onkeyup="settings.checkNumber('vertexSettings')"/>
+        letzte Einstellung: <span id="nodes"></span><br>
         <br>
     Level: <input type="text" name="levelSettings" id="levelSettings" value="" maxlength="5" onkeyup="settings.checkNumber('levelSettings')"/>
+        letzte Einstellung: <span id="level"></span><br>
+        <br>
+    Speed: <input type="range" name="speedSettings" id="speedSettings" min="1" max="100">
+        letzte Einstellung: <span id="speed"></span><br><br>
         <br>
     
-         <input type="button" id="changeUN" value="Change Username" onclick="settings.changeUsername()"/>
     <input type="button" id="update" value="Update" onclick="settings.updateVars()"/>
+    <input type="button" id="changeUN" value="Change Username" onclick="settings.changeUsername()"/>
     </body>
 
 </html>
