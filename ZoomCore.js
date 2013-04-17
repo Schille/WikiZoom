@@ -130,7 +130,7 @@ var ZoomCore = new Class({
 				//However, the children also have to be checked
 				for (var i = 0; i < f; i++) {
 					if (myVertex.outlinks[i] == undefined){
-						console.error('Outlink was undefined. ' + myVertex.title);
+						console.warn('Outlink was undefined. ' + myVertex.title);
 						continue;
 					}
 					if(myVertex.children[i] != undefined){
