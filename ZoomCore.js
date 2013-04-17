@@ -11,7 +11,7 @@ var ZoomCore = new Class({
 		//These are the values, loaded with the Setting component 
 		this.nextID = 0;
 		//Defines the actual prefetch level - in which the vertex will not be painted
-		this.prefetch = 2;
+		this.prefetch = 3;
 		//Measure how many requests are still pending
 		this.requestsPending = 0;
 		//The initial amount of vertices in level 1
@@ -37,14 +37,14 @@ var ZoomCore = new Class({
 			console.log('Zooming back to vertex: ' + myVertex.id + '(Title:' + myVertex.title + ' Level:' 
 			+ myVertex.level + ')');
 			CUR_LEVEL = myVertex.level;
-			return;
+			this.paintSuccessors(myVertex, true);
 		} else {
 			//This code will be reached if the user performed an zoom (in) action on a certain vertex
 			console.log('Zooming to vertex: ' + myVertex.id + '(Title: "' + myVertex.title + '" Level:' 
 			+ myVertex.level + ')');
 			CUR_LEVEL = myVertex.level;
 			//Now we have to paint all the vertices, which have not been painted yet
-			this.paintSuccessors(myVertex);
+			this.paintSuccessors(myVertex, false);
 			//Requests the missing vertices
 			this.iterateChildren(myVertex, this.vertices);
 		}
@@ -56,17 +56,26 @@ var ZoomCore = new Class({
 	 * yet. 
 	 * @param {Vertex} The actual 'ancestor' of the to be painted vertices 
 	 */
-	paintSuccessors : function(myVertex){
-		//Decided whether the vertex's level is on the upcoming
-		if(myVertex.level == ((this.prefetch + 1) - CUR_LEVEL)){
+
+	paintSuccessors : function(myVertex, myPaintAll){
+	
+		if(myPaintAll == true){
 			UI.paint(myVertex);
-			//Activate the cyclic paint 'thread'
 			UI.setPaintJob(true);
 		}
+		else{
+			//Decided whether the vertex's level is on the upcoming
+			if(myVertex.level == ((this.prefetch + 1) - CUR_LEVEL)){
+				UI.paint(myVertex);
+				//Activate the cyclic paint 'thread'
+				UI.setPaintJob(true);
+			}
+		}
+			
 		//Traverse recursively downwards the tree in order to paint the next visible 
 		//level
 		for(var i = 0; i < myVertex.children.length; i++){
-			this.paintSuccessors(myVertex.children[i]);
+			this.paintSuccessors(myVertex.children[i], myPaintAll);
 		}
 		
 	},
@@ -90,6 +99,7 @@ var ZoomCore = new Class({
 		
 		//In case the current vertex is within the visible levels, just paint it
 		if(myVertex.level < (CUR_LEVEL + this.prefetch)){
+			console.warn('you get' + myVertex.title);
 			UI.paint(myVertex);
 			//Activate the cyclic paint 'thread', since a new vertex was added
 			UI.setPaintJob(true);
@@ -118,7 +128,7 @@ var ZoomCore = new Class({
 				//However, the children also have to be checked
 				for (var i = 0; i < f; i++) {
 					if (myVertex.outlinks[i] == undefined){
-						console.error('Outlink was undefined.');
+						console.error('Outlink was undefined. ' +myVertex.title);
 						continue;
 					}
 					if(myVertex.children[i] != undefined){
