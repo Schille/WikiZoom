@@ -15,7 +15,7 @@ var ZoomCore = new Class({
 		//Measure how many requests are still pending
 		this.requestsPending = 0;
 		//The initial amount of vertices in level 1
-		this.vertices = 5;
+		this.vertices = 4;
 		
 		//Create and fetch the initial article
 		initialVertex = this.createVertex(myInitialArticle, null, 0);
