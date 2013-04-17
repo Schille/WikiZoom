@@ -25,8 +25,7 @@
 			aotd_vertex.title = "Wikipedia:Hauptseite/Artikel des Tages/Sonntag"
 			aotd_vertex.parent = null;
 			var aotd_fetcher = new WikiFetcher();
-			var updated_aotd = new Vertex();
-			updated_aotd = aotd_fetcher.fetch(aotd_vertex);
+			
 			//$('div.container div.jumbotron div.row-fluid aotd').set('html', updated_aotd.intro);
 
 		</script>
@@ -345,6 +344,8 @@
 						</p>
 					</div>
 					<script>
+					var updated_aotd = new Vertex();
+			updated_aotd = aotd_fetcher.fetch(aotd_vertex);
 						setTimeout('updated_aotd.intro = updated_aotd.intro.substring(0,910)',500);
 						setTimeout('$(\'aotd_text\').set(\'html\'\, updated_aotd.intro)',500);
 					</script>
