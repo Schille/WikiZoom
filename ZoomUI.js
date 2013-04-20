@@ -125,9 +125,7 @@ var ZoomUI = new Class({
 	},
 
 	/**
-	 * Updates rendering of the graph on inzoom event.
-	 *
-	 * @param{Vertex} vertex - svg which was zoomed on
+	 * Updates rendering of the graph on zoomOut event
 	 */
 	zoomOut : function() {
 		if (UI.zoompending == true)

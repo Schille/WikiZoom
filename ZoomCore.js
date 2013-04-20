@@ -54,11 +54,19 @@ var ZoomCore = new Class({
 
 	},
 	
+	/**
+	 *This function paints all child-vertices for the event of an zoomOut.
+	 *It uses a level order traversel to avoid the problem of not yet 
+	 *painted parent nodes.
+	 * @param {Vertex} The new root vertex after the zoomOut. This vertex must be painted before calling this function.
+	 */
 	paintZoomOut : function(vertex){
+		//paint all vertices of the current level. Make sure that we don't want to paint to much vertrices for this level.
 		for(var i = 0; (i < vertex.children.length) && (i < this.vertices - (vertex.level-CUR_LEVEL)); i++){
 			UI.paint(vertex.children[i]);
 			UI.setPaintJob(true);	
 		}
+		//checks that we are not on the last level
 		if(vertex.level < (CUR_LEVEL+Core.prefetch-1)){
 			for(var i =0; (i < vertex.children.length) && (i < this.vertices - (vertex.level-CUR_LEVEL)); i++){
 				this.paintZoomOut(vertex.children[i]);
