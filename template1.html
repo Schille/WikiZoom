@@ -11,16 +11,229 @@
 		<script src="WikiFetcher.js" type="text/javascript"></script>
 		<script src="Settings.js"></script>
 		<script src="TestsWikiZoom.js" type="text/javascript"></script>
+		<script src="Settings.js" type="text/javascript"></script>
 		<meta charset="utf-8">
 		<title>WikiZoom</title>
 		<link href="dependencies/bootstrap/css/bootstrap.css" rel="stylesheet">
 
 	</head>
 	<body>
+
+		<script>
+			//var aotd_core = new ZoomCore();
+			var aotd_vertex = new Vertex();
+			var Core = new ZoomCore();
+			aotd_vertex.title = "Wikipedia:Hauptseite/Artikel des Tages/Sonntag"
+			aotd_vertex.parent = null;
+			var aotd_fetcher = new WikiFetcher();
+			
+			//$('div.container div.jumbotron div.row-fluid aotd').set('html', updated_aotd.intro);
+
+		</script>
+		<!-- Begin navbar (Bottom) -->
+		<div class="navbar navbar_hide navbar-fixed-bottom">
+			<div class="navbar-inner navbar_hide">
+				<div class="container navbar_hide">
+					<ul class="nav navbar_hide">
+						<li >
+							<a href="template1.html">Home</a>
+						</li>
+						<li>
+							<a onclick="toggle_about()">About</a>
+						</li>
+						<li>
+							<a onclick="toggle_help()">Help</a>
+						</li>
+						<li>
+							<a onclick="toggle_settings()">Settings</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- Begin help-overlay -->
+		<div class="modal help-over overlay_window">
+			<div class="help-over overlay_header">
+				Hilfefenster
+			</div>
+			<div class="help-over overlay_body">
+				Hier kommt die Hilfe rein!
+			</div>
+			<div class="help-over overlay_footer">
+				<button role="button" onclick="toggle_help()" class="btn btn-primary pull-right">
+					Back!
+				</button>
+			</div>
+
+		</div>
+		<div class="modal-backdrop help-over overlay_background"></div>
+		<!-- End help-overlay -->
+
+		<!-- Begin about-overlay -->
+		<div class="modal about-over overlay_window">
+			<div class="about-over overlay_header">
+				Aboutfenster
+			</div>
+			<div class="about-over overlay_body">
+				Hier kommt der about Text rein
+			</div>
+			<div class="about-over overlay_footer">
+				<button role="button" onclick="toggle_about()" class="btn btn-primary pull-right">
+					Back!
+				</button>
+			</div>
+
+		</div>
+		<div class="modal-backdrop about-over overlay_background"></div>
+
+		<!-- End about-overlay -->
+
+				<!-- Begin settings-overlay -->
+		<div class="modal settings-over overlay_window">
+			<div class="settings-over overlay_header">
+				Settingsfenster
+			</div>
+			<div class="settings-over overlay_body">
+				<script>
+					var settings = new Settings();
+					window.addEvent('domready', function() {
+
+						settings.init();
+					});
+				</script>
+				Hallo <span id="userName"></span>,
+				<p class="text-left">
+					Hier kannst du deine Settings einstellen.
+					Die Grundeinstellungen (Knoten: 5, Level: 3) ermöglichen das optimale Zoomerlebnis.
+					<br>
+				</p>
+
+				<label>Speed:</label>
+				
+         <div id="velocitySlider" class="slider">
+					<div class="knob"></div>
+
+				</div>
+				<div id="velocityChanged"></div>
+				<span class="help-block"> Aktueller Speed: <span id="velocitySaved"></span></span>
+                
+				<script>
+        window.addEvent('domready', function () {
+
+            var slider = $('velocitySlider');
+
+            new Slider(slider, slider.getElement('.knob'), {
+                range: [1, 4000],
+                initialStep: settings.getValue('velocity'),
+                onChange: function (value) {
+                    if (value)
+                        $('velocityChanged').set('html', Math.round(value / 40) + 1 + '%');
+                        settings.setVelocity(value); 
+                }
+            });
+        });
+				</script>
+                <label>Knoten:</label>
+				
+         <div id="verticesSlider" class="slider">
+					<div class="knob"></div>
+
+				</div>
+				<div id="verticesChanged"></div>
+				<span class="help-block"> Aktuelle Anzahl: <span id="verticesSaved"></span></span>
+                
+				<script>
+        window.addEvent('domready', function () {
+
+            var slider = $('verticesSlider');
+
+            new Slider(slider, slider.getElement('.knob'), {
+                range: [1, 6],
+                initialStep: settings.getValue('vertices'),
+                onChange: function (value) {
+                    if (value)
+                        $('verticesChanged').set('html', value);
+                        settings.setVertices(value); 
+                }
+            });
+        });
+				</script>
+                <label>Level:</label>
+				
+         <div id="levelSlider" class="slider">
+					<div class="knob"></div>
+
+				</div>
+				<div id="levelChanged"></div>
+				<span class="help-block"> Aktuelle Anzahl: <span id="levelSaved"></span></span>
+                
+				<script>
+        window.addEvent('domready', function () {
+
+            var slider = $('levelSlider');
+
+            new Slider(slider, slider.getElement('.knob'), {
+                range: [2, 5],
+                initialStep: settings.getValue('level'),
+                onChange: function (value) {
+                    if (value)
+                        $('levelChanged').set('html', value);
+                        settings.setLevel(value); 
+                }
+            });
+        });
+				</script>
+
+			</div>
+
+			<div class="settings-over overlay_footer">
+				<button type="button" id="changeUN" class="btn pull-left" value="Change Username" onclick="settings.changeUsername()">
+					Change Username!
+				</button>
+				<button id="update" class="btn btn-primary pull-right" value="Update" onclick="settings.updateVars();toggle_settings();">
+					Save!
+				</button>
+				&nbsp;
+				<button role="button" onclick="toggle_settings()" class="btn pull-right">
+					Back!
+				</button>
+
+			</div>
+
+		</div>
+		<div class="modal-backdrop settings-over overlay_background"></div>
+		<!-- End settings-overlay -->
+
+		<script>
+			var help_over = $$("div.help-over");
+
+			var about_over = $$("div.about-over");
+			var settings_over = $$("div.settings-over");
+			//var navbar = $$("div.navbar_hide");
+			help_over.hide();
+			about_over.hide();
+			settings_over.hide();
+			//navbar.toggle();
+
+			function toggle_help() {
+
+				help_over.toggle();
+				myHorizontalSlide.toggle();
+			}
+
+			function toggle_about() {
+				about_over.toggle();
+			}
+
+			function toggle_settings() {
+				settings_over.toggle();
+			}
+		</script>
+
 		<div class="container">
 			<div class="masthead">
 				<h3 class="muted"><a class="brand" href="#">WikiZoom</a></h3>
-				<!-- /.navbar -->
+
 			</div>
 			<!-- Jumbotron -->
 			<div>
@@ -33,18 +246,27 @@
 
 					</p>
 
-					<a href="" role="button" class="badge pull-left">Help!</a>
+					<a role="button" onclick="toggle_help()" class="badge pull-left">Help!</a>
 				</div>
-				<div class="span4"></div>
+				<div class="row">
+					<div class="span5"></div>
+
+					<div id="alert" class="alert-error span text-center">
+						Wort nicht gefunden!
+					</div>
+
+				</div>
+
 			</div>
 			<div id="raus" class="row">
-				<form class="form-search span1">
-					<div class="input-append" id="inputApp">
-						<input type="text" id="search" autocomplete="off" class="search-query">
+				<div class="span3"></div>
+				<form class="form-search center">
+					<div class="input-append center" id="inputApp">
+						<input type="text" id="search" autocomplete="off"  class="input-xxlarge c search-query">
 
-						<button type="button" id="fade" type="search" onclick="template1_init()" class="btn btn-primary">
-						Search
-					</button>
+						<button type="button"  type="search" onclick="template1_init()" class="btn btn-primary">
+							Search
+						</button>
 					</div>
 
 				</form>
@@ -52,28 +274,33 @@
 
 			<script type="text/javascript">
 				function template1_init() {
+					if ($('search').value != '') {
 
-					$$('div').fade('out');
-					start($('search').value);
+						$$('div').hide();
+
+						//$$('div.navbar_hide').show();
+						start($('search').value);
+					}
+
 				}
-
-
 			</script>
 
 			<div id="raus" class="row">
 				<div class="span5"></div>
-				<div class="span1 ">
-					<ul class="nav nav-list" id="selects"></ul>
+				<div class="span3">
+					<ul class="nav nav-list span4" id="selects"></ul>
 				</div>
 			</div>
 
 			<script type="text/javascript">
+				var alert1 = $('alert');
 				var selects = $('selects');
 				var searchBox = $('search')
 
+				alert1.hide();
 				searchBox.addEvents({
-					//New Request at keystroke
-					'keyup' : function() {
+					'input' : function(e) {
+
 						var searchKey = $('search');
 
 						//Create API-Request
@@ -95,6 +322,7 @@
 									selects.set('html', selects.get('html') + '<li class="nav-header" ><a id=\'typeahead' + counter + '\'>' + data[1][counter] + '</a></li>');
 									//Add bottom border
 									selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)')
+
 								}
 
 								//EventListener
@@ -127,6 +355,7 @@
 
 								var type3 = $('typeahead3');
 								type3.addEvents({
+
 									'click' : function() {
 										searchBox.set('value', type3.get('html'));
 										selects.set('html', '');
@@ -148,42 +377,51 @@
 			<div class="jumbotron">
 
 				<div class="row-fluid">
+
 					<div id="aotd" class="span6">
 						<h2> Artikel des Tages ...
 						<br>
 						</h2>
-						<p class="text-left">
-
-							Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas
-							eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus,
-							tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum
-							massa.
+						<p id="aotd_text" class="text-left">
 
 						</p>
-
 						<p>
-							<a class="btn" id="makeRequest" href="# ">Mehr »</a>
-						<p>
-
-						</p>
-
-						<div id="gallery"></div>
+							<a class="btn" target="_blank" href="http://de.wikipedia.org/">Mehr »</a>
 						</p>
 					</div>
-
+					<script>
+					var updated_aotd = new Vertex();
+			updated_aotd = aotd_fetcher.fetch(aotd_vertex);
+						setTimeout('updated_aotd.intro = updated_aotd.intro.substring(0,910)',500);
+						setTimeout('$(\'aotd_text\').set(\'html\'\, updated_aotd.intro)',500);
+					</script>
 					<div class="span6">
 						<h2> Was geschah am ...
 						<br>
 						</h2>
-						<p class="text-left">
-							Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas
-							eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus,
-							tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum
-							massa.
+						<p id="schon_text" class="text-left">
+
 						</p>
 						<p>
-							<a class="btn" href="# ">Mehr »</a>
+							<a class="btn" target="_blank" href="http://de.wikipedia.org/">Mehr »</a>
 						</p>
+						<script>
+							var global;
+							var searchRequest = new Request.JSONP({
+
+							url : "http://de.wikipedia.org/w/api.php?action=parse&format=json&page=Wikipedia%3AHauptseite%2FSchon_gewusst%2FMontag&prop=text",
+							
+							onComplete : function(JSONdata) {
+								global = JSONdata;
+								$('schon_text').set('html',JSONdata.parse.text["*"].replace(/<div\sclass=(.|\n)+Aktualisierungserinnerungen funktionieren.<\/li>\s<\/ul>\n<\/div>/gi,''));
+								console.log(JSONdata.parse.text["*"]);
+							}
+							
+							}).send();
+							
+							
+						</script>
+						
 					</div>
 				</div>
 			</div>
@@ -195,8 +433,33 @@
 				</p>
 			</div>
 		</div>
+
 		<div class="span"></div>
 		<style>
+			.navbar .nav {
+				margin: 0;
+				display: table;
+				width: 100%;
+			}
+			.navbar .nav li {
+				display: table-cell;
+				width: 1%;
+				float: none;
+			}
+			.navbar .nav li a {
+				font-weight: bold;
+				text-align: center;
+				border-left: 1px solid rgba(255,255,255,.75);
+				border-right: 1px solid rgba(0,0,0,.1);
+			}
+			.navbar .nav li:first-child a {
+				border-left: 0;
+				border-radius: 3px 0 0 3px;
+			}
+			.navbar .nav li:last-child a {
+				border-right: 0;
+				border-radius: 0 3px 3px 0;
+			}
 			body {
 				padding-top: 20px;
 				padding-bottom: 60px;
@@ -219,9 +482,58 @@
 				padding: 14px 24px;
 			}
 
+			.center {
+
+				float: none;
+				margin-left: auto;
+				margin-right: auto;
+			}
+
+			.overlay_window {
+
+				background-color: #FFFFFF;
+			}
+			.overlay_header {
+				position: relative;
+				margin-top: 0%;
+				height: 30px;
+				padding: 10px;
+				-webkit-border-radius: 4px;
+				-moz-border-radius: 4px;
+				border-radius: 5px;
+				background-color: #F0F0F0;
+			}
+
+			.overlay_body {
+				position: relative;
+				height: 100%;
+				padding: 10px;
+				-webkit-border-radius: 4px;
+				-moz-border-radius: 4px;
+				border-radius: 5px;
+				background-color: #FFFFFF;
+			}
+
+			.overlay_footer {
+				position: relative;
+				height: 30px;
+				padding: 10px;
+				-webkit-border-radius: 4px;
+				-moz-border-radius: 4px;
+				border-radius: 5px;
+				background-color: #F0F0F0;
+			}
+
+			#alert {
+
+				-webkit-border-radius: 4px;
+				-moz-border-radius: 4px;
+				border-radius: 5px;
+			}
+
 			#selects {
 				position: absolute;
-				margin-left: -4%;
+				margin-left: -12%;
 				margin-top: -20px;
 				border: 2px;
 				border-right: 2px solid rgba(175,175,175,5);
@@ -236,6 +548,39 @@
 				-webkit-border-radius: 4px;
 				-moz-border-radius: 4px;
 				border-radius: 4px;
+			}
+
+			.slider {
+
+				-webkit-border-radius: 4px;
+				-moz-border-radius: 4px;
+				border-radius: 8px;
+				outline: 0;
+				-webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
+				-moz-box-shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
+				box-shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
+				background: #F0F0F0;
+				height: 16px;
+				width: 200px;
+			}
+			.slider .knob {
+				border: 1px solid #cccccc;
+				border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+				-webkit-border-radius: 4px;
+				-moz-border-radius: 4px;
+				border-radius: 8px;
+				outline: 0;
+				-webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
+				-moz-box-shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
+				box-shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
+				background: #CCC;
+				width: 26px;
+				height: 14px;
+			}
+
+			#fontSize {
+				height: 50px;
+				line-height: 50px;
 			}
 
 		</style>
