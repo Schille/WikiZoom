@@ -130,9 +130,16 @@ var ZoomUI = new Class({
 	 * @param{Vertex} vertex - svg which was zoomed on
 	 */
 	zoomOut : function() {
+		if (UI.zoompending == true)
+			return;
+
+		UI.zoompending = true;
+		setTimeout(function() {
+			UI.zoompending = false;
+		}, 5000);
+		
 		var vertex = this.currentVertex;
 		this.currentVertex = vertex.parent;
-		this.fadeOutSiblings(vertex.children[1], true);
 		Core.zoomed(vertex.parent);
 	},
 
@@ -337,10 +344,9 @@ var ZoomUI = new Class({
 				}, 500, "linear");
 				temp_vertex.path.remove();
 				temp_vertex.svg.remove();
-
 				temp_vertex.svg = null;
 				temp_vertex.path = null;
-				if (temp_vertex.children.length > 0) {
+				if (temp_vertex.level < (CUR_LEVEL+Core.prefetch)) {
 					temp_scope.fadeOutChildren(temp_vertex);
 				}
 			}
@@ -476,8 +482,7 @@ var ZoomUI = new Class({
 
 	paint : function(myVertex) {
 
-		if (myVertex.level == 0) {
-			this.currentVertex = myVertex;
+		if (myVertex.level == CUR_LEVEL) {
 			this.paintNode(myVertex, paper_width / 2, paper_height / 2);
 			return;
 		}

@@ -37,7 +37,10 @@ var ZoomCore = new Class({
 			console.log('Zooming back to vertex: ' + myVertex.id + '(Title:' + myVertex.title + ' Level:' 
 			+ myVertex.level + ')');
 			CUR_LEVEL = myVertex.level;
-			this.paintSuccessors(myVertex, true);
+			UI.fadeOutChildren(myVertex);
+			UI.paint(myVertex);
+			UI.setPaintJob(true);
+			this.paintZoomOut(myVertex);
 		} else {
 			//This code will be reached if the user performed an zoom (in) action on a certain vertex
 			console.log('Zooming to vertex: ' + myVertex.id + '(Title: "' + myVertex.title + '" Level:' 
@@ -49,6 +52,18 @@ var ZoomCore = new Class({
 			this.iterateChildren(myVertex, this.vertices);
 		}
 
+	},
+	
+	paintZoomOut : function(vertex){
+		for(var i = 0; (i < vertex.children.length) && (i < this.vertices - (vertex.level-CUR_LEVEL)); i++){
+			UI.paint(vertex.children[i]);
+			UI.setPaintJob(true);	
+		}
+		if(vertex.level < (CUR_LEVEL+Core.prefetch-1)){
+			for(var i =0; (i < vertex.children.length) && (i < this.vertices - (vertex.level-CUR_LEVEL)); i++){
+				this.paintZoomOut(vertex.children[i]);
+			}
+		}
 	},
 	
 	/**
