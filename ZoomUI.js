@@ -131,8 +131,24 @@ var ZoomUI = new Class({
 	zoomOut : function() {
 		var vertex = this.currentVertex;
 		this.currentVertex = vertex.parent;
-		this.fadeOutSiblings(vertex);
-		Core.zoomed(vertex.parent);
+		
+		this.fadeOutSiblings(vertex.children[0], true);
+		this.paintVector.push(vertex);
+		this.setPaintJob(true);
+		
+	},
+	
+	fancyZoom : function(myVertex) {
+		if(myVertex.svg != null) {
+		myVertex.svg.transform('s6');
+		myVertex.svg.animate({
+			'opacity' : 1,
+			transform: 's1'
+		},4000,'linear');
+		console.debug(Core.prefetch);
+		
+		}
+		
 	},
 
 	zoomIn : function(vertex) {
@@ -253,6 +269,7 @@ var ZoomUI = new Class({
 	 */
 
 	fadeOutSiblings : function(vertex, myFlag) {
+		console.debug(vertex.parent.children);
 		var siblings = vertex.parent.children;
 		var parent = vertex.parent;
 		var temp_scope = this;
