@@ -8,6 +8,7 @@ var ZoomUI = new Class({
 	initialize : function() {
 		this.paintVector = new Array();
 		this.currentVertex = null;
+		this.zoompending = false;
 		this.createTooltip();
 		paper_width = (window.innerWidth - window.innerWidth / 100);
 		// width of raphael paper
@@ -124,39 +125,37 @@ var ZoomUI = new Class({
 	},
 
 	/**
-	 * Updates rendering of the graph on inzoom event.
-	 *
-	 * @param{Vertex} vertex - svg which was zoomed on
+	 * Updates rendering of the graph on zoomOut event
 	 */
 	zoomOut : function() {
+		if (UI.zoompending == true)
+			return;
+
+		UI.zoompending = true;
+		setTimeout(function() {
+			UI.zoompending = false;
+		}, 5000);
+		
 		var vertex = this.currentVertex;
 		this.currentVertex = vertex.parent;
-		
-		this.fadeOutSiblings(vertex.children[0], true);
-		this.paintVector.push(vertex);
-		this.setPaintJob(true);
-		
-	},
-	
-	fancyZoom : function(myVertex) {
-		if(myVertex.svg != null) {
-		myVertex.svg.transform('s6');
-		myVertex.svg.animate({
-			'opacity' : 1,
-			transform: 's1'
-		},4000,'linear');
-		console.debug(Core.prefetch);
-		
-		}
-		
+
+		Core.zoomed(vertex.parent);
 	},
 
 	zoomIn : function(vertex) {
+		if (UI.zoompending == true)
+			return;
+
+		UI.zoompending = true;
+		setTimeout(function() {
+			UI.zoompending = false;
+		}, 5000);
+
 		this.currentVertex = vertex;
-		Core.zoomed(vertex);
+
 		// Factor to calculate distance between father and child node
 		// and color fading.
-		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL)));
+		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL + 1)));
 
 		// Relocate zoomed on svg to middle of paper.
 		vertex.svg.animate({
@@ -172,34 +171,60 @@ var ZoomUI = new Class({
 			"y" : paper_height / 2,
 		});
 
-			
-		vertex.svg.x = paper_width/2;
-		vertex.svg.y = paper_height/2;
+		vertex.svg.x = paper_width / 2;
+		vertex.svg.y = paper_height / 2;
 
 		vertex.path.remove();
-		this.fadeOutSiblings(vertex,false);
-		this.repaintNode(vertex);
+
+		//this.fadeOutSiblings(vertex,false);
+		//this.repaintNode(vertex);
+
+		var tmp = vertex.level - CUR_LEVEL;
+		var oneparent = vertex;
+		for (var i = 0; i < tmp; i++) {
+			this.repaintNode(oneparent);
+			this.fadeOutSiblings(oneparent, false);
+			oneparent.path.remove();
+			var oneparent = oneparent.parent;
+		}
+
+		Core.zoomed(vertex);
 
 		var child_count = vertex.children.length;
 
-		var angle_steps = Math.PI * 2 / child_count;
-		if ((vertex.level - CUR_LEVEL + 1) % 2 == 0) {
-			var angle = angle_steps;
-		} else {
-			var angle = Math.ceil(angle_steps / 2);
-		}
+		if (child_count > 0) {
 
-		// Update all child- and following nodes.
-		if (child_count >= 1) {
-			console.log("I'm on");
-			for (var i = 0; i < child_count; i++) {
-				console.log("I'm in ya");
-				if (vertex.children[i].svg != undefined) {
-					this.moveNode(vertex.children[i], Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.45, (vertex.level - CUR_LEVEL + 1))) * Math.cos(angle) + vertex.svg.x)), Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.45, (vertex.level - CUR_LEVEL + 1))) * Math.sin(angle) + vertex.svg.y)));
-					angle = angle_steps + angle;
-					this.repaintChildren(vertex.children[i]);
+			// calculate the new angles for all sibling vertices
+			var angle_steps = Math.PI * 2 / (child_count);
+
+			if (vertex.level - CUR_LEVEL <= 1) {
+				if ((vertex.level - CUR_LEVEL + 1) % 2 == 0) {
+					angle = angle_steps;
+				} else {
+					angle = Math.ceil(angle_steps / 2);
+				}
+			} else {
+				angle = Math.atan2(vertex.parent.parent.svg.y - vertex.parent.svg.y, vertex.parent.parent.svg.x - vertex.parent.svg.x);
+				if (angle < 0)
+					angle = angle + Math.PI * 2;
+				//console.log("angle between " + vertex.parent.parent.title + " and " + vertex.parent.title + "is" + angle);
+				angle = angle + 16 / 18 * 2 * Math.PI;
+
+			}
+
+			// Update all child- and following nodes.
+			if (child_count >= 1) {
+				console.log("I'm on");
+				for (var i = 0; i < child_count; i++) {
+					console.log("I'm in ya");
+					if (vertex.children[i].svg != undefined) {
+						this.moveNode(vertex.children[i], Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.45, (vertex.level - CUR_LEVEL + 1))) * Math.cos(angle) + vertex.svg.x)), Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.45, (vertex.level - CUR_LEVEL + 1))) * Math.sin(angle) + vertex.svg.y)));
+						angle = angle_steps + angle;
+						this.repaintChildren(vertex.children[i]);
+					}
 				}
 			}
+
 		}
 	},
 
@@ -280,7 +305,7 @@ var ZoomUI = new Class({
 						opacity : 0,
 					}, 500, "linear");
 					temp_vertex.path.remove();
-					temp_vertex.svg = null;
+					temp_vertex.svg.remove();
 					temp_scope.fadeOutChildren(temp_vertex);
 				}
 			});
@@ -319,10 +344,9 @@ var ZoomUI = new Class({
 				}, 500, "linear");
 				temp_vertex.path.remove();
 				temp_vertex.svg.remove();
-
 				temp_vertex.svg = null;
 				temp_vertex.path = null;
-				if (temp_vertex.children.length > 0) {
+				if (temp_vertex.level < (CUR_LEVEL+Core.prefetch)) {
 					temp_scope.fadeOutChildren(temp_vertex);
 				}
 			}
@@ -341,7 +365,6 @@ var ZoomUI = new Class({
 		var nodePath = myNode.path;
 		var xP = myNode.parent.svg.x;
 		var yP = myNode.parent.svg.y;
-
 
 		var startColor = myNode.parent.svg[0].attr("fill");
 		console.log(myNode.title);
@@ -411,6 +434,7 @@ var ZoomUI = new Class({
 		}
 
 		// collect all already painted children of myVertex
+
 		var children = new Array();
 		for (var i = 0; i < myNode.children.length; i++) {
 			if (myNode.children[i].svg != null)
@@ -418,11 +442,23 @@ var ZoomUI = new Class({
 		}
 
 		if (children.length > 0) {
+
+			// calculate the new angles for all sibling vertices
 			var angle_steps = Math.PI * 2 / (children.length);
-			if ((myNode.level - CUR_LEVEL + 1) % 2 == 0) {
-				var angle = angle_steps;
+
+			if (myNode.level <= 1) {
+				if ((myNode.level - CUR_LEVEL + 1) % 2 == 0) {
+					angle = angle_steps;
+				} else {
+					angle = Math.ceil(angle_steps / 2);
+				}
 			} else {
-				var angle = Math.ceil(angle_steps / 2);
+				angle = Math.atan2(myNode.parent.svg.y - myNode.svg.y, myNode.parent.svg.x - myNode.svg.x);
+				if (angle < 0)
+					angle = angle + Math.PI * 2;
+				console.log("angle between " + myNode.parent.parent.title + " and " + myNode.parent.title + "is" + angle);
+				angle = angle + 16 / 18 * 2 * Math.PI;
+
 			}
 
 			for (var j = 0; j < children.length; j++) {
@@ -446,14 +482,17 @@ var ZoomUI = new Class({
 
 	paint : function(myVertex) {
 
-		if (myVertex.level == 0) {
-			this.currentVertex = myVertex;
+		if (myVertex.level == CUR_LEVEL) {
 			this.paintNode(myVertex, paper_width / 2, paper_height / 2);
 			return;
 		}
 
+		UI.paintVector.push(myVertex);
 
-		UI.paintVector.push(myVertex)
+		UI.zoompending = true;
+		setTimeout(function() {
+			UI.zoompending = false;
+		}, 4000);
 
 	},
 
@@ -474,14 +513,14 @@ var ZoomUI = new Class({
 			} else {
 
 				vertex = UI.paintVector[i];
-				if(vertex.svg == null) {
-				UI.paintChildVertex(vertex);
-				UI.paintVector.splice(i, 1)
-				}
-				else {
-					console.debug('Deleting: ' + vertex.title);
-					UI.repaintNode(vertex);	
-			 		UI.paintVector.splice(i, 1)
+
+				if (vertex.svg == null) {
+					UI.paintChildVertex(vertex);
+					UI.paintVector.splice(i, 1)
+				} else {
+					UI.repaintNode(vertex);
+					UI.paintVector.splice(i, 1)
+
 				}
 				//To control with which probability more then one element is painted.
 				if (Math.random() < 0.8)
@@ -506,12 +545,11 @@ var ZoomUI = new Class({
 	 */
 
 	paintChildVertex : function(myVertex) {
-		
+
 		var parent = myVertex.parent;
 		var x = myVertex.parent.svg.x;
 		var y = myVertex.parent.svg.y;
 		console.info('Painting ' + myVertex.title + 'to x:' + x + ' y:' + y);
-
 
 		// Factor to calculate distance between father and child node
 		// and color fading.
@@ -543,34 +581,22 @@ var ZoomUI = new Class({
 				angle = Math.atan2(myVertex.parent.parent.svg.y - myVertex.parent.svg.y, myVertex.parent.parent.svg.x - myVertex.parent.svg.x);
 				if (angle < 0)
 					angle = angle + Math.PI * 2;
-				console.log("angle between " + myVertex.parent.parent.title + " and " + myVertex.parent.title + "is" + angle);
+				//console.log("angle between " + myVertex.parent.parent.title + " and " + myVertex.parent.title + "is" + angle);
 				angle = angle + 16 / 18 * 2 * Math.PI;
 
 			}
 
-			if (myVertex.level <= 1)
-				for (var i = 0; i < siblings.length; i++) {
-					if (siblings[i].svg != null) {
-						this.moveNode(siblings[i], Math.ceil((window.innerWidth / 1.5 * (Math.pow(0.45, (myVertex.level - CUR_LEVEL))) * Math.cos(angle) + x)), Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.45, (myVertex.level - CUR_LEVEL))) * Math.sin(angle) + y)));
-						angle = angle_steps + angle;
-					}
+			for (var i = 0; i < siblings.length; i++) {
+				if (siblings[i].svg != null) {
+					this.moveNode(siblings[i], Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.45, (myVertex.level - CUR_LEVEL))) * Math.cos(angle) + x)), Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.45, (myVertex.level - CUR_LEVEL))) * Math.sin(angle) + y)));
+					angle = angle_steps + angle;
 				}
-			else
-				for (var i = 0; i < siblings.length; i++) {
-					if (siblings[i].svg != null) {
-						this.moveNode(siblings[i], Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.45, (myVertex.level - CUR_LEVEL))) * Math.cos(angle) + x)), Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.45, (myVertex.level - CUR_LEVEL))) * Math.sin(angle) + y)));
-						angle = angle_steps + angle;
-					}
-				}
+			}
 
 		}
 
 		// paint actual vertex and create its edge
-		if (myVertex.level <= 1)
-			this.paintNode(myVertex, Math.ceil((window.innerWidth / 1.5 * (Math.pow(0.45, (myVertex.level - CUR_LEVEL))) * Math.cos(angle) + x)), Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.45, (myVertex.level - CUR_LEVEL))) * Math.sin(angle) + y)));
-		else
-			this.paintNode(myVertex, Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.45, (myVertex.level - CUR_LEVEL))) * Math.cos(angle) + x)), Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.45, (myVertex.level - CUR_LEVEL))) * Math.sin(angle) + y)));
-
+		this.paintNode(myVertex, Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.45, (myVertex.level - CUR_LEVEL))) * Math.cos(angle) + x)), Math.ceil((window.innerHeight / 1.5 * (Math.pow(0.45, (myVertex.level - CUR_LEVEL))) * Math.sin(angle) + y)));
 		this.createEdge(myVertex);
 	},
 
@@ -651,6 +677,8 @@ var ZoomUI = new Class({
 
 			// Event handler for mousewheel
 			mouse = function(e) {
+				if (UI.zoompending == true)
+					return;
 				// Remove the event listener, since we want to fire this
 				// only once
 				if (document.addEventListener) {

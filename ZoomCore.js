@@ -37,7 +37,10 @@ var ZoomCore = new Class({
 			console.log('Zooming back to vertex: ' + myVertex.id + '(Title:' + myVertex.title + ' Level:' 
 			+ myVertex.level + ')');
 			CUR_LEVEL = myVertex.level;
-			this.paintSuccessors(myVertex, true);
+			UI.fadeOutChildren(myVertex);
+			UI.paint(myVertex);
+			UI.setPaintJob(true);
+			this.paintZoomOut(myVertex);
 		} else {
 			//This code will be reached if the user performed an zoom (in) action on a certain vertex
 			console.log('Zooming to vertex: ' + myVertex.id + '(Title: "' + myVertex.title + '" Level:' 
@@ -49,6 +52,26 @@ var ZoomCore = new Class({
 			this.iterateChildren(myVertex, this.vertices);
 		}
 
+	},
+	
+	/**
+	 *This function paints all child-vertices for the event of an zoomOut.
+	 *It uses a level order traversel to avoid the problem of not yet 
+	 *painted parent nodes.
+	 * @param {Vertex} The new root vertex after the zoomOut. This vertex must be painted before calling this function.
+	 */
+	paintZoomOut : function(vertex){
+		//paint all vertices of the current level. Make sure that we don't want to paint to much vertrices for this level.
+		for(var i = 0; (i < vertex.children.length) && (i < this.vertices - (vertex.level-CUR_LEVEL)); i++){
+			UI.paint(vertex.children[i]);
+			UI.setPaintJob(true);	
+		}
+		//checks that we are not on the last level
+		if(vertex.level < (CUR_LEVEL+Core.prefetch-1)){
+			for(var i =0; (i < vertex.children.length) && (i < this.vertices - (vertex.level-CUR_LEVEL)); i++){
+				this.paintZoomOut(vertex.children[i]);
+			}
+		}
 	},
 	
 	/**
@@ -96,12 +119,11 @@ var ZoomCore = new Class({
 				if(myVertex.level == 0)
 					this.iterateChildren(myVertex, this.vertices);
 				else
-					this.iterateChildren(myVertex, myVertex.parent.children.length - 1);
+					this.iterateChildren(myVertex,  this.vertices - (myVertex.level - CUR_LEVEL));
 			}
 		}
 		//In case the current vertex is within the visible levels, just paint it
 		if(myVertex.level < (CUR_LEVEL + this.prefetch)){
-			console.warn('you get' + myVertex.title);
 			UI.paint(myVertex);
 			//Activate the cyclic paint 'thread', since a new vertex was added
 			UI.setPaintJob(true);

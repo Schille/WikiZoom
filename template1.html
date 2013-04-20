@@ -18,7 +18,17 @@
 
 	</head>
 	<body>
+		<script>
+			//var aotd_core = new ZoomCore();
+			var aotd_vertex = new Vertex();
+			var Core = new ZoomCore();
+			aotd_vertex.title = "Wikipedia:Hauptseite/Artikel des Tages/Sonntag"
+			aotd_vertex.parent = null;
+			var aotd_fetcher = new WikiFetcher();
+			
+			//$('div.container div.jumbotron div.row-fluid aotd').set('html', updated_aotd.intro);
 
+		</script>
 		<!-- Begin navbar (Bottom) -->
 		<div class="navbar navbar_hide navbar-fixed-bottom">
 			<div class="navbar-inner navbar_hide">
@@ -83,61 +93,65 @@
 				Settingsfenster
 			</div>
 			<div class="settings-over overlay_body">
-<script>
-var settings = new Settings();
-window.addEvent('domready', function() {
-						
+				<script>
+					var settings = new Settings();
+					window.addEvent('domready', function() {
+
 						settings.init();
-			});
-					</script>
+					});
+				</script>
 				Hallo <span id="userName"></span>,
 				<p class="text-left">
 					Hier kannst du deine Settings einstellen.
 					Die Grundeinstellungen (Knoten: 5, Level: 3) ermöglichen das optimale Zoomerlebnis.
 					<br>
 				</p>
-					<label>Speed:</label>
-					<div id="slider" class="slider">
-						<div class="knubbel"></div>
-						
-					</div>
-					<div id="speed_value"></div>
-					<span class="help-block"> Aktueller Speed: <span id="speed"></span></span>
+				<label>Speed:</label>
+				<div id="slider" class="slider">
+					<div class="knubbel"></div>
 
-					<script>
-						window.addEvent('domready', function() {
+				</div>
+				<div id="speed_value"></div>
+				<span class="help-block"> Aktueller Speed: <span id="speed"></span></span>
 
-							var slider = $('slider');
+				<script>
+					window.addEvent('domready', function() {
 
-							new Slider(slider, slider.getElement('.knubbel'), {
-								range : [1, 100],
-								initialStep : $('speed').get('html'),
-								onChange : function(value) {
-									if (value)
-										$('speed_value').set('html', value);
-								}
-							});
+						var slider = $('slider');
+
+						new Slider(slider, slider.getElement('.knubbel'), {
+							range : [1, 100],
+							initialStep : $('speed').get('html'),
+							onChange : function(value) {
+								if (value)
+									$('speed_value').set('html', value);
+							}
 						});
-					</script>
+					});
+				</script>
 
-					<label>Knoten:</label>
-					<input type="text" name="vertexSettings" placeholder="" id="vertexSettings" value="" maxlength="5" onkeyup="settings.checkNumber('vertexSettings')"/>
-					<span class="help-block"> Aktuelle Knotenanzahl: <span id="nodes"></span></span>
+				<label>Knoten:</label>
+				<input type="text" name="vertexSettings" placeholder="" id="vertexSettings" value="" maxlength="5" onkeyup="settings.checkNumber('vertexSettings')"/>
+				<span class="help-block"> Aktuelle Knotenanzahl: <span id="nodes"></span></span>
 
-					<label>Level:</label>
-					<input type="text" name="levelSettings" id="levelSettings" value="" maxlength="5" onkeyup="settings.checkNumber('levelSettings')"/>
-					<span class="help-block">Aktuelle 	Levelanzahl: <span id="level"></span></span>
-					
-					
+				<label>Level:</label>
+				<input type="text" name="levelSettings" id="levelSettings" value="" maxlength="5" onkeyup="settings.checkNumber('levelSettings')"/>
+				<span class="help-block">Aktuelle 	Levelanzahl: <span id="level"></span></span>
 
 			</div>
 
 			<div class="settings-over overlay_footer">
-				<button type="button" id="changeUN" class="btn pull-left" value="Change Username" onclick="settings.changeUsername()">Change Username!</button>
-				<button id="update" class="btn btn-primary pull-right" value="Update" onclick="settings.updateVars();toggle_settings();">Save!</button>
+				<button type="button" id="changeUN" class="btn pull-left" value="Change Username" onclick="settings.changeUsername()">
+					Change Username!
+				</button>
+				<button id="update" class="btn btn-primary pull-right" value="Update" onclick="settings.updateVars();toggle_settings();">
+					Save!
+				</button>
 				&nbsp;
-				<button role="button" onclick="toggle_settings()" class="btn pull-right">Back!</button>
-				
+				<button role="button" onclick="toggle_settings()" class="btn pull-right">
+					Back!
+				</button>
+
 			</div>
 
 		</div>
@@ -317,42 +331,51 @@ window.addEvent('domready', function() {
 			<div class="jumbotron">
 
 				<div class="row-fluid">
+
 					<div id="aotd" class="span6">
 						<h2> Artikel des Tages ...
 						<br>
 						</h2>
-						<p class="text-left">
-
-							Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas
-							eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus,
-							tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum
-							massa.
+						<p id="aotd_text" class="text-left">
 
 						</p>
-
 						<p>
-							<a class="btn" id="makeRequest" href="# ">Mehr »</a>
-						<p>
-
-						</p>
-
-						<div id="gallery"></div>
+							<a class="btn" target="_blank" href="http://de.wikipedia.org/">Mehr »</a>
 						</p>
 					</div>
-
+					<script>
+					var updated_aotd = new Vertex();
+			updated_aotd = aotd_fetcher.fetch(aotd_vertex);
+						setTimeout('updated_aotd.intro = updated_aotd.intro.substring(0,910)',500);
+						setTimeout('$(\'aotd_text\').set(\'html\'\, updated_aotd.intro)',500);
+					</script>
 					<div class="span6">
 						<h2> Was geschah am ...
 						<br>
 						</h2>
-						<p class="text-left">
-							Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas
-							eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus,
-							tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum
-							massa.
+						<p id="schon_text" class="text-left">
+
 						</p>
 						<p>
-							<a class="btn" href="# ">Mehr »</a>
+							<a class="btn" target="_blank" href="http://de.wikipedia.org/">Mehr »</a>
 						</p>
+						<script>
+							var global;
+							var searchRequest = new Request.JSONP({
+
+							url : "http://de.wikipedia.org/w/api.php?action=parse&format=json&page=Wikipedia%3AHauptseite%2FSchon_gewusst%2FMontag&prop=text",
+							
+							onComplete : function(JSONdata) {
+								global = JSONdata;
+								$('schon_text').set('html',JSONdata.parse.text["*"].replace(/<div\sclass=(.|\n)+Aktualisierungserinnerungen funktionieren.<\/li>\s<\/ul>\n<\/div>/gi,''));
+								console.log(JSONdata.parse.text["*"]);
+							}
+							
+							}).send();
+							
+							
+						</script>
+						
 					</div>
 				</div>
 			</div>
