@@ -139,19 +139,16 @@ var Settings = new Class({
     // sets velocity
     setVelocity: function (value) {
         this.velocity = value;
-        this.setValues();
     },
 
     // sets vertices
     setVertices: function (value) {
         this.vertices = value;
-        this.setValues();
     },
 
     // sets level
     setLevel: function (value) {
         this.level = value;
-        this.setValues();
     },
 
     // returns velocity
