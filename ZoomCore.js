@@ -38,8 +38,8 @@ var ZoomCore = new Class({
 			+ myVertex.level + ')');
 			CUR_LEVEL = myVertex.level;
 			UI.fadeOutChildren(myVertex);
-			UI.paint(myVertex);
-			UI.setPaintJob(true);
+			//UI.paint(myVertex);
+			//UI.setPaintJob(true);
 			this.paintZoomOut(myVertex);
 		} else {
 			//This code will be reached if the user performed an zoom (in) action on a certain vertex
@@ -61,17 +61,25 @@ var ZoomCore = new Class({
 	 * @param {Vertex} The new root vertex after the zoomOut. This vertex must be painted before calling this function.
 	 */
 	paintZoomOut : function(vertex){
+		UI.paint(vertex);
+		UI.setPaintJob(true);
+		if(vertex.level < (CUR_LEVEL+Core.prefetch-1)){
+			for(var i=0; (i < vertex.children.length) && (i < this.vertices - (vertex.level-CUR_LEVEL)); i++){
+				this.paintZoomOut(vertex.children[i]);
+			}
+		}
+		
 		//paint all vertices of the current level. Make sure that we don't want to paint to much vertrices for this level.
-		for(var i = 0; (i < vertex.children.length) && (i < this.vertices - (vertex.level-CUR_LEVEL)); i++){
+		/*for(var i = 0; (i < vertex.children.length) && (i < this.vertices - (vertex.level-CUR_LEVEL)); i++){
 			UI.paint(vertex.children[i]);
 			UI.setPaintJob(true);	
-		}
+		
 		//checks that we are not on the last level
 		if(vertex.level < (CUR_LEVEL+Core.prefetch-2)){
 			for(var i =0; (i < vertex.children.length) && (i < this.vertices - (vertex.level-CUR_LEVEL)); i++){
 				this.paintZoomOut(vertex.children[i]);
 			}
-		}
+		}}*/
 	},
 	
 	/**
@@ -81,15 +89,13 @@ var ZoomCore = new Class({
 	 */
 
 	paintSuccessors : function(myVertex){
-		//Decided whether the vertex's level is on the upcoming
-
-			UI.paint(myVertex);
-			//Activate the cyclic paint 'thread'
-			UI.setPaintJob(true);
-							
-		//Traverse recursively downwards the tree in order to paint the next visible 
-		//level
+		UI.paint(myVertex);
+		//Activate the cyclic paint 'thread'
+		UI.setPaintJob(true);
+		//Decided whether the vertex's level is on the upcoming					
 		if(myVertex.level <= (CUR_LEVEL + this.prefetch + 1)){
+			//Traverse recursively downwards the tree in order to paint the next visible 
+			//level
 			for(var i = 0; i < myVertex.children.length; i++){
 				this.paintSuccessors(myVertex.children[i]);
 			}
