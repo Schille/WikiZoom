@@ -67,7 +67,7 @@ var ZoomCore = new Class({
 			UI.setPaintJob(true);	
 		}
 		//checks that we are not on the last level
-		if(vertex.level < (CUR_LEVEL+Core.prefetch-1)){
+		if(vertex.level < (CUR_LEVEL+Core.prefetch-2)){
 			for(var i =0; (i < vertex.children.length) && (i < this.vertices - (vertex.level-CUR_LEVEL)); i++){
 				this.paintZoomOut(vertex.children[i]);
 			}
