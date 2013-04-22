@@ -145,13 +145,25 @@ var ZoomUI = new Class({
 	zoomIn : function(vertex) {
 		if (UI.zoompending == true)
 			return;
-
+		
 		UI.zoompending = true;
 		setTimeout(function() {
 			UI.zoompending = false;
 		}, 5000);
 
 		this.currentVertex = vertex;
+		
+		
+		var tmp = vertex.level - CUR_LEVEL;
+		var oneparent = vertex;
+		for (var i = 0; i < tmp; i++) {
+			this.repaintNode(oneparent);
+			this.fadeOutSiblings(oneparent, false);
+			oneparent.path.remove();
+			var oneparent = oneparent.parent;
+		}
+
+	Core.zoomed(vertex);		
 
 		// Factor to calculate distance between father and child node
 		// and color fading.
@@ -176,19 +188,11 @@ var ZoomUI = new Class({
 
 		vertex.path.remove();
 
-		//this.fadeOutSiblings(vertex,false);
-		//this.repaintNode(vertex);
+		
+		this.fadeOutSiblings(vertex,false);
+		this.repaintNode(vertex);
 
-		var tmp = vertex.level - CUR_LEVEL;
-		var oneparent = vertex;
-		for (var i = 0; i < tmp; i++) {
-			this.repaintNode(oneparent);
-			this.fadeOutSiblings(oneparent, false);
-			oneparent.path.remove();
-			var oneparent = oneparent.parent;
-		}
-
-		Core.zoomed(vertex);
+		
 
 		var child_count = vertex.children.length;
 
@@ -250,7 +254,7 @@ var ZoomUI = new Class({
 	 */
 
 	repaintNode : function(vertex) {
-
+		console.error('detected ' + vertex.title);
 		// Factor to calculate distance between father and child node
 		// and color fading.
 		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL)));

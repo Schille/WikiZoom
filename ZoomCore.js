@@ -47,7 +47,7 @@ var ZoomCore = new Class({
 			+ myVertex.level + ')');
 			CUR_LEVEL = myVertex.level;
 			//Now we have to paint all the vertices, which have not been painted yet
-			this.paintSuccessors(myVertex);
+			this.paintSuccessors(myVertex, true);
 			//Requests the missing vertices
 			this.iterateChildren(myVertex, this.vertices);
 		}
@@ -88,16 +88,18 @@ var ZoomCore = new Class({
 	 * @param {Vertex} The actual 'ancestor' of the to be painted vertices 
 	 */
 
-	paintSuccessors : function(myVertex){
+	paintSuccessors : function(myVertex, myPaintAll){
+		if(myPaintAll != true) {
 		UI.paint(myVertex);
 		//Activate the cyclic paint 'thread'
 		UI.setPaintJob(true);
+		}
 		//Decided whether the vertex's level is on the upcoming					
 		if(myVertex.level <= (CUR_LEVEL + this.prefetch + 1)){
 			//Traverse recursively downwards the tree in order to paint the next visible 
 			//level
 			for(var i = 0; i < myVertex.children.length; i++){
-				this.paintSuccessors(myVertex.children[i]);
+				this.paintSuccessors(myVertex.children[i], false);
 			}
 		}	
 	},
