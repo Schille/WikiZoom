@@ -128,7 +128,7 @@ var ZoomUI = new Class({
 	 * Updates rendering of the graph on zoomOut event
 	 */
 	zoomOut : function() {
-		if (UI.zoompending == true)
+		if (UI.zoompending == true || this.currentVertex.parent == null)
 			return;
 
 		UI.zoompending = true;
