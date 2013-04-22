@@ -166,7 +166,6 @@ var ZoomCore = new Class({
 						var vertex = this.createVertex(myVertex.outlinks[i], myVertex, (myVertex.level + 1));
 						//Add it as child to this vertex
 						myVertex.children.push(vertex);
-						console.log('Fetching new vertex:' + vertex.title + ' ID:' + vertex.id + ' Level:' + vertex.level);
 						this.fetcher.fetch(vertex);
 						//Increment the pending requests counter
 						this.requestsPending += 1;

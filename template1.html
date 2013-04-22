@@ -19,13 +19,38 @@
 	</head>
 	<body>
 		<script>
-			//var aotd_core = new ZoomCore();
-			var aotd_vertex = new Vertex();
-			var Core = new ZoomCore();
-			aotd_vertex.title = "Wikipedia:Hauptseite/Artikel des Tages/Sonntag"
-			aotd_vertex.parent = null;
-			var aotd_fetcher = new WikiFetcher();
-			
+			var weekday = new Date().get('day');
+			switch(weekday) {
+				case 1:
+					weekday = "Montag";
+					break;
+
+				case 2:
+					weekday = "Dienstag";
+					break;
+
+				case 3:
+					weekday = "Mittwoch";
+					break;
+
+				case 4:
+					weekday = "Donnerstag";
+					break;
+
+				case 5:
+					weekday = "Freitag";
+					break;
+
+				case 6:
+					weekday = "Samstag";
+					break;
+
+				case 7:
+					weekday = "Sonntag";
+					break;
+
+			}
+
 			//$('div.container div.jumbotron div.row-fluid aotd').set('html', updated_aotd.intro);
 
 		</script>
@@ -265,11 +290,12 @@
 							onComplete : function(data) {
 								//Delete container content
 								selects.set('html', '');
+
 								for (var counter = 0; counter < 4; counter++) {
 
 									//Check if there is content in the Array
-									if (data[1][counter] == undefined) {
-										selects.set('style', 'border-bottom: 0px solid rgba(175,175,175,1)')
+									if (data[1][counter] == undefined || data[1][counter] == null) {
+										selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)')
 										break;
 									}
 									//Insert
@@ -280,43 +306,54 @@
 								}
 
 								//EventListener
-								var type0 = $('typeahead0');
-								type0.addEvents({
-									'click' : function() {
-										searchBox.set('value', type0.get('html'));
-										selects.set('html', '');
-										selects.set('style', 'border-bottom: 0px')
-									}
-								})
+								if ($('typeahead0') != null) {
+									var type0 = $('typeahead0');
+									type0.addEvents({
+										'click' : function() {
+											searchBox.set('value', type0.get('html'));
+											selects.set('html', '');
+											selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)')
+										}
+									})
+								} else
+									selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)');
+								if ($('typeahead1') != null) {
+									var type1 = $('typeahead1');
+									type1.addEvents({
+										'click' : function() {
+											searchBox.set('value', type1.get('html'));
+											selects.set('html', '');
+											selects.set('style', 'border-bottom: 0px')
+										}
+									})
+								} else {
+									selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)')
+								}
+								if ($('typeahead2') != null) {
+									var type2 = $('typeahead2');
+									type2.addEvents({
+										'click' : function() {
+											searchBox.set('value', type2.get('html'));
+											selects.set('html', '');
+											selects.set('style', 'border-bottom: 0px')
+										}
+									})
+								} else {
+									selects.set('style', 'border-bottom: 0px')
+								}
+								if ($('typeahead3') != null) {
+									var type3 = $('typeahead3');
+									type3.addEvents({
 
-								var type1 = $('typeahead1');
-								type1.addEvents({
-									'click' : function() {
-										searchBox.set('value', type1.get('html'));
-										selects.set('html', '');
-										selects.set('style', 'border-bottom: 0px')
-									}
-								})
-
-								var type2 = $('typeahead2');
-								type2.addEvents({
-									'click' : function() {
-										searchBox.set('value', type2.get('html'));
-										selects.set('html', '');
-										selects.set('style', 'border-bottom: 0px')
-									}
-								})
-
-								var type3 = $('typeahead3');
-								type3.addEvents({
-
-									'click' : function() {
-										searchBox.set('value', type3.get('html'));
-										selects.set('html', '');
-										selects.set('style', 'border-bottom: 0px')
-									}
-								})
-
+										'click' : function() {
+											searchBox.set('value', type3.get('html'));
+											selects.set('html', '');
+											selects.set('style', 'border-bottom: 0px')
+										}
+									})
+								} else {
+									selects.set('style', 'border-bottom: 0px')
+								}
 							}
 						});
 						searchRequest.send();
@@ -343,39 +380,47 @@
 							<a class="btn" target="_blank" href="http://de.wikipedia.org/">Mehr »</a>
 						</p>
 					</div>
+					
 					<script>
-					var updated_aotd = new Vertex();
-			updated_aotd = aotd_fetcher.fetch(aotd_vertex);
-						setTimeout('updated_aotd.intro = updated_aotd.intro.substring(0,910)',500);
-						setTimeout('$(\'aotd_text\').set(\'html\'\, updated_aotd.intro)',500);
+					
+						var aotdRequest = new Request.JSONP({
+						
+							url : "http://de.wikipedia.org/w/api.php?action=parse&format=json&prop=text&page=Wikipedia%3AHauptseite%2FArtikel_des_Tages%2F"+weekday,
+
+							onComplete : function(JSONdata) {
+								
+								$('aotd_text').set('html', JSONdata.parse.text["*"].replace(/Abk(.|\n)+Folgewoche.<\/li>\n<\/ul>\n<\/div>/gi, ''));
+								
+							}
+						}).send();
+						
+
 					</script>
+					
 					<div class="span6">
-						<h2> Was geschah am ...
+						<h2> Wusstest du schon ...
 						<br>
 						</h2>
 						<p id="schon_text" class="text-left">
-
 						</p>
 						<p>
 							<a class="btn" target="_blank" href="http://de.wikipedia.org/">Mehr »</a>
 						</p>
 						<script>
-							var global;
+							
 							var searchRequest = new Request.JSONP({
 
-							url : "http://de.wikipedia.org/w/api.php?action=parse&format=json&page=Wikipedia%3AHauptseite%2FSchon_gewusst%2FMontag&prop=text",
-							
-							onComplete : function(JSONdata) {
-								global = JSONdata;
-								$('schon_text').set('html',JSONdata.parse.text["*"].replace(/<div\sclass=(.|\n)+Aktualisierungserinnerungen funktionieren.<\/li>\s<\/ul>\n<\/div>/gi,''));
-								console.log(JSONdata.parse.text["*"]);
-							}
-							
+								url : "http://de.wikipedia.org/w/api.php?action=parse&format=json&prop=text&page=Wikipedia%3AHauptseite%2FSchon_gewusst%2F" + weekday,
+
+								onComplete : function(JSONdata) {
+									
+									$('schon_text').set('html', JSONdata.parse.text["*"].replace(/<div\sclass=(.|\n)+Aktualisierungserinnerungen funktionieren.<\/li>\s<\/ul>\n<\/div>/gi, ''));
+
+								}
 							}).send();
-							
-							
+
 						</script>
-						
+
 					</div>
 				</div>
 			</div>
