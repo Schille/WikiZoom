@@ -320,7 +320,7 @@
 			function toggle_help() {
 
 				help_over.toggle();
-				myHorizontalSlide.toggle();
+				
 			}
 
 			function toggle_about() {
@@ -383,6 +383,7 @@
 
 			<script type="text/javascript">
 				function template1_init() {
+					
 					var search = $('search').value;
 					alert1.hide();
 					var searchRequest = new Request.JSONP({
@@ -457,17 +458,35 @@
 
 										(function(elem) {
 								
-											this.addEvents({
+											
+												this.addEvents({
 												'click' : function(event) {
+													console.log(event);
+													if(event.target.id.contains("typeahead")){
+													
 													searchBox.set('value', event.target.textContent);
 													selects.set('html', '');
 													selects.set('style', 'border-bottom: 0px')
-
+													}
 												}
-											})
-										})(elem);
+												
+												
+												
+												})
+												})(elem);
+											}
+											
+											
+											
+												
+											
+										
 
-									}
+									
+
+									
+									
+
 
 									//Insert borders
 
