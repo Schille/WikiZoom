@@ -458,8 +458,8 @@
 										(function(elem) {
 								
 											this.addEvents({
-												'click' : function() {
-													searchBox.set('value', $(elem).get('html'));
+												'click' : function(event) {
+													searchBox.set('value', event.target.textContent);
 													selects.set('html', '');
 													selects.set('style', 'border-bottom: 0px')
 
