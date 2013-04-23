@@ -55,7 +55,7 @@
 
 		</script>
 		<!-- Begin navbar (Bottom) -->
-		<div class="navbar navbar_hide navbar-fixed-bottom">
+		<div id="navschow" class="navbar navbar_hide navbar-fixed-bottom">
 			<div class="navbar-inner navbar_hide">
 				<div class="container navbar_hide">
 					<ul class="nav navbar_hide">
@@ -383,13 +383,32 @@
 
 			<script type="text/javascript">
 				function template1_init() {
-					if ($('search').value != '') {
+					var search = $('search').value;
+					alert1.hide();
+					var searchRequest = new Request.JSONP({
 
-						$$('div').hide();
+						url : "http://de.wikipedia.org/w/api.php?action=query&prop=flagged&format=json&titles=" + search,
 
-						//$$('div.navbar_hide').show();
-						start($('search').value);
-					}
+						onComplete : function(data) {
+							var info = Object.keys(data.query.pages);
+							if (info == -1) {
+							alert1.show();
+							} else {
+								$$('div').hide();
+								start($('search').value);
+								$$('div.navbar_hide').show();
+								
+							}
+
+						}
+					}).send();
+
+					/*
+					 $$('div').hide();
+
+					 //$$('div.navbar_hide').show();
+					 start($('search').value);
+					 */
 
 				}
 			</script>
@@ -425,65 +444,96 @@
 
 									//Check if there is content in the Array
 									if (data[1][counter] == undefined || data[1][counter] == null) {
-										selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)')
+										if (counter == 0) {
+											selects.set('style', 'border: 0px solid rgba(175,175,175,1)');
+										}
 										break;
 									}
-									//Insert
+
 									selects.set('html', selects.get('html') + '<li class="nav-header" ><a id=\'typeahead' + counter + '\'>' + data[1][counter] + '</a></li>');
-									//Add bottom border
-									selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)')
+									var elem = $(('typeahead' + counter));
+
+									if (elem != null) {
+
+										(function(elem) {
+								
+											this.addEvents({
+												'click' : function() {
+													searchBox.set('value', $(elem).get('html'));
+													selects.set('html', '');
+													selects.set('style', 'border-bottom: 0px')
+
+												}
+											})
+										})(elem);
+
+									}
+
+									//Insert borders
+
+									selects.set('style', 'border-left: 2px solid rgba(175,175,175,5)');
+									selects.set('style', selects.get('style') + 'border-right: 2px solid rgba(175,175,175,5)');
+									selects.set('style', selects.get('style') + 'border-bottom: 2px solid rgba(175,175,175,1)');
+
+									//var cunt='typeahead'+counter;
+
+									/*	if ($(cunt) != null) {
+									 console.log(cunt);
+									 $(cunt).addEvents({
+									 'click' : function() {
+									 searchBox.set('value', $(cunt).get('html'));
+									 selects.set('html', '');
+									 selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)')
+									 }
+									 })
+									 } else{
+									 selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)');
+									 }*/
 
 								}
 
 								//EventListener
-								if ($('typeahead0') != null) {
-									var type0 = $('typeahead0');
-									type0.addEvents({
-										'click' : function() {
-											searchBox.set('value', type0.get('html'));
-											selects.set('html', '');
-											selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)')
-										}
-									})
-								} else
-									selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)');
-								if ($('typeahead1') != null) {
-									var type1 = $('typeahead1');
-									type1.addEvents({
-										'click' : function() {
-											searchBox.set('value', type1.get('html'));
-											selects.set('html', '');
-											selects.set('style', 'border-bottom: 0px')
-										}
-									})
-								} else {
-									selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)')
-								}
-								if ($('typeahead2') != null) {
-									var type2 = $('typeahead2');
-									type2.addEvents({
-										'click' : function() {
-											searchBox.set('value', type2.get('html'));
-											selects.set('html', '');
-											selects.set('style', 'border-bottom: 0px')
-										}
-									})
-								} else {
-									selects.set('style', 'border-bottom: 0px')
-								}
-								if ($('typeahead3') != null) {
-									var type3 = $('typeahead3');
-									type3.addEvents({
 
-										'click' : function() {
-											searchBox.set('value', type3.get('html'));
-											selects.set('html', '');
-											selects.set('style', 'border-bottom: 0px')
-										}
-									})
-								} else {
-									selects.set('style', 'border-bottom: 0px')
-								}
+								/*					if ($('typeahead1') != null) {
+								 var type1 = $('typeahead1');
+								 type1.addEvents({
+								 'click' : function() {
+								 searchBox.set('value', type1.get('html'));
+								 selects.set('html', '');
+								 selects.set('style', 'border-bottom: 0px')
+								 }
+								 })
+								 } else {
+								 selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)')
+								 }
+								 if ($('typeahead2') != null) {
+								 var type2 = $('typeahead2');
+								 type2.addEvents({
+								 'click' : function() {
+								 searchBox.set('value', type2.get('html'));
+								 selects.set('html', '');
+								 selects.set('style', 'border-bottom: 0px')
+								 }
+								 })
+								 } else {
+								 selects.set('style', 'border-bottom: 0px')
+								 }
+								 if ($('typeahead3') != null) {
+								 var type3 = $('typeahead3');
+								 type3.addEvents({
+
+								 'click' : function() {
+								 searchBox.set('value', type3.get('html'));
+								 selects.set('html', '');
+								 selects.set('style', 'border-bottom: 0px')
+								 }
+								 })
+								 } else {
+								 selects.set('style', 'border-bottom: 0px')
+
+								 }
+
+								 */
 							}
 						});
 						searchRequest.send();
@@ -506,46 +556,44 @@
 						<p id="aotd_text" class="text-left">
 
 						</p>
-						<p>
-							<a class="btn" target="_blank" href="http://de.wikipedia.org/">Mehr »</a>
+						<p id="aotdButton">
+							<!-- <a class="btn" target="_blank" href="http://de.wikipedia.org/">Mehr »</a> -->
 						</p>
 					</div>
-					
+
 					<script>
-					
 						var aotdRequest = new Request.JSONP({
-						
-							url : "http://de.wikipedia.org/w/api.php?action=parse&format=json&prop=text&page=Wikipedia%3AHauptseite%2FArtikel_des_Tages%2F"+weekday,
+
+							url : "http://de.wikipedia.org/w/api.php?action=parse&format=json&prop=text&page=Wikipedia%3AHauptseite%2FArtikel_des_Tages%2F" + weekday,
 
 							onComplete : function(JSONdata) {
-								
-								$('aotd_text').set('html', JSONdata.parse.text["*"].replace(/Abk(.|\n)+Folgewoche.<\/li>\n<\/ul>\n<\/div>/gi, ''));
+								//console.log(JSONdata.parse.text["*"]);
+								var moreButton = JSONdata.parse.text["*"].replace(/(\n|.)+<small><a\shref="\/wiki\//g,'').replace(/"\stitle=+(\n|.)*/i,'');
+								$('aotdButton').set('html','<a class="btn" target="_blank" href="http://de.wikipedia.org/wiki/'+moreButton+'">Mehr »</a>');
+								//console.log(moreButton);
+								$('aotd_text').set('html', JSONdata.parse.text["*"].replace(/Abk(.|\n)+Folgewoche.<\/li>\n<\/ul>\n<\/div>/gi, '').replace(/<a\shref="\/wiki/g,'<a href="http://de.wikipedia.org/wiki').replace(/<small>+(\n|.)*/g, ''));
 								
 							}
 						}).send();
-						
 
 					</script>
-					
+
 					<div class="span6">
 						<h2> Wusstest du schon ...
 						<br>
 						</h2>
-						<p id="schon_text" class="text-left">
-						</p>
+						<p id="schon_text" class="text-left"></p>
 						<p>
-							<a class="btn" target="_blank" href="http://de.wikipedia.org/">Mehr »</a>
+							<a class="btn text-left" target="_blank" href="http://de.wikipedia.org/">Mehr »</a>
 						</p>
 						<script>
-							
 							var searchRequest = new Request.JSONP({
 
 								url : "http://de.wikipedia.org/w/api.php?action=parse&format=json&prop=text&page=Wikipedia%3AHauptseite%2FSchon_gewusst%2F" + weekday,
 
 								onComplete : function(JSONdata) {
-									
-									$('schon_text').set('html', JSONdata.parse.text["*"].replace(/<div\sclass=(.|\n)+Aktualisierungserinnerungen funktionieren.<\/li>\s<\/ul>\n<\/div>/gi, ''));
-
+									$('schon_text').set('html', JSONdata.parse.text["*"].replace(/<div\sclass=(.|\n)+Aktualisierungserinnerungen funktionieren.<\/li>\s<\/ul>\n<\/div>/gi, '').replace(/<a\shref="\/wiki/g,'<a href="http://de.wikipedia.org/wiki'));
+						
 								}
 							}).send();
 
@@ -664,9 +712,6 @@
 				margin-left: -12%;
 				margin-top: -20px;
 				border: 2px;
-				border-right: 2px solid rgba(175,175,175,5);
-				border-left: 2px solid rgba(175,175,175,5);
-				border-bottom: 0px solid rgba(175,175,175,5);
 				border-radius: 3px;
 			}
 
