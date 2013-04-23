@@ -121,9 +121,58 @@
 				<script>
 					var settings = new Settings();
 					window.addEvent('domready', function() {
-
 						settings.init();
 					});
+					function refreshSlider(){
+
+						// add velocitySlider
+						window.addEvent('domready', function() {
+
+							var slider = $('velocitySlider');
+
+							new Slider(slider, slider.getElement('.knob'), {
+							range : [1, 4000],
+								initialStep : settings.getValue("velocity"),
+								onChange : function(value) {
+									if (value)
+										$('newVelocity').set('html', Math.round(value/40) + 1 + '%');
+										settings.setVelocity(value);
+								}
+							});
+						});
+
+						// add verticesSlider
+						window.addEvent('domready', function() {
+
+							var slider = $('verticesSlider');
+
+							new Slider(slider, slider.getElement('.knob'), {
+								range : [1, 5],
+								initialStep : settings.getValue("vertices"),
+								onChange : function(value) {
+									if (value)
+										$('newVertices').set('html', value);
+										settings.setVertices(value);
+								}
+							});
+						});
+
+						// add levelSlider
+						window.addEvent('domready', function() {
+
+							var slider = $('levelSlider');
+
+							new Slider(slider, slider.getElement('.knob'), {
+								range : [2, 6],
+								initialStep : settings.getValue("level"),
+								onChange : function(value) {
+									if (value)
+										$('newLevel').set('html', value);
+										settings.setLevel(value);
+								}
+							});
+						});						
+					}
 				</script>
 				Hallo <span id="userName"></span>,
 				<p class="text-left">
@@ -131,50 +180,45 @@
 					Die Grundeinstellungen (Knoten: 5, Level: 3) ermöglichen das optimale Zoomerlebnis.
 					<br>
 				</p>
-				<label>Speed:</label>
-				<div id="slider" class="slider">
-					<div class="knubbel"></div>
+
+				<label>Geschwindigkeit:</label>
+				<div id="velocitySlider" class="slider">
+					<div class="knob"></div>
 
 				</div>
-				<div id="speed_value"></div>
-				<span class="help-block"> Aktueller Speed: <span id="speed"></span></span>
+				<div id="newVelocity"></div>
+				<span class="help-block"> Aktueller Speed: <span id="currentVelocity"></span></span>
 
-				<script>
-					window.addEvent('domready', function() {
-
-						var slider = $('slider');
-
-						new Slider(slider, slider.getElement('.knubbel'), {
-							range : [1, 100],
-							initialStep : $('speed').get('html'),
-							onChange : function(value) {
-								if (value)
-									$('speed_value').set('html', value);
-							}
-						});
-					});
-				</script>
 
 				<label>Knoten:</label>
-				<input type="text" name="vertexSettings" placeholder="" id="vertexSettings" value="" maxlength="5" onkeyup="settings.checkNumber('vertexSettings')"/>
-				<span class="help-block"> Aktuelle Knotenanzahl: <span id="nodes"></span></span>
+				<div id="verticesSlider" class="slider">
+					<div class="knob"></div>
+
+				</div>
+				<div id="newVertices"></div>
+				<span class="help-block"> Aktuelle Anzahl: <span id="currentVertices"></span></span>
+
 
 				<label>Level:</label>
-				<input type="text" name="levelSettings" id="levelSettings" value="" maxlength="5" onkeyup="settings.checkNumber('levelSettings')"/>
-				<span class="help-block">Aktuelle 	Levelanzahl: <span id="level"></span></span>
+				<div id="levelSlider" class="slider">
+					<div class="knob"></div>
+
+				</div>
+				<div id="newLevel"></div>
+				<span class="help-block"> Aktuelle Anzahl: <span id="currentLevel"></span></span>
 
 			</div>
 
 			<div class="settings-over overlay_footer">
-				<button type="button" id="changeUN" class="btn pull-left" value="Change Username" onclick="settings.changeUsername()">
-					Change Username!
+				<button type="button" id="changeUN" class="btn pull-left" value="changeUser" onclick="toggle_settings();toggle_changeUser();">
+					Benutzer wechseln!
 				</button>
-				<button id="update" class="btn btn-primary pull-right" value="Update" onclick="settings.updateVars();toggle_settings();">
-					Save!
+				<button id="update" class="btn btn-primary pull-right" value="update" onclick="settings.setValues();toggle_settings();">
+					Speichern!
 				</button>
 				&nbsp;
-				<button role="button" onclick="toggle_settings()" class="btn pull-right">
-					Back!
+				<button role="button" onclick="toggle_settings();" class="btn pull-right">
+					Zurück!
 				</button>
 
 			</div>
@@ -182,16 +226,94 @@
 		</div>
 		<div class="modal-backdrop settings-over overlay_background"></div>
 		<!-- End settings-overlay -->
+        <!-- Begin changeUser-overlay -->
+		<div class="modal changeUser-over overlay_window">
+
+			<div class="changeUser-over overlay_header">
+				Benutzer wechseln
+			</div>
+
+			<div class="changeUser-over overlay_body">
+				<p class="text-left">
+					Hier kannst du den Benutzer wechseln:
+				</p>
+				<select id="usersDropDown" name="users" class="dropdown">
+				</select>
+				<button type="button" id="deleteUser" class="btn" value="deleteUser" onclick="deleteUser(getSelectedUser());">
+					Löschen</button>
+					<script>
+						var select = document.getElementById("usersDropDown"); 
+						function refreshAllUsers(){
+							select.options.length = 0;
+							var users = settings.getAllUsers();
+							for(var i = 0; i < users.length; i++){
+								var user = users[i];
+								var element = document.createElement("option");
+    							element.textContent = user;
+    							element.value = user;
+    							select.appendChild(element);
+							}
+							select.selectedIndex = 0;
+						}
+						
+						function getSelectedUser(){
+							return select.options[select.selectedIndex].text;
+						}
+
+						function checkInput(){
+							var newUserName = document.getElementById("newUserField").value;
+							if(newUserName.length >= 3){
+								settings.newUser(newUserName);
+								document.getElementById("newUserField").value = ""
+								toggle_changeUser();
+								toggle_settings();
+							}else{
+								alert("Der Benutzername muss mind. 3 und max. 20 Zeichen umfassen!");
+								document.getElementById("newUserField").value = "";
+							}
+						}
+
+						function deleteUser(user){
+							if (select.options.length == 1){
+								alert("Du musst erst einen neuen Benutzer erstellen bevor du diesen hier löschen kannst!");
+							}else{
+								select.remove(user);
+								settings.deleteUser(user);
+								refreshAllUsers();
+								settings.changeUser(getSelectedUser());
+							}
+						}
+					</script>		
+			</div>
+
+			<div class="changeUser-over overlay_footer">
+				<input type="text" maxlength="20" class="pull-left" id = "newUserField" />
+				<button type="button" id="newUser" class="btn pull-left" value="newUser" onclick="checkInput();">
+					Neuer Benutzer!
+				</button>
+				<button id="update" class="btn btn-primary pull-right" value="update" onclick="settings.changeUser(getSelectedUser());toggle_changeUser();toggle_settings();">
+					Speichern!
+				</button>
+				&nbsp;
+				<button role="button" onclick="toggle_changeUser();toggle_settings();" class="btn pull-right">
+					Zurück!
+				</button>
+			</div>
+		</div>
+		<div class="modal-backdrop changeUser-over overlay_background"></div>
+		<!-- End changeUser-overlay -->
+
 
 		<script>
 			var help_over = $$("div.help-over");
-
 			var about_over = $$("div.about-over");
 			var settings_over = $$("div.settings-over");
+			var changeUser_over = $$("div.changeUser-over");
 			//var navbar = $$("div.navbar_hide");
 			help_over.hide();
 			about_over.hide();
 			settings_over.hide();
+			changeUser_over.hide();
 			//navbar.toggle();
 
 			function toggle_help() {
@@ -205,7 +327,13 @@
 			}
 
 			function toggle_settings() {
+				refreshSlider();
 				settings_over.toggle();
+			}
+
+			function toggle_changeUser() {
+				refreshAllUsers();
+				changeUser_over.toggle();
 			}
 		</script>
 
@@ -561,7 +689,7 @@
 				height: 16px;
 				width: 200px;
 			}
-			.slider .knubbel {
+			.slider .knob {
 				border: 1px solid #cccccc;
 				border-color: #e6e6e6 #e6e6e6 #bfbfbf;
 				-webkit-border-radius: 4px;

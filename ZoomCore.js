@@ -7,15 +7,16 @@ var ZoomCore = new Class({
 		//Create and initialize the global variable CUR_LEVEL
 		CUR_LEVEL = 0;
 		this.fetcher = new WikiFetcher();
-		//this.settings = new Settings();
+		this.settings = new Settings();
+        this.settings.init();
 		//These are the values, loaded with the Setting component 
 		this.nextID = 0;
 		//Defines the actual prefetch level - in which the vertex will not be painted
-		this.prefetch = 3;
+		this.prefetch = this.settings.getLevel();
 		//Measure how many requests are still pending
 		this.requestsPending = 0;
 		//The initial amount of vertices in level 1
-		this.vertices = 5;
+		this.vertices = this.settings.getVertices();
 		
 		//Create and fetch the initial article
 		initialVertex = this.createVertex(myInitialArticle, null, 0);
