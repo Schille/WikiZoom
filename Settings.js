@@ -48,10 +48,10 @@ var Settings = new Class({
         var create = true;
         var users = this.getAllUsers();
         if (users.length >= 5) {
-                alert("Es dürfen maximal 5 User gespeichert werden");
-                create = false; 
-            }
-            else for (var i = 0; i < users.length; i++) {
+            alert("Es dürfen maximal 5 User gespeichert werden");
+            create = false;
+        }
+        else for (var i = 0; i < users.length; i++) {
             if (user == users[i]) {
                 alert("Dieser Benutzername ist leider schon vergeben");
                 create = false;

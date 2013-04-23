@@ -18,7 +18,7 @@ var ZoomUI = new Class({
 		paper.renderfix();
 		// In order to solve some rendering bugs. For more information
 		// take a look at raphael's doc.
-		this.velocity = 50;
+		this.velocity = Setting.getVelocity();
 		// time in ms between paintVertices function calls
 		this.intervalOn = null;
 		// flag to determine if interval function calls should be
