@@ -53,6 +53,10 @@ var Settings = new Class({
                 create = false;
             }
         }
+        if (users.length >= 5) {
+                alert("Es dürfen maximal 5 User gespeichert werden");
+                create = false; 
+            }
         if (create) {
             this.username = user;
             this.setLastUser();
