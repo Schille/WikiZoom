@@ -19,7 +19,7 @@ var ZoomUI = new Class({
 		this.background = paper.image('dependencies/room1.jpg',0, 0, paper_width, paper_height).toBack();
 		// In order to solve some rendering bugs. For more information
 		// take a look at raphael's doc.
-		this.velocity = 50;
+		this.velocity = Setting.getVelocity();
 		// time in ms between paintVertices function calls
 		this.intervalOn = null;
 		// flag to determine if interval function calls should be
