@@ -29,7 +29,6 @@ var WikiFetcher = new Class({
 				// onComplete start the action
 				onComplete : function(JSONdata) {
 					//first parse the JSON Object
-					console.info("Received article " + vertex.title);
 					var pageid = Object.keys(JSONdata.query.pages);
 					if (JSONdata.query.pages[pageid].revisions == undefined) {
 						console.warn('Can not resolve redlink: ' + vertex.title + ' of ' + vertex.parent.title);
@@ -44,7 +43,7 @@ var WikiFetcher = new Class({
 					if (count != null && count.length > 1) {
 						intro = intro.replace(/{{.+'''+.+}}/, '');
 					}
-					intro = intro.replace(/{{Infobox(.|\n)+}}\n/gi,'');
+					intro = intro.replace(/{{Infobox(.|\n)+}}\n/gi,'').replace(/{\| border(.|\n)+\|}/g,'');
 
 
 					// then search for the ''' Pattern to determine the start of the introduction
@@ -109,7 +108,7 @@ var WikiFetcher = new Class({
 					vertex.intro = cleanIntro;
 					vertex.outlinks = Links;
 					vertex.link = 'http://de.wikipedia.org/wiki/' + vertex.title
-					//console.info(vertex.intro);
+					console.info(vertex.intro);
 					//console.info(vertex.outlinks);
 					Core.updated(vertex)
 				}

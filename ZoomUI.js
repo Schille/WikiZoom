@@ -138,17 +138,33 @@ var ZoomUI = new Class({
 		
 		var vertex = this.currentVertex;
 		this.currentVertex = vertex.parent;
+
 		Core.zoomed(vertex.parent);
 	},
 
 	zoomIn : function(vertex) {
-		UI.zoompending = true;
-		setTimeout(function(){
-			UI.zoompending = false;
-		},2000);
+		if (UI.zoompending == true)
+			return;
 		
+		UI.zoompending = true;
+		setTimeout(function() {
+			UI.zoompending = false;
+		}, 5000);
+
 		this.currentVertex = vertex;
 		
+		
+		var tmp = vertex.level - CUR_LEVEL;
+		var oneparent = vertex;
+		for (var i = 0; i < tmp; i++) {
+			this.repaintNode(oneparent);
+			this.fadeOutSiblings(oneparent, false);
+			oneparent.path.remove();
+			var oneparent = oneparent.parent;
+		}
+
+	Core.zoomed(vertex);		
+
 		// Factor to calculate distance between father and child node
 		// and color fading.
 		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL + 1)));
@@ -172,20 +188,11 @@ var ZoomUI = new Class({
 
 		vertex.path.remove();
 
-		//this.fadeOutSiblings(vertex,false);
-		//this.repaintNode(vertex);
+		
+		this.fadeOutSiblings(vertex,false);
+		this.repaintNode(vertex);
 
 		
-		var tmp = vertex.level - CUR_LEVEL;
-		var oneparent = vertex;
-		for(var i = 0; i < tmp; i++){
-			this.repaintNode(oneparent);
-			this.fadeOutSiblings(oneparent,false);
-			oneparent.path.remove();
-			var oneparent = oneparent.parent;
-		}
-		
-		Core.zoomed(vertex);
 
 		var child_count = vertex.children.length;
 
@@ -247,7 +254,7 @@ var ZoomUI = new Class({
 	 */
 
 	repaintNode : function(vertex) {
-
+		console.error('detected ' + vertex.title);
 		// Factor to calculate distance between father and child node
 		// and color fading.
 		var level_fac = (Math.pow(0.7, (vertex.level - CUR_LEVEL)));
@@ -291,6 +298,7 @@ var ZoomUI = new Class({
 	 */
 
 	fadeOutSiblings : function(vertex, myFlag) {
+		console.debug(vertex.parent.children);
 		var siblings = vertex.parent.children;
 		var parent = vertex.parent;
 		var temp_scope = this;
@@ -430,15 +438,14 @@ var ZoomUI = new Class({
 		}
 
 		// collect all already painted children of myVertex
-		
-		
+
 		var children = new Array();
 		for (var i = 0; i < myNode.children.length; i++) {
 			if (myNode.children[i].svg != null)
 				children.push(myNode.children[i]);
 		}
 
-if (children.length > 0) {
+		if (children.length > 0) {
 
 			// calculate the new angles for all sibling vertices
 			var angle_steps = Math.PI * 2 / (children.length);
@@ -466,10 +473,6 @@ if (children.length > 0) {
 			}
 		}
 
-
-
-	
-
 	},
 
 	/**
@@ -488,11 +491,13 @@ if (children.length > 0) {
 			return;
 		}
 
-		UI.paintVector.push(myVertex)
+		UI.paintVector.push(myVertex);
+
 		UI.zoompending = true;
-		setTimeout(function(){
+		setTimeout(function() {
 			UI.zoompending = false;
-		},2000);
+		}, 4000);
+
 	},
 
 	/**
@@ -512,12 +517,14 @@ if (children.length > 0) {
 			} else {
 
 				vertex = UI.paintVector[i];
+
 				if (vertex.svg == null) {
 					UI.paintChildVertex(vertex);
 					UI.paintVector.splice(i, 1)
 				} else {
 					UI.repaintNode(vertex);
 					UI.paintVector.splice(i, 1)
+
 				}
 				//To control with which probability more then one element is painted.
 				if (Math.random() < 0.8)
@@ -674,7 +681,7 @@ if (children.length > 0) {
 
 			// Event handler for mousewheel
 			mouse = function(e) {
-				if(UI.zoompending == true)
+				if (UI.zoompending == true)
 					return;
 				// Remove the event listener, since we want to fire this
 				// only once
