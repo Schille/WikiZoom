@@ -16,6 +16,7 @@ var ZoomUI = new Class({
 		// height of raphael paper
 		paper = Raphael(0, 0, paper_width, paper_height);
 		paper.renderfix();
+		this.background = paper.image('dependencies/room1.jpg',0, 0, paper_width, paper_height).toBack();
 		// In order to solve some rendering bugs. For more information
 		// take a look at raphael's doc.
 		this.velocity = 50;
@@ -104,11 +105,11 @@ var ZoomUI = new Class({
 		path.animate({
 			'fill' : startColor,
 
-		}, 2000, ">").toBack();
+		}, 100, ">").toBack();
 
 		// Append svg of edge to its vertex (child).
 		vertexChild.path = path;
-
+		this.background.toBack();
 	},
 
 	/**
@@ -175,7 +176,7 @@ var ZoomUI = new Class({
 			"cy" : paper_height / 2,
 			"x" : paper_width / 2,
 			"y" : paper_height / 2,
-		}, 2000, "backOut");
+		}, 200);
 		vertex.svg.attr({
 			"cx" : paper_width / 2,
 			"cy" : paper_height / 2,
@@ -345,7 +346,7 @@ var ZoomUI = new Class({
 			if (temp_vertex.svg != null) {
 				temp_vertex.svg.animate({
 					opacity : 0,
-				}, 500, "linear");
+				}, 100);
 				temp_vertex.path.remove();
 				temp_vertex.svg.remove();
 				temp_vertex.svg = null;
@@ -384,12 +385,12 @@ var ZoomUI = new Class({
 				var move1 = element.animate({
 					"x" : mx,
 					"y" : my
-				}, 2000, "backOut");
+				}, 500);
 			} else {
 				element.animate({
 					"cx" : mx,
 					"cy" : my
-				}, 2000, "backOut");
+				}, 500);
 			}
 
 		});
@@ -412,30 +413,32 @@ var ZoomUI = new Class({
 			nodePath.animate({
 				path : "M" + (xP - 10) + "," + yP + " L" + mx + "," + my + " L" + xP + "," + (yP - 10),
 				fill : startColor,
-			}, 2000, "backOut").toBack();
+			}, 500).toBack();
 
 		}
 		if (xP >= mx && yP <= my) {
 			nodePath.animate({
 				path : "M" + xP + "," + (yP - 10) + " L" + mx + "," + my + " L" + (xP + 10) + "," + yP,
 				fill : startColor,
-			}, 2000, "backOut").toBack();
+			}, 500).toBack();
 
 		}
 		if (xP >= mx && yP > my) {
 			nodePath.animate({
 				path : "M" + xP + "," + (yP + 10) + " L" + mx + "," + my + " L" + (xP + 10) + "," + yP,
 				fill : startColor,
-			}, 2000, "backOut").toBack();
+			}, 500).toBack();
 
 		}
 		if (xP <= mx && yP >= my) {
 			nodePath.animate({
 				path : "M" + (xP - 10) + "," + yP + " L" + mx + "," + my + " L" + xP + "," + (yP + 10),
 				fill : startColor,
-			}, 2000, "backOut").toBack();
+			}, 500).toBack();
 
 		}
+		
+		this.background.toBack();
 
 		// collect all already painted children of myVertex
 
@@ -620,7 +623,7 @@ var ZoomUI = new Class({
 		var fontsize = 20 * level_fac;
 
 		paper.setStart();
-		var circle1 = paper.circle(x, y, 0);
+		var circle1 = paper.circle(x, y, size);
 
 		circle1.attr({
 			"fill" : "#CCCCCC",
@@ -628,7 +631,7 @@ var ZoomUI = new Class({
 			"stroke" : '#AAAAAA',
 			"stroke-width" : 2,
 		});
-		var circle11 = paper.circle(x, y, 0);
+		var circle11 = paper.circle(x, y, size - 4);
 		circle11.attr({
 			"stroke" : '#AAAAAA',
 			"stroke-dasharray" : "- ",
@@ -639,7 +642,7 @@ var ZoomUI = new Class({
 		var text1 = paper.text(x, y, myNode.title).toFront();
 
 		text1.attr({
-			"font-size" : 0,
+			"font-size" : fontsize,
 			"font-family" : "Cabin",
 			"fill" : '#555555',
 		});
@@ -656,15 +659,15 @@ var ZoomUI = new Class({
 			"fill" : this.shadeColor("#555555", (1 - level_fac) * 80)
 		});
 
-		var an1 = circle1.animate({
-			"r" : size
-		}, 2000, "elastic");
-		circle11.animateWith(circle1, an1, {
-			"r" : (size - 4)
-		}, 2000, "elastic");
-		text1.animateWith(circle1, an1, {
-			"font-size" : fontsize
-		}, 2000, "elastic");
+		// var an1 = circle1.animate({
+			// "r" : size
+		// }, 2000);
+		// circle11.animateWith(circle1, an1, {
+			// "r" : (size - 4)
+		// }, 2000);
+		// text1.animateWith(circle1, an1, {
+			// "font-size" : fontsize
+		// }, 2000);
 
 		set3.x = x;
 		set3.y = y;
@@ -677,7 +680,7 @@ var ZoomUI = new Class({
 			UI.showTooltip(myNode.title, myNode.intro, event);
 			set3.animate({
 				transform : "s1.1"
-			}, 2000, "elastic");
+			}, 2000);
 
 			// Event handler for mousewheel
 			mouse = function(e) {
@@ -727,7 +730,7 @@ var ZoomUI = new Class({
 			// Shrink the vertex back
 			set3.animate({
 				transform : "s1"
-			}, 2000, "elastic");
+			}, 100);
 			Tips4 = null;
 		};
 		// Event handler for mouse out - end
