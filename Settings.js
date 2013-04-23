@@ -9,7 +9,7 @@ var Settings = new Class({
     // update spans to current values
     updateSpans: function () {
         document.getElementById("userName").innerHTML = this.username;
-        document.getElementById("currentVelocity").innerHTML = Math.round(this.getValue("velocity") / 40) + 1 + '%';
+        document.getElementById("currentVelocity").innerHTML = Math.round( (4000 - this.getValue("velocity")) / 40) + '%';
         document.getElementById("currentVertices").innerHTML = this.getValue("vertices");
         document.getElementById("currentLevel").innerHTML = this.getValue("level");
     },

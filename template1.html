@@ -136,7 +136,7 @@
 								initialStep : settings.getValue("velocity"),
 								onChange : function(value) {
 									if (value)
-										$('newVelocity').set('html', Math.round(value/40) + 1 + '%');
+										$('newVelocity').set('html', Math.round((4000-value)/40) + '%');
 										settings.setVelocity(value);
 								}
 							});

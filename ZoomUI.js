@@ -695,7 +695,7 @@ var ZoomUI = new Class({
 					document.removeEvent("onmousewheel", mouse);
 				}
 				var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-				if (delta > 0) {
+				if (delta > 0 && !UI.intervalOn) {
 					console.debug('Zoom on ' + myNode.title);
 					UI.zoomIn(myNode);
 				}
@@ -872,7 +872,7 @@ mousescrollout = function(e) {
 		}
 	}, UI.mouseoutTimeout);
 	var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-	if (delta < 0) {
+	if (delta < 0 && !UI.intervalOn) {
 		console.log("zooming out");
 		UI.zoomOut();
 	}
