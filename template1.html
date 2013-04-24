@@ -112,7 +112,7 @@
 
 		<!-- End about-overlay -->
 
-        <!-- ADDED  UNTIL 340 -->
+		<!-- ADDED  UNTIL 340 -->
 		<!-- Begin settings-overlay -->
 		<div class="modal settings-over overlay_window">
 			<div class="settings-over overlay_header">
@@ -124,7 +124,7 @@
 					window.addEvent('domready', function() {
 						settings.init();
 					});
-					function refreshSlider(){
+					function refreshSlider() {
 
 						// add velocitySlider
 						window.addEvent('domready', function() {
@@ -132,12 +132,12 @@
 							var slider = $('velocitySlider');
 
 							new Slider(slider, slider.getElement('.knob'), {
-							range : [1, 4000],
+								range : [1, 4000],
 								initialStep : settings.getValue("velocity"),
 								onChange : function(value) {
 									if (value)
-										$('newVelocity').set('html', Math.round((4000-value)/40) + '%');
-										settings.setVelocity(value);
+										$('newVelocity').set('html', Math.round((4000 - value) / 40) + '%');
+									settings.setVelocity(value);
 								}
 							});
 						});
@@ -153,7 +153,7 @@
 								onChange : function(value) {
 									if (value)
 										$('newVertices').set('html', value);
-										settings.setVertices(value);
+									settings.setVertices(value);
 								}
 							});
 						});
@@ -169,10 +169,10 @@
 								onChange : function(value) {
 									if (value)
 										$('newLevel').set('html', value);
-										settings.setLevel(value);
+									settings.setLevel(value);
 								}
 							});
-						});						
+						});
 					}
 				</script>
 				Hallo <span id="userName"></span>,
@@ -190,7 +190,6 @@
 				<div id="newVelocity"></div>
 				<span class="help-block"> Aktueller Speed: <span id="currentVelocity"></span></span>
 
-
 				<label>Knoten:</label>
 				<div id="verticesSlider" class="slider">
 					<div class="knob"></div>
@@ -198,7 +197,6 @@
 				</div>
 				<div id="newVertices"></div>
 				<span class="help-block"> Aktuelle Anzahl: <span id="currentVertices"></span></span>
-
 
 				<label>Level:</label>
 				<div id="levelSlider" class="slider">
@@ -227,7 +225,7 @@
 		</div>
 		<div class="modal-backdrop settings-over overlay_background"></div>
 		<!-- End settings-overlay -->
-        <!-- Begin changeUser-overlay -->
+		<!-- Begin changeUser-overlay -->
 		<div class="modal changeUser-over overlay_window">
 
 			<div class="changeUser-over overlay_header">
@@ -238,53 +236,53 @@
 				<p class="text-left">
 					Hier kannst du den Benutzer wechseln:
 				</p>
-				<select id="usersDropDown" name="users" class="dropdown">
-				</select>
+				<select id="usersDropDown" name="users" class="dropdown"></select>
 				<button type="button" id="deleteUser" class="btn" value="deleteUser" onclick="deleteUser(getSelectedUser());">
-					Löschen</button>
-					<script>
-						var select = document.getElementById("usersDropDown"); 
-						function refreshAllUsers(){
-							select.options.length = 0;
-							var users = settings.getAllUsers();
-							for(var i = 0; i < users.length; i++){
-								var user = users[i];
-								var element = document.createElement("option");
-    							element.textContent = user;
-    							element.value = user;
-    							select.appendChild(element);
-							}
-							select.selectedIndex = 0;
+					Löschen
+				</button>
+				<script>
+					var select = document.getElementById("usersDropDown");
+					function refreshAllUsers() {
+						select.options.length = 0;
+						var users = settings.getAllUsers();
+						for (var i = 0; i < users.length; i++) {
+							var user = users[i];
+							var element = document.createElement("option");
+							element.textContent = user;
+							element.value = user;
+							select.appendChild(element);
 						}
-						
-						function getSelectedUser(){
-							return select.options[select.selectedIndex].text;
-						}
+						select.selectedIndex = 0;
+					}
 
-						function checkInput(){
-							var newUserName = document.getElementById("newUserField").value;
-							if(newUserName.length >= 3){
-								settings.newUser(newUserName);
-								document.getElementById("newUserField").value = ""
-								toggle_changeUser();
-								toggle_settings();
-							}else{
-								alert("Der Benutzername muss mind. 3 und max. 20 Zeichen umfassen!");
-								document.getElementById("newUserField").value = "";
-							}
-						}
+					function getSelectedUser() {
+						return select.options[select.selectedIndex].text;
+					}
 
-						function deleteUser(user){
-							if (select.options.length == 1){
-								alert("Du musst erst einen neuen Benutzer erstellen bevor du diesen hier löschen kannst!");
-							}else{
-								select.remove(user);
-								settings.deleteUser(user);
-								refreshAllUsers();
-								settings.changeUser(getSelectedUser());
-							}
+					function checkInput() {
+						var newUserName = document.getElementById("newUserField").value;
+						if (newUserName.length >= 3) {
+							settings.newUser(newUserName);
+							document.getElementById("newUserField").value = ""
+							toggle_changeUser();
+							toggle_settings();
+						} else {
+							alert("Der Benutzername muss mind. 3 und max. 20 Zeichen umfassen!");
+							document.getElementById("newUserField").value = "";
 						}
-					</script>		
+					}
+
+					function deleteUser(user) {
+						if (select.options.length == 1) {
+							alert("Du musst erst einen neuen Benutzer erstellen bevor du diesen hier löschen kannst!");
+						} else {
+							select.remove(user);
+							settings.deleteUser(user);
+							refreshAllUsers();
+							settings.changeUser(getSelectedUser());
+						}
+					}
+				</script>
 			</div>
 
 			<div class="changeUser-over overlay_footer">
@@ -304,7 +302,6 @@
 		<div class="modal-backdrop changeUser-over overlay_background"></div>
 		<!-- End changeUser-overlay -->
 
-
 		<script>
 			var help_over = $$("div.help-over");
 			var about_over = $$("div.about-over");
@@ -320,7 +317,7 @@
 			function toggle_help() {
 
 				help_over.toggle();
-				
+
 			}
 
 			function toggle_about() {
@@ -337,7 +334,7 @@
 				changeUser_over.toggle();
 			}
 		</script>
-        <!-- ADDED -->
+		<!-- ADDED -->
 
 		<div class="container">
 			<div class="masthead">
@@ -383,7 +380,7 @@
 
 			<script type="text/javascript">
 				function template1_init() {
-					
+
 					var search = $('search').value;
 					alert1.hide();
 					var searchRequest = new Request.JSONP({
@@ -393,12 +390,12 @@
 						onComplete : function(data) {
 							var info = Object.keys(data.query.pages);
 							if (info == -1) {
-							alert1.show();
+								alert1.show();
 							} else {
 								$$('div').hide();
 								start($('search').value);
 								$$('div.navbar_hide').show();
-								
+
 							}
 
 						}
@@ -425,17 +422,28 @@
 				var alert1 = $('alert');
 				var selects = $('selects');
 				var searchBox = $('search')
-
+				s
 				alert1.hide();
+				var count =-1;
 				searchBox.addEvents({
-					'input' : function(e) {
 
-						var searchKey = $('search');
+					/*'keydown' :function(e){
+					 if(e.keyCode == 13) {
+					 e.preventDefault();
+					 return false;
+					 }
+					 },*/
+
+					'input' : function(e) {
+						count=-1;
+						
+						console.log(count);
+						var searchKey = $('search').value;
 
 						//Create API-Request
 						var searchRequest = new Request.JSONP({
 
-							url : "http://de.wikipedia.org/w/api.php?action=opensearch&format=json&limit=10&search=" + searchKey.value,
+							url : "http://de.wikipedia.org/w/api.php?action=opensearch&format=json&limit=10&search=" + searchKey,
 
 							onComplete : function(data) {
 								//Delete container content
@@ -457,60 +465,36 @@
 									if (elem != null) {
 
 										(function(elem) {
-								
-											
-												this.addEvents({
+
+											this.addEvents({
 												'click' : function(event) {
 													console.log(event);
-													if(event.target.id.contains("typeahead")){
-													
-													searchBox.set('value', event.target.textContent);
-													selects.set('html', '');
-													selects.set('style', 'border-bottom: 0px')
+													if (event.target.id.contains("typeahead")) {
+
+														searchBox.set('value', event.target.textContent);
+														selects.set('html', '');
+														selects.setStyles({
+														'border-bottom': '0px',
+														
+														
+														});
 													}
 												}
-												
-												
-												
-												})
-												})(elem);
-											}
-											
-											
-											
-												
-											
-										
+											})
+										})(elem);
+									}
 
-									
-
-									
-									
-
-
+								
 									//Insert borders
 
 									selects.set('style', 'border-left: 2px solid rgba(175,175,175,5)');
 									selects.set('style', selects.get('style') + 'border-right: 2px solid rgba(175,175,175,5)');
 									selects.set('style', selects.get('style') + 'border-bottom: 2px solid rgba(175,175,175,1)');
 
-									//var cunt='typeahead'+counter;
-
-									/*	if ($(cunt) != null) {
-									 console.log(cunt);
-									 $(cunt).addEvents({
-									 'click' : function() {
-									 searchBox.set('value', $(cunt).get('html'));
-									 selects.set('html', '');
-									 selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)')
-									 }
-									 })
-									 } else{
-									 selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)');
-									 }*/
-
 								}
-
+								
+								
+									
 								//EventListener
 
 								/*					if ($('typeahead1') != null) {
@@ -557,7 +541,62 @@
 						});
 						searchRequest.send();
 
-					}
+					},
+					
+					
+					'keypress' : function(e) {
+						Element.implement({
+	setFocus: function(index) {
+		this.set('style','background-color: rgb(238, 255, 238)');
+		this.focus();
+	}
+});
+										console.log(e.key);
+										if(count!=-1){var selected=$(('typeahead'+count));
+										selected.set('style','');
+								} else {
+										var selected=$(('typeahead0'));
+									}
+										switch(e.key) {
+											case 'down':
+											
+												if(count<3){
+												count=count+1;
+												selected=$(('typeahead'+count));
+													
+													console.log(selected.id);
+													selected.setStyles({'background-color': 'rgb(238, 238, 238)'});
+													console.log(selected.get('style'));
+													
+													selected.addClass("hover");
+												//console.log(count);
+												
+												}else {
+													count=count-1;
+												}
+												break;
+											case 'up':
+											
+											if(count>0){
+												count=count-1;
+												selected=$(('typeahead'+count));
+													
+													console.log(selected.id);
+													selected.setStyles({'background-color': 'rgb(238, 238, 238)'});
+													console.log(selected.get('style'));
+													
+													selected.addClass("hover");
+												//console.log(count);
+												
+												}else {
+													count=count+1;
+												}
+												break;
+											case 'enter':
+											$('search').set('value',selected.value);
+											
+										}
+									}
 				})
 
 			</script>
@@ -587,11 +626,11 @@
 
 							onComplete : function(JSONdata) {
 								//console.log(JSONdata.parse.text["*"]);
-								var moreButton = JSONdata.parse.text["*"].replace(/(\n|.)+<small><a\shref="\/wiki\//g,'').replace(/"\stitle=+(\n|.)*/i,'');
-								$('aotdButton').set('html','<a class="btn" target="_blank" href="http://de.wikipedia.org/wiki/'+moreButton+'">Mehr »</a>');
+								var moreButton = JSONdata.parse.text["*"].replace(/(\n|.)+<small><a\shref="\/wiki\//g, '').replace(/"\stitle=+(\n|.)*/i, '');
+								$('aotdButton').set('html', '<a class="btn" target="_blank" href="http://de.wikipedia.org/wiki/' + moreButton + '">Mehr »</a>');
 								//console.log(moreButton);
-								$('aotd_text').set('html', JSONdata.parse.text["*"].replace(/Abk(.|\n)+Folgewoche.<\/li>\n<\/ul>\n<\/div>/gi, '').replace(/<a\shref="\/wiki/g,'<a href="http://de.wikipedia.org/wiki').replace(/<small>+(\n|.)*/g, ''));
-								
+								$('aotd_text').set('html', JSONdata.parse.text["*"].replace(/Abk(.|\n)+Folgewoche.<\/li>\n<\/ul>\n<\/div>/gi, '').replace(/<a\shref="\/wiki/g, '<a href="http://de.wikipedia.org/wiki').replace(/<small>+(\n|.)*/g, ''));
+
 							}
 						}).send();
 
@@ -611,8 +650,8 @@
 								url : "http://de.wikipedia.org/w/api.php?action=parse&format=json&prop=text&page=Wikipedia%3AHauptseite%2FSchon_gewusst%2F" + weekday,
 
 								onComplete : function(JSONdata) {
-									$('schon_text').set('html', JSONdata.parse.text["*"].replace(/<div\sclass=(.|\n)+Aktualisierungserinnerungen funktionieren.<\/li>\s<\/ul>\n<\/div>/gi, '').replace(/<a\shref="\/wiki/g,'<a href="http://de.wikipedia.org/wiki'));
-						
+									$('schon_text').set('html', JSONdata.parse.text["*"].replace(/<div\sclass=(.|\n)+Aktualisierungserinnerungen funktionieren.<\/li>\s<\/ul>\n<\/div>/gi, '').replace(/<a\shref="\/wiki/g, '<a href="http://de.wikipedia.org/wiki'));
+
 								}
 							}).send();
 
