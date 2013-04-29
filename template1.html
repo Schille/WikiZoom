@@ -51,8 +51,6 @@
 
 			}
 
-			//$('div.container div.jumbotron div.row-fluid aotd').set('html', updated_aotd.intro);
-
 		</script>
 		<!-- Begin navbar (Bottom) -->
 		<div id="navschow" class="navbar navbar_hide navbar-fixed-bottom">
@@ -112,7 +110,6 @@
 
 		<!-- End about-overlay -->
 
-		<!-- ADDED  UNTIL 340 -->
 		<!-- Begin settings-overlay -->
 		<div class="modal settings-over overlay_window">
 			<div class="settings-over overlay_header">
@@ -175,6 +172,7 @@
 						});
 					}
 				</script>
+				<!-- Content settings overlay -->
 				Hallo <span id="userName"></span>,
 				<p class="text-left">
 					Hier kannst du deine Settings einstellen.
@@ -225,6 +223,7 @@
 		</div>
 		<div class="modal-backdrop settings-over overlay_background"></div>
 		<!-- End settings-overlay -->
+
 		<!-- Begin changeUser-overlay -->
 		<div class="modal changeUser-over overlay_window">
 
@@ -303,16 +302,16 @@
 		<!-- End changeUser-overlay -->
 
 		<script>
+			// Overlay toggle methods
 			var help_over = $$("div.help-over");
 			var about_over = $$("div.about-over");
 			var settings_over = $$("div.settings-over");
 			var changeUser_over = $$("div.changeUser-over");
-			//var navbar = $$("div.navbar_hide");
+
 			help_over.hide();
 			about_over.hide();
 			settings_over.hide();
 			changeUser_over.hide();
-			//navbar.toggle();
 
 			function toggle_help() {
 
@@ -357,6 +356,7 @@
 				<div class="row">
 					<div class="span5"></div>
 
+					<!-- Alert after wrong search input -->
 					<div id="alert" class="alert-error span text-center">
 						Wort nicht gefunden!
 					</div>
@@ -379,10 +379,13 @@
 			</div>
 
 			<script type="text/javascript">
+				//Start search request
 				function template1_init() {
 
 					var search = $('search').value;
 					alert1.hide();
+
+					//Open request if the Keyword is correct
 					var searchRequest = new Request.JSONP({
 
 						url : "http://de.wikipedia.org/w/api.php?action=query&prop=flagged&format=json&titles=" + search,
@@ -395,18 +398,14 @@
 								$$('div').hide();
 								start($('search').value);
 								$$('div.navbar_hide').show();
-
+								$('levelSlider').show();
+								$('verticesSlider').show();
+								$('velocitySlider').show();
+								$$('div.knob').show();
 							}
 
 						}
 					}).send();
-
-					/*
-					 $$('div').hide();
-
-					 //$$('div.navbar_hide').show();
-					 start($('search').value);
-					 */
 
 				}
 			</script>
@@ -422,21 +421,16 @@
 				var alert1 = $('alert');
 				var selects = $('selects');
 				var searchBox = $('search')
-				
+
 				alert1.hide();
-				var count =-1;
+				var count = -1;
 				searchBox.addEvents({
 
-					/*'keydown' :function(e){
-					 if(e.keyCode == 13) {
-					 e.preventDefault();
-					 return false;
-					 }
-					 },*/
+					//Request for typeahed function
 
 					'input' : function(e) {
-						count=-1;
-						
+						count = -1;
+
 						console.log(count);
 						var searchKey = $('search').value;
 
@@ -474,9 +468,8 @@
 														searchBox.set('value', event.target.textContent);
 														selects.set('html', '');
 														selects.setStyles({
-														'border-bottom': '0px',
-														
-														
+															'border-bottom' : '0px',
+
 														});
 													}
 												}
@@ -484,7 +477,6 @@
 										})(elem);
 									}
 
-								
 									//Insert borders
 
 									selects.set('style', 'border-left: 2px solid rgba(175,175,175,5)');
@@ -492,111 +484,70 @@
 									selects.set('style', selects.get('style') + 'border-bottom: 2px solid rgba(175,175,175,1)');
 
 								}
-								
-								
-									
-								//EventListener
-
-								/*					if ($('typeahead1') != null) {
-								 var type1 = $('typeahead1');
-								 type1.addEvents({
-								 'click' : function() {
-								 searchBox.set('value', type1.get('html'));
-								 selects.set('html', '');
-								 selects.set('style', 'border-bottom: 0px')
-								 }
-								 })
-								 } else {
-								 selects.set('style', 'border-bottom: 2px solid rgba(175,175,175,1)')
-								 }
-								 if ($('typeahead2') != null) {
-								 var type2 = $('typeahead2');
-								 type2.addEvents({
-								 'click' : function() {
-								 searchBox.set('value', type2.get('html'));
-								 selects.set('html', '');
-								 selects.set('style', 'border-bottom: 0px')
-								 }
-								 })
-								 } else {
-								 selects.set('style', 'border-bottom: 0px')
-								 }
-								 if ($('typeahead3') != null) {
-								 var type3 = $('typeahead3');
-								 type3.addEvents({
-
-								 'click' : function() {
-								 searchBox.set('value', type3.get('html'));
-								 selects.set('html', '');
-								 selects.set('style', 'border-bottom: 0px')
-								 }
-								 })
-								 } else {
-								 selects.set('style', 'border-bottom: 0px')
-
-								 }
-
-								 */
 							}
 						});
 						searchRequest.send();
 
 					},
-					
-					
+					//KeyListener typeahead (Down arrow ...)
 					'keypress' : function(e) {
 						Element.implement({
-	setFocus: function(index) {
-		this.set('style','background-color: rgb(238, 255, 238)');
-		this.focus();
-	}
-});
-										console.log(e.key);
-										if(count!=-1){var selected=$(('typeahead'+count));
-										selected.set('style','');
+							setFocus : function(index) {
+								this.set('style', 'background-color: rgb(238, 255, 238)');
+								this.focus();
+							}
+						});
+						console.log(e.key);
+						if (count != -1) {
+							var selected = $(('typeahead' + count));
+							selected.set('style', '');
+						} else {
+							var selected = $(('typeahead0'));
+						}
+						switch(e.key) {
+							case 'down':
+
+								if (count < 3) {
+									count = count + 1;
+									selected = $(('typeahead' + count));
+
+									console.log(selected.id);
+									selected.setStyles({
+										'background-color' : 'rgb(238, 238, 238)'
+									});
+									console.log(selected.get('style'));
+
+									selected.addClass("hover");
+									//console.log(count);
+
 								} else {
-										var selected=$(('typeahead0'));
-									}
-										switch(e.key) {
-											case 'down':
-											
-												if(count<3){
-												count=count+1;
-												selected=$(('typeahead'+count));
-													
-													console.log(selected.id);
-													selected.setStyles({'background-color': 'rgb(238, 238, 238)'});
-													console.log(selected.get('style'));
-													
-													selected.addClass("hover");
-												//console.log(count);
-												
-												}else {
-													count=count-1;
-												}
-												break;
-											case 'up':
-											
-											if(count>0){
-												count=count-1;
-												selected=$(('typeahead'+count));
-													
-													console.log(selected.id);
-													selected.setStyles({'background-color': 'rgb(238, 238, 238)'});
-													console.log(selected.get('style'));
-													
-													selected.addClass("hover");
-												//console.log(count);
-												
-												}else {
-													count=count+1;
-												}
-												break;
-											case 'enter':
-											$('search').set('value',selected.value);
-											
-										}
-									}
+									count = count - 1;
+								}
+								break;
+							case 'up':
+
+								if (count > 0) {
+									count = count - 1;
+									selected = $(('typeahead' + count));
+
+									console.log(selected.id);
+									selected.setStyles({
+										'background-color' : 'rgb(238, 238, 238)'
+									});
+									console.log(selected.get('style'));
+
+									selected.addClass("hover");
+									//console.log(count);
+
+								} else {
+									count = count + 1;
+								}
+								break;
+							case 'enter':
+								$('search').set('value', selected.value);
+
+						}
+					}
 				})
 
 			</script>
@@ -606,7 +557,7 @@
 			<div class="jumbotron">
 
 				<div class="row-fluid">
-
+					<!--Placeholder article of the day -->
 					<div id="aotd" class="span6">
 						<h2> Artikel des Tages ...
 						<br>
@@ -615,7 +566,7 @@
 
 						</p>
 						<p id="aotdButton">
-							<!-- <a class="btn" target="_blank" href="http://de.wikipedia.org/">Mehr »</a> -->
+							
 						</p>
 					</div>
 
@@ -635,7 +586,7 @@
 						}).send();
 
 					</script>
-
+					<!--Placeholder did you know -->
 					<div class="span6">
 						<h2> Wusstest du schon ...
 						<br>
