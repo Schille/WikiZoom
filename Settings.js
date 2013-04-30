@@ -1,4 +1,10 @@
+/**
+ * @author Alina Fleckenstein
+ */
 var Settings = new Class({
+     /**
+	 * @constructor Initializing Settings
+	 */
     initialize: function () {
         var username;
         var vertices;
@@ -6,7 +12,9 @@ var Settings = new Class({
         var velocity;
     },
 
-    // update spans to current values
+	/**
+	 * The updateSpans function updates the <span> fields in the html page. 
+  	 */
     updateSpans: function () {
         document.getElementById("userName").innerHTML = this.username;
         document.getElementById("currentVelocity").innerHTML = Math.round( (4000 - this.getValue("velocity")) / 40) + '%';
@@ -14,7 +22,10 @@ var Settings = new Class({
         document.getElementById("currentLevel").innerHTML = this.getValue("level");
     },
 
-    // set iniital values
+	/**
+	 * The init function check, whether a user has already signed up before, 
+     * if not, user has to type in new user name
+  	 */
     init: function () {
         this.username = this.getLastUser();
         var tempUserName;
@@ -25,28 +36,41 @@ var Settings = new Class({
         this.updateSpans();
     },
 
-    // set cookie with new values
+	/**
+	 * The setValues function creates a Cookie, which expires 365 days after being set. 
+     * The cookie is named after current User and has the values of user's velocity, vertices and level. 
+  	 */
     setValues: function () {
         var exdays = 365;
         var date = new Date();
         date.setTime(date.getTime() + (exdays * 24 * 60 * 60 * 1000));
         var expires = "; expires=" + date.toGMTString();
+        // "x" to separate values
         var values = escape(this.velocity) + "x" + escape(this.vertices) + "x" + escape(this.level);
         document.cookie = escape(this.username) + "=" + values + expires + "; path=/";
         this.updateSpans();
     },
 
-    // changes the current user
+	/**
+	 * The changeUser function changes the current user. cookie lastUser is set and spans are updatet
+  	 * @param user The new user
+  	 */
     changeUser: function (user) {
         this.username = user;
         this.setLastUser();
         this.updateSpans();
     },
 
-    // creates a new user
+	/**
+	 * The newUser function creates a new user in system.
+     * Function checks a number of rules, if all rules are obeyed: 
+     * Update username, set lastUser cookie, set values for velocity, vertices and level, create user's cookie
+  	 * @param user The new user to sign in.
+  	 */
     newUser: function (user) {
         var create = true;
         var users = this.getAllUsers();
+        // to ensure that no browser overwrites any cookie, there are only 5 usercookies + 1 lastUser cookie allowed. 
         if (users.length >= 5) {
             alert("Es dürfen maximal 5 User gespeichert werden");
             create = false;
@@ -67,13 +91,17 @@ var Settings = new Class({
         }
     },
 
-    // returns value of given string
+	/**
+	 * The getValue function extracts a certain value from user's cookie
+  	 * @param value The value you want to know. i.e. velocity, vertices or level 
+  	 */
     getValue: function (value) {
         if (value == "lastUser") {
             var cookieName = "lastUser=";
         } else {
             var cookieName = this.username + "=";
         }
+        // split all cookies, save cookies in cookieArray
         var cookieArray = document.cookie.split(';');
         for (var i = 0; i < cookieArray.length; i++) {
             var cookie = cookieArray[i];
@@ -82,6 +110,7 @@ var Settings = new Class({
                 return cookie.substring(cookieName.length, cookie.length);
             } else if (cookie.indexOf(cookieName) == 0) {
                 var values = cookie.substring(cookieName.length, cookie.length);
+                // split current user's cookie to get values, save values in valueArray
                 var valueArray = values.split('x');
                 switch (value) {
                     case "velocity":
@@ -101,12 +130,16 @@ var Settings = new Class({
         return null;
     },
 
-    // returns last active user
+	/**
+	 * The getLastUser function returns last user logged into system to update user's settings
+  	 */
     getLastUser: function () {
         return this.getValue("lastUser");
     },
 
-    // sets last active user
+	/**
+	 * The setLastUser function creates cookie to save current user as last user logged into system
+  	 */
     setLastUser: function () {
         var exdays = 365;
         var date = new Date();
@@ -115,7 +148,9 @@ var Settings = new Class({
         document.cookie = "lastUser=" + escape(this.username) + expires + "; path=/";
     },
 
-    // returns array with all users
+	/**
+	 * The getAllUser function extracts all saved usernames from cookies
+  	 */
     getAllUsers: function () {
         var cookieArray = document.cookie.split(';');
         var users = new Array(cookieArray.length - 1);
@@ -131,7 +166,10 @@ var Settings = new Class({
         return users;
     },
 
-    // deletes User
+	/**
+	 * The deleteUser function deletes user's cookie through setting a negative expiredate 
+  	 * @param user The user you want to delete from system 
+  	 */
     deleteUser: function (user) {
         var exdays = -1;
         var date = new Date();
@@ -140,32 +178,50 @@ var Settings = new Class({
         document.cookie = user + "=" + "" + expires + "; path=/";
     },
 
-    // sets velocity
+	/**
+	 * The setVelocity function sets current velocity value
+  	 * @param value The value you want to save 
+  	 */
     setVelocity: function (value) {
         this.velocity = value;
     },
 
-    // sets vertices
+	/**
+	 * The setVertices function sets current vertices value
+  	 * @param value The value you want to save 
+  	 */
     setVertices: function (value) {
         this.vertices = value;
     },
 
-    // sets level
+	/**
+	 * The setLevel function sets current level value
+  	 * @param value The value you want to save 
+  	 */
     setLevel: function (value) {
         this.level = value;
     },
 
-    // returns velocity
+	/**
+	 * The getVelocity function returns current velocity value
+  	 * @return velocity value
+  	 */
     getVelocity: function () {
         return parseInt(this.getValue("velocity"));
     },
 
-    // returns vertices
+	/**
+	 * The getVertices function returns current vertices value
+  	 * @return vertices value
+  	 */
     getVertices: function () {
         return parseInt(this.getValue("vertices"));
     },
 
-    // returns level
+	/**
+	 * The getLevel function returns current level value
+  	 * @return level value
+  	 */
     getLevel: function () {
         return parseInt(this.getValue("level"));
     }
